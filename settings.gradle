@@ -1,1 +1,1 @@
-include ':orbotservice'
+include ':tor-android-binary'
