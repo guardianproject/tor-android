@@ -310,15 +310,15 @@ polipo-clean:
 #this is related to a bug in compression of assets and resources > 1MB
 
 assets: tor polipo 
-	install -d ../orbotservice/src/main/assets/$(APP_ABI)
+	install -d ../tor-android-binary/src/main/assets/$(APP_ABI)
 	-$(STRIP) bin/polipo
-	-zip ../orbotservice/src/main/assets/$(APP_ABI)/polipo.mp3 bin/polipo
+	-zip ../tor-android-binary/src/main/assets/$(APP_ABI)/polipo.mp3 bin/polipo
 	-$(STRIP) bin/tor
-	-zip ../orbotservice/src/main/assets/$(APP_ABI)/tor.mp3 bin/tor
+	-zip ../tor-android-binary/src/main/assets/$(APP_ABI)/tor.mp3 bin/tor
 
 assets-clean:
-	-rm ../orbotservice/src/main/assets/$(APP_ABI)/polipo.mp3
-	-rm ../orbotservice/src/main/assets/$(APP_ABI)/tor.mp3
+	-rm ../tor-android-binary/src/main/assets/$(APP_ABI)/polipo.mp3
+	-rm ../tor-android-binary/src/main/assets/$(APP_ABI)/tor.mp3
 
 
 #------------------------------------------------------------------------------#
