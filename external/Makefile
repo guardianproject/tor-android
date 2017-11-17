@@ -252,12 +252,6 @@ tor/configure:
 	 ./autogen.sh
 
 tor/Makefile: tor/configure
-#	cp 0001-add-limits.h-to-support-MAX_SIZE-on-Android.patch tor
-#	cd tor && \
-#		git apply 0001-add-limits.h-to-support-MAX_SIZE-on-Android.patch
-#	cp fix_android_0.2.6.4rc_build.patch tor
-#	cd tor && \
-#		git apply fix_android_0.2.6.4rc_build.patch
 	cp config.sub tor
 	cp config.guess tor
 	cd tor && \

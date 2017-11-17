@@ -207,7 +207,7 @@ public class TorResourceInstaller implements TorServiceConstants {
 
     }
 
-    
+
 
     private void setExecutable(File fileBin) {
         fileBin.setReadable(true);
