@@ -303,53 +303,29 @@ polipo-clean:
 	-rm -f bin/polipo
 	-rm -f polipo-build-stamp
 
-#------------------------------------------------------------------------------#
-# PLUTO Pluggable Transports
-
-pluto/bin/android_arm/obfs4proxy:
-#don't build for now until we sort out Go SDK 
-#	cd pluto && \
-#		./build.sh
-
-pluto-build-stamp: pluto/bin/android_arm/obfs4proxy
-	touch pluto-build-stamp
-
-pluto: pluto-build-stamp
-	test -d bin || mkdir bin
-	cp pluto/bin/android_arm/obfs4proxy bin
-
-pluto-clean:
-#	-rm -rf pluto/bin
 
 #------------------------------------------------------------------------------#
 #create and clean assets: FYI - tor is stored as a ZIP file with an mp3 extension
 #in order to stop Android OS (older devices) from trying to compress/decompress it
 #this is related to a bug in compression of assets and resources > 1MB
 
-assets: tor polipo pluto
+assets: tor polipo 
 	install -d ../orbotservice/src/main/assets/$(APP_ABI)
 	-$(STRIP) bin/polipo
 	-zip ../orbotservice/src/main/assets/$(APP_ABI)/polipo.mp3 bin/polipo
 	-$(STRIP) bin/tor
 	-zip ../orbotservice/src/main/assets/$(APP_ABI)/tor.mp3 bin/tor
-	-$(STRIP) bin/obfs4proxy
-	-zip ../orbotservice/src/main/assets/$(APP_ABI)/obfs4proxy.mp3 bin/obfs4proxy
-	-$(STRIP) ../orbotservice/src/main/libs/$(APP_ABI)/pdnsd
-	-zip ../orbotservice/src/main/assets/$(APP_ABI)/pdnsd.mp3 ../orbotservice/src/main/libs/$(APP_ABI)/pdnsd
-	-rm ../orbotservice/src/main/libs/$(APP_ABI)/pdnsd
 
 assets-clean:
 	-rm ../orbotservice/src/main/assets/$(APP_ABI)/polipo.mp3
 	-rm ../orbotservice/src/main/assets/$(APP_ABI)/tor.mp3
-	-rm ../orbotservice/src/main/assets/$(APP_ABI)/obfs4proxy.mp3
-	-rm ../orbotservice/src/main/assets/$(APP_ABI)/pdnsd.mp3
 
 
 #------------------------------------------------------------------------------#
 # cleanup, cleanup, put the toys away
 
 ##clean: openssl-clean libevent-clean tor-clean polipo-clean assets-clean
-clean: openssl-clean libevent-clean lzma-clean zstd-clean tor-clean polipo-clean pluto-clean
+clean: openssl-clean libevent-clean lzma-clean zstd-clean tor-clean polipo-clean 
 
 #------------------------------------------------------------------------------#
 # debugging stuff
