@@ -32,3 +32,18 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar','*.so'])
     testCompile 'junit:junit:4.12'
 }
+
+apply plugin: 'maven'
+
+uploadArchives {
+        repositories.mavenDeployer {
+                def deployPath = file(getProperty('aar.deployPath'))
+                repository(url: "file://${deployPath.absolutePath}")
+                pom.project {
+                        groupId 'org.torproject'
+                        artifactId 'tor-android-binary'
+                        version "0.3.1"
+                }
+        }
+}
+
