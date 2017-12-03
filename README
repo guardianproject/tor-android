@@ -10,12 +10,16 @@ Please see: https://raw.githubusercontent.com/n8fr8/tor-android/master/BUILD
 How to Use via Gradle
 ***********************************************
 
+Add the repository your list as shown:
+
 repositories {
         maven { url "https://raw.githubusercontent.com/guardianproject/gpmaven/master" }
     }
     
+and then add the dependency, setting it to the latest version (or any version) we have made available, as a release:
+
 dependencies {
-    compile 'org.torproject:tor-android-binary:0.3.1'
+    compile 'org.torproject:tor-android-binary:0.3.1.9'
 }
 
 
