@@ -38,7 +38,7 @@ build_external_dependencies()
 
 build_app()
 {
-    echo "Building Orfox"
+    echo "Building tor-android"
     build_external_dependencies
     $ANDROID_HOME/tools/android update project --name $2 --target $3 --path ./tor-android-binary/src/main/
 
@@ -51,7 +51,7 @@ build_app()
 
 show_options()
 {
-    echo "usage: ./orbot-tools.sh command arguments"
+    echo "usage: ./tor-droid-make.sh command arguments"
     echo ""
     echo "Commands:"
     echo "          fetch   Fetch git submodules"
@@ -60,7 +60,7 @@ show_options()
     echo "Options:"
     echo "          -b      Build type, it can be release or debug (default: debug)"
     echo "          -c      Clean the repository (Used together with the fetch command)"
-    echo "          -n      Project name (default: Orbot)"
+    echo "          -n      Project name (default: tor-android-binary)"
     echo "          -t      Project target (default: android-23)"
     echo ""
     exit
@@ -68,7 +68,7 @@ show_options()
 
 option=$1
 build_type="debug"
-name="Orbot"
+name="tor-android-binary"
 target="android-23"
 
 if [ -z $option ]; then
