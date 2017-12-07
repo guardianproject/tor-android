@@ -33,7 +33,10 @@ check_android_dependencies()
 build_external_dependencies()
 {
     check_android_dependencies
-    make -C external
+    APP_ABI=armeabi make -C external clean 
+    APP_ABI=armeabi make -C external 
+    APP_ABI=x86 make -C external clean
+    APP_ABI=x86 make -C external 
 }
 
 build_app()
