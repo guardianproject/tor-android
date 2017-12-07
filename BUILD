@@ -26,30 +26,12 @@ Android platform supports (ICS 4.x or android-15)
 
 Be sure that you have all of the git submodules up-to-date:
 
-	git submodule update --init --recursive
+	./tor-droid-make.sh fetch
 
-To begin building, from the Orbot root directory, you first need to build all
-external C/native dependencies:
+To begin building, from the Orbot root directory, it builds all submodules and
+the project.
 
-	export ANDROID_NDK_HOME={PATH TO YOUR NDK INSTALL}
-	make -C external
-
-At this point, you'll have Tor and Polipo binaries that can be run on an
-Android handset.  You can verify the ARM binary was properly built using the
-following command:
-
-	file external/bin/tor external/bin/polipo
-	
-You should see something like:
-    external/bin/tor: ELF 32-bit LSB executable, ARM, version 1 (SYSV),
-        dynamically linked (uses shared libs), not stripped
-    external/bin/polipo: ELF 32-bit LSB executable, ARM, version 1 (SYSV),
-        dynamically linked (uses shared libs), not stripped
-
-This isn't enough though and we'll now sew up the binary into a small package
-that will handle basic Tor controlling features.
-
-	android update project --name Orbot --target android-15 --path .
+        ./tor-droid-make.sh build
 
 Now build the Android app
 
