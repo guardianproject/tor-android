@@ -53,13 +53,12 @@ public class TorResourceInstaller implements TorServiceConstants {
         }
     }
     
-    private final static String COMMAND_RM_FORCE = "rm -f ";
     private final static String MP3_EXT = ".mp3";
     //        
     /*
      * Extract the Tor resources from the APK file using ZIP
      */
-    public boolean installResources () throws IOException, FileNotFoundException, TimeoutException
+    public boolean installResources () throws IOException, TimeoutException
     {
         
         InputStream is;
@@ -150,19 +149,19 @@ public class TorResourceInstaller implements TorServiceConstants {
      * Extract the Tor binary from the APK file using ZIP
      */
     
-    private boolean installGeoIP () throws IOException, FileNotFoundException
+    private boolean installGeoIP () throws IOException
     {
         
         InputStream is;
         File outFile;
         
         outFile = new File(installFolder, GEOIP_ASSET_KEY);
-        is = context.getAssets().open(COMMON_ASSET_KEY + GEOIP_ASSET_KEY + MP3_EXT);
-        streamToFile(is, outFile, false, true);
+        is = context.getAssets().open(COMMON_ASSET_KEY + GEOIP_ASSET_KEY);
+        streamToFile(is, outFile, false, false);
 
-        is = context.getAssets().open(COMMON_ASSET_KEY + GEOIP6_ASSET_KEY + MP3_EXT);
+        is = context.getAssets().open(COMMON_ASSET_KEY + GEOIP6_ASSET_KEY);
         outFile = new File(installFolder, GEOIP6_ASSET_KEY);
-        streamToFile(is, outFile, false, true);
+        streamToFile(is, outFile, false, false);
     
         return true;
     }
