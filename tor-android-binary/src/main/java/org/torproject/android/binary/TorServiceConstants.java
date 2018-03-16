@@ -14,12 +14,6 @@ public interface TorServiceConstants {
 
 	String COMMON_ASSET_KEY = "common/";
 
-	//privoxy
-	String POLIPO_ASSET_KEY = "polipo";
-	
-	//privoxy.config
-	String POLIPOCONFIG_ASSET_KEY = "torpolipo.conf";
-	
 	//geoip data file asset key
 	String GEOIP_ASSET_KEY = "geoip";
 	String GEOIP6_ASSET_KEY = "geoip6";
