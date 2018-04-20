@@ -26,7 +26,6 @@ public interface TorServiceConstants {
 
 	int FILE_WRITE_BUFFER_SIZE = 1024;
 
-        String BINARY_TOR_VERSION = "0.3.1.9-openssl1.0.2k";
-
+    String BINARY_TOR_VERSION = "0.3.2.10-openssl1.0.2o";
 
 }
