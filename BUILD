@@ -8,8 +8,6 @@ Orbot includes, in the external directory, git repo submodules of:
 	- LibEvent
 	- JTorControl: The Tor Control Library for Java
 
-The Orbot repo also includes the Polipo source code of a recent stable release.
-
 Please install the following prerequisites (instructions for each follows):
 	ant: http://ant.apache.org/
 	Android Native Dev Kit or NDK (for C/C++ code):

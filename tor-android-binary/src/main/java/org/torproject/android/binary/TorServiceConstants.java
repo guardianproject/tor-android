@@ -14,19 +14,12 @@ public interface TorServiceConstants {
 
 	String COMMON_ASSET_KEY = "common/";
 
-	//privoxy
-	String POLIPO_ASSET_KEY = "polipo";
-	
-	//privoxy.config
-	String POLIPOCONFIG_ASSET_KEY = "torpolipo.conf";
-	
 	//geoip data file asset key
 	String GEOIP_ASSET_KEY = "geoip";
 	String GEOIP6_ASSET_KEY = "geoip6";
 
 	int FILE_WRITE_BUFFER_SIZE = 1024;
 
-        String BINARY_TOR_VERSION = "0.3.1.9-openssl1.0.2k";
-
+    String BINARY_TOR_VERSION = "0.3.2.10-openssl1.0.2o";
 
 }

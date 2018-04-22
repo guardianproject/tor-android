@@ -3,8 +3,6 @@
 
 package org.torproject.android.binary;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.StringBufferInputStream;
 import java.util.concurrent.TimeoutException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -60,9 +57,6 @@ public class TorResourceInstaller implements TorServiceConstants {
      */
     public boolean installResources () throws IOException, TimeoutException
     {
-        
-        InputStream is;
-        File outFile;
 
         String cpuPath = "armeabi";
 
@@ -73,29 +67,15 @@ public class TorResourceInstaller implements TorServiceConstants {
         
         installFolder.mkdirs();
 
-        is = context.getAssets().open(COMMON_ASSET_KEY + TORRC_ASSET_KEY);
-        outFile = new File(installFolder, TORRC_ASSET_KEY);
-        streamToFile(is,outFile, false, false);
+        assetToFile(COMMON_ASSET_KEY + TORRC_ASSET_KEY, TORRC_ASSET_KEY, false, false);
 
-        is = context.getAssets().open(COMMON_ASSET_KEY + POLIPOCONFIG_ASSET_KEY);
-        outFile = new File(installFolder, POLIPOCONFIG_ASSET_KEY);
-        streamToFile(is,outFile, false, false);
-
-        is = context.getAssets().open(cpuPath + '/' + TOR_ASSET_KEY + MP3_EXT);
-        outFile = new File(installFolder, TOR_ASSET_KEY);
-        streamToFile(is,outFile, false, true);
-        setExecutable(outFile);
+        assetToFile(cpuPath + '/' + TOR_ASSET_KEY + MP3_EXT, TOR_ASSET_KEY, true, true);
     
-        is = context.getAssets().open(cpuPath + '/' + POLIPO_ASSET_KEY + MP3_EXT);
-        outFile = new File(installFolder, POLIPO_ASSET_KEY);
-        streamToFile(is,outFile, false, true);
-        setExecutable(outFile);
-
         installGeoIP();
     
         return true;
     }
-    
+
     public boolean updateTorConfigCustom (File fileTorRcCustom, String extraLines) throws IOException, FileNotFoundException, TimeoutException
     {
     	if (fileTorRcCustom.exists())
@@ -113,57 +93,31 @@ public class TorResourceInstaller implements TorServiceConstants {
     	
         return true;
     }
-    
-    public boolean updatePolipoConfig (File filePolipo, String extraLines) throws IOException, FileNotFoundException, TimeoutException
-    {
-        
-        InputStream is;
 
-        is = context.getAssets().open(COMMON_ASSET_KEY + POLIPOCONFIG_ASSET_KEY);
-        streamToFile(is,filePolipo, false, false);
-
-        if (extraLines != null && extraLines.length() > 0)
-        {
-            StringBufferInputStream sbis = new StringBufferInputStream('\n' + extraLines + '\n');
-            streamToFile(sbis,filePolipo,true,false);
-        }
-        
-
-        return true;
-    }
-    
-    public boolean installPolipoConf () throws IOException, FileNotFoundException, TimeoutException
-    {
-        
-        InputStream is;
-        File outFile;
-
-        is = context.getAssets().open(COMMON_ASSET_KEY + POLIPOCONFIG_ASSET_KEY);
-        outFile = new File(installFolder, POLIPOCONFIG_ASSET_KEY);
-        streamToFile(is,outFile, false, false);
-        
-        return true;
-    }
-    
     /*
      * Extract the Tor binary from the APK file using ZIP
      */
     
     private boolean installGeoIP () throws IOException
     {
-        
-        InputStream is;
-        File outFile;
-        
-        outFile = new File(installFolder, GEOIP_ASSET_KEY);
-        is = context.getAssets().open(COMMON_ASSET_KEY + GEOIP_ASSET_KEY);
-        streamToFile(is, outFile, false, false);
 
-        is = context.getAssets().open(COMMON_ASSET_KEY + GEOIP6_ASSET_KEY);
-        outFile = new File(installFolder, GEOIP6_ASSET_KEY);
-        streamToFile(is, outFile, false, false);
-    
+        assetToFile(COMMON_ASSET_KEY + GEOIP_ASSET_KEY, GEOIP_ASSET_KEY, false, false);
+
+        assetToFile(COMMON_ASSET_KEY + GEOIP6_ASSET_KEY, GEOIP6_ASSET_KEY, false, false);
+
         return true;
+    }
+
+    /*
+     * Reads file from assetPath/assetKey writes it to the install folder
+     */
+    private void assetToFile(String assetPath, String assetKey, boolean isZipped, boolean isExecutable) throws IOException {
+        InputStream is = context.getAssets().open(assetPath);
+        File outFile = new File(installFolder, assetKey);
+        streamToFile(is, outFile, false, isZipped);
+        if (isExecutable) {
+            setExecutable(outFile);
+        }
     }
     
 

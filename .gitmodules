@@ -10,10 +10,6 @@
 	path = external/openssl
 	url = https://github.com/openssl/openssl.git
 	ignore = dirty
-[submodule "external/polipo"]
-	path = external/polipo
-	url = https://github.com/jech/polipo.git
-	ignore = dirty
 [submodule "external/zstd"]
 	path = external/zstd
 	url = https://github.com/facebook/zstd.git
