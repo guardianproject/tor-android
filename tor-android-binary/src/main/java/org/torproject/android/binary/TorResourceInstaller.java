@@ -4,6 +4,7 @@
 package org.torproject.android.binary;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.util.Log;
 
@@ -49,8 +51,7 @@ public class TorResourceInstaller implements TorServiceConstants {
             file.delete();
         }
     }
-    
-    private final static String MP3_EXT = ".mp3";
+
     //        
     /*
      * Extract the Tor resources from the APK file using ZIP
@@ -58,23 +59,29 @@ public class TorResourceInstaller implements TorServiceConstants {
     public boolean installResources () throws IOException, TimeoutException
     {
 
-        String cpuPath = "armeabi";
-
-        if (Build.CPU_ABI.contains("x86"))
-        	cpuPath = "x86";
-
         deleteDirectory(installFolder);
         
         installFolder.mkdirs();
 
         assetToFile(COMMON_ASSET_KEY + TORRC_ASSET_KEY, TORRC_ASSET_KEY, false, false);
 
-        assetToFile(cpuPath + '/' + TOR_ASSET_KEY + MP3_EXT, TOR_ASSET_KEY, true, true);
-    
+        InputStream is = new FileInputStream(new File(getNativeLibraryDir(context),TOR_ASSET_KEY + ".so"));
+        File outFile = new File(installFolder, TOR_ASSET_KEY);
+        streamToFile(is,outFile, false, true);
+        setExecutable(outFile);
+
         installGeoIP();
     
         return true;
     }
+
+
+    // Return Full path to the directory where native JNI libraries are stored.
+    private static String getNativeLibraryDir(Context context) {
+        ApplicationInfo appInfo = context.getApplicationInfo();
+        return appInfo.nativeLibraryDir;
+    }
+
 
     public boolean updateTorConfigCustom (File fileTorRcCustom, String extraLines) throws IOException, FileNotFoundException, TimeoutException
     {
