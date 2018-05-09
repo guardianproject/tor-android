@@ -280,18 +280,16 @@ tor-clean:
 		git reset HEAD --hard
 
 #------------------------------------------------------------------------------#
-#create and clean assets: FYI - tor is stored as a ZIP file with an mp3 extension
-#in order to stop Android OS (older devices) from trying to compress/decompress it
-#this is related to a bug in compression of assets and resources > 1MB
+#create and clean assets: FYI - tor is stored as a ZIP file with an so extension
+#in the libs directly, so it is handled like a shared library for local installation
 
 assets: tor
-	install -d ../tor-android-binary/src/main/assets/$(APP_ABI)
+	install -d ../tor-android-binary/src/main/libs/$(APP_ABI)
 	-$(STRIP) bin/tor
-	-zip ../tor-android-binary/src/main/assets/$(APP_ABI)/tor.mp3 bin/tor
+	-zip ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so bin/tor
 
 assets-clean:
-	-rm ../tor-android-binary/src/main/assets/$(APP_ABI)/tor.mp3
-
+	-rm ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
 
 #------------------------------------------------------------------------------#
 # cleanup, cleanup, put the toys away
