@@ -14,8 +14,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 3210
-        versionName "0.3.2.10"
+        versionCode 32101
+        versionName "0.3.2.10-dev"
 
     }
     buildTypes {
@@ -39,7 +39,7 @@ uploadArchives {
                 pom.project {
                         groupId 'org.torproject'
                         artifactId 'tor-android-binary'
-                        version "0.3.2.10"
+                        version "0.3.2.10-dev"
                 }
         }
 }
