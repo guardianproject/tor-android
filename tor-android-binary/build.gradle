@@ -40,7 +40,7 @@ uploadArchives {
                 pom.project {
                         groupId 'org.torproject'
                         artifactId 'tor-android-binary'
-                        version "0.3.2.10-dev"
+                        version "0.3.3.5-rc"
                 }
         }
 }
