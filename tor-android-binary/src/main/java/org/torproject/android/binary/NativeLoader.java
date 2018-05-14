@@ -12,15 +12,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 public class NativeLoader {
 
-    private final static int LIB_VERSION = 1;
     private final static String LIB_NAME = "tor";
     private final static String LIB_SO_NAME = "tor.so";
-    private final static String LOCALE_LIB_SO_NAME = "tor.so";
-
-    private static volatile boolean nativeLoaded = false;
 
     private final static String TAG = "TorNativeLoader";
 
@@ -28,14 +25,18 @@ public class NativeLoader {
 
 
         ZipFile zipFile = null;
-        InputStream stream = null;
+        ZipInputStream stream = null;
+
         try {
             zipFile = new ZipFile(context.getApplicationInfo().sourceDir);
             ZipEntry entry = zipFile.getEntry("lib/" + folder + "/" + LIB_SO_NAME);
             if (entry == null) {
                 throw new Exception("Unable to find file in apk:" + "lib/" + folder + "/" + LIB_NAME);
             }
-            stream = zipFile.getInputStream(entry);
+
+            //how we wrap this in another stream because the native .so is zipped itself
+            stream = new ZipInputStream(zipFile.getInputStream(entry));
+            ZipEntry ze = stream.getNextEntry();
 
             OutputStream out = new FileOutputStream(destLocalFile);
             byte[] buf = new byte[4096];
@@ -52,12 +53,6 @@ public class NativeLoader {
                 destLocalFile.setWritable(true);
             }
 
-            try {
-              //  System.load(destLocalFile.getAbsolutePath());
-                nativeLoaded = true;
-            } catch (Error e) {
-                Log.e(TAG, e.getMessage());
-            }
             return true;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -81,20 +76,16 @@ public class NativeLoader {
     }
 
     public static synchronized boolean initNativeLibs(Context context, File destLocalFile) {
-        if (nativeLoaded) {
-            return nativeLoaded;
-        }
 
         try {
             String folder = null;
 
             try {
-                /**
+
                 if (Build.CPU_ABI.equalsIgnoreCase("armeabi-v7a")) {
                     folder = "armeabi-v7a";
-                } else
-                **/
-                if (Build.CPU_ABI.startsWith("armeabi")) {
+                }
+                else if (Build.CPU_ABI.equalsIgnoreCase("armeabi")) {
                     folder = "armeabi";
                 } else if (Build.CPU_ABI.equalsIgnoreCase("x86")) {
                     folder = "x86";
@@ -106,7 +97,7 @@ public class NativeLoader {
                 }
             } catch (Exception e) {
                 //  FileLog.e("tmessages", e);
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG, e.getMessage(),e);
                 folder = "armeabi";
             }
 
@@ -116,33 +107,16 @@ public class NativeLoader {
                 folder = "x86";
             }
 
-            if (destLocalFile != null && destLocalFile.exists()) {
-                try {
-          //          System.load(destLocalFile.getAbsolutePath());
-                    nativeLoaded = true;
-                    return nativeLoaded;
-                } catch (Error e) {
-                    Log.e(TAG, e.getMessage());
-                }
-                destLocalFile.delete();
-            }
-
 
             if (loadFromZip(context, destLocalFile, folder)) {
                 return true;
             }
 
         } catch (Throwable e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage(),e);
         }
 
-        try {
-       //     System.loadLibrary(LIB_NAME);
-            nativeLoaded = true;
-        } catch (Error e) {
-            Log.e(TAG, e.getMessage());
-        }
 
-        return nativeLoaded;
+        return false;
     }
 }
