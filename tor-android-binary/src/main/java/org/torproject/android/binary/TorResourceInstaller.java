@@ -34,7 +34,7 @@ public class TorResourceInstaller implements TorServiceConstants {
         this.context = context;
     }
     
-    public void deleteDirectory(File file) {
+    private void deleteDirectory(File file) {
         if( file.exists() ) {
             if (file.isDirectory()) {
                 File[] files = file.listFiles();
@@ -58,21 +58,39 @@ public class TorResourceInstaller implements TorServiceConstants {
      */
     public boolean installResources () throws IOException, TimeoutException
     {
+        File fileTorLocalFile = new File(installFolder, TOR_ASSET_KEY);
 
         deleteDirectory(installFolder);
         
         installFolder.mkdirs();
 
+        installGeoIP();
         assetToFile(COMMON_ASSET_KEY + TORRC_ASSET_KEY, TORRC_ASSET_KEY, false, false);
 
-        InputStream is = new FileInputStream(new File(getNativeLibraryDir(context),TOR_ASSET_KEY + ".so"));
-        File outFile = new File(installFolder, TOR_ASSET_KEY);
-        streamToFile(is,outFile, false, true);
-        setExecutable(outFile);
+        File fileNativeDir = new File(getNativeLibraryDir(context));
+        Log.d(TAG,"listing native files");
+        listf(fileNativeDir.getAbsolutePath());
 
-        installGeoIP();
-    
-        return true;
+        File fileNativeBin = new File(getNativeLibraryDir(context),TOR_ASSET_KEY + ".so");
+        if (!fileNativeBin.exists())
+        {
+            if (getNativeLibraryDir(context).endsWith("arm")) {
+                fileNativeBin = new File(getNativeLibraryDir(context)+"eabi", TOR_ASSET_KEY + ".so");
+            }
+        }
+
+        if (fileNativeBin.exists()) {
+            InputStream is = new FileInputStream(fileNativeBin);
+            streamToFile(is, fileTorLocalFile, false, true);
+            setExecutable(fileTorLocalFile);
+
+            return fileTorLocalFile.exists() && fileTorLocalFile.canExecute();
+        }
+        else
+        {
+            //let's try another approach
+            return NativeLoader.initNativeLibs(context,fileTorLocalFile);
+        }
     }
 
 
@@ -131,7 +149,7 @@ public class TorResourceInstaller implements TorServiceConstants {
     /*
      * Write the inputstream contents to the file
      */
-    public static boolean streamToFile(InputStream stm, File outFile, boolean append, boolean zip) throws IOException
+    private static boolean streamToFile(InputStream stm, File outFile, boolean append, boolean zip) throws IOException
 
     {
         byte[] buffer = new byte[FILE_WRITE_BUFFER_SIZE];
@@ -176,4 +194,22 @@ public class TorResourceInstaller implements TorServiceConstants {
         fileBin.setWritable(true, true);
     }
 
+    private static File[] listf(String directoryName) {
+
+        // .............list file
+        File directory = new File(directoryName);
+
+        // get all the files from a directory
+        File[] fList = directory.listFiles();
+
+        for (File file : fList) {
+            if (file.isFile()) {
+                Log.d(TAG,file.getAbsolutePath());
+            } else if (file.isDirectory()) {
+                listf(file.getAbsolutePath());
+            }
+        }
+
+        return fList;
+    }
 }
