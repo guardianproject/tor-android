@@ -23,24 +23,6 @@ public class NativeLoader {
     private static volatile boolean nativeLoaded = false;
 
     private final static String TAG = "TorNativeLoader";
-    
-    private static File getNativeLibraryDir(Context context) {
-        File f = null;
-        if (context != null) {
-            try {
-                f = new File((String)ApplicationInfo.class.getField("nativeLibraryDir").get(context.getApplicationInfo()));
-            } catch (Throwable th) {
-                th.printStackTrace();
-            }
-        }
-        if (f == null) {
-            f = new File(context.getApplicationInfo().dataDir, "lib");
-        }
-        if (f != null && f.isDirectory()) {
-            return f;
-        }
-        return null;
-    }
 
     private static boolean loadFromZip(Context context, File destLocalFile, String folder) {
 
@@ -150,15 +132,6 @@ public class NativeLoader {
                 return true;
             }
 
-            /*
-            folder = "x86";
-                destLocalFile = new File(context.getFilesDir().getAbsolutePath() + "/libtmessages86.so");
-                if (!loadFromZip(context, destLocalFile, folder)) {
-                    destLocalFile = new File(context.getFilesDir().getAbsolutePath() + "/libtmessagesarm.so");
-                    folder = "armeabi";
-                    loadFromZip(context, destLocalFile, folder);
-                }
-             */
         } catch (Throwable e) {
             e.printStackTrace();
         }
