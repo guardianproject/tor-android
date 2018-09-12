@@ -28,6 +28,7 @@ endif
 
 # Android NDK setup
 ANDROID_NDK_HOME ?= /opt/android-ndk
+ANDROID_NDK ?= $(ANDROID_NDK_HOME)
 NDK_PLATFORM_LEVEL ?= 16
 NDK_TOOLCHAIN_VERSION=4.9
 APP_ABI ?= armeabi
@@ -42,6 +43,7 @@ endif
 ifneq ($(filter arm64%, $(APP_ABI)),)
  NDK_ABI := arm64
 endif
+
 NDK_SYSROOT=$(ANDROID_NDK_HOME)/platforms/android-$(NDK_PLATFORM_LEVEL)/arch-$(NDK_ABI)
 NDK_UNAME := $(shell uname -s | tr '[A-Z]' '[a-z]')
 ifneq ($(filter mips%, $(NDK_ABI)),)
@@ -125,10 +127,9 @@ ifneq ($(filter mips%, $(NDK_ABI)),)
   OPENSSL_CONF_FLAG+=-D_MIPS_SZLONG=32 -D__MIPSEL__
  endif
 endif
-
 lib/libcrypto.a:
 	cd openssl && \
-		./Configure android -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
+		./Configure android -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
 		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr depend && \
 		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr build_libs
 
@@ -136,7 +137,7 @@ lib/libssl.a:
 	cp config.sub openssl
 	cp config.guess openssl
 	cd openssl && \
-		./Configure android -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
+		./Configure android -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
 		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr depend && \
 		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr build_libs
 
