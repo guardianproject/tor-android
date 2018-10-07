@@ -262,7 +262,7 @@ tor/Makefile: tor/configure
 				--disable-asciidoc \
 				--enable-static-libevent --with-libevent-dir=$(EXTERNAL_ROOT) \
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
-				--disable-linker-hardening --disable-gcc-hardening --disable-tool-name-check --disable-systemd
+				--disable-linker-hardening --disable-gcc-hardening --disable-tool-name-check --disable-systemd --disable-module-dirauth
 
 tor-build-stamp: tor/Makefile
 	$(MAKE) -C tor all-am
