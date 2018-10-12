@@ -1,5 +1,5 @@
 RunAsDaemon 1
-AvoidDiskWrites 1
+AvoidDiskWrites 0
 ControlPort auto
 SOCKSPort 0
 DNSPort 0
