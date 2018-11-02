@@ -253,6 +253,7 @@ tor/configure:
 
 tor/Makefile: tor/configure
 	cp config.sub tor
+	sed -i '14i #include <errno.h>' tor/src/lib/fs/freespace.c
 	cp config.guess tor
 	cd tor && \
                 CC="$(CC)" AR="$(AR)" RANLIB=$(RANLIB) PKG_CONFIG_PATH="$(EXTERNAL_ROOT)/lib/pkgconfig" CFLAGS="$(CFLAGS) -D_FORTIFY_SOURCE=2 -fwrapv -fno-strict-aliasing -fno-strict-overflow" LDFLAGS="$(LDFLAGS)" \
@@ -270,7 +271,7 @@ tor-build-stamp: tor/Makefile
 
 tor: lzma zstd libevent openssl tor-build-stamp
 	test -d bin || mkdir bin
-	cp tor/src/or/tor bin
+	cp tor/src/app/tor bin
 
 tor-clean:
 	-rm -f bin/tor
