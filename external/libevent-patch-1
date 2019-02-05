@@ -1,23 +1,18 @@
-For some reason arc4random_addrandom isn't present in 64-bit android archs. !
-
-diff --git a/configure.ac b/configure.ac
-index d42edd8..c511be7 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -290,7 +290,7 @@ AC_HEADER_TIME
- 
- dnl Checks for library functions.
- AC_CHECK_FUNCS([gettimeofday vasprintf fcntl clock_gettime strtok_r strsep])
--AC_CHECK_FUNCS([getnameinfo strlcpy inet_ntop inet_pton signal sigaction strtoll inet_aton pipe eventfd sendfile mmap splice arc4random arc4random_buf issetugid geteuid getegid getprotobynumber setenv unsetenv putenv sysctl])
-+AC_CHECK_FUNCS([getnameinfo strlcpy inet_ntop inet_pton signal sigaction strtoll inet_aton pipe eventfd sendfile mmap splice arc4random arc4random_buf arc4random_addrandom issetugid geteuid getegid getprotobynumber setenv unsetenv putenv sysctl])
- AC_CHECK_FUNCS([umask])
- 
- AC_CACHE_CHECK(
-diff --git a/evutil_rand.c b/evutil_rand.c
-index 284341c..97161e4 100644
---- a/evutil_rand.c
-+++ b/evutil_rand.c
-@@ -174,7 +174,9 @@ evutil_secure_rng_get_bytes(void *buf, size_t n)
+diff -Naur libevent1/configure.ac libevent/configure.ac
+--- libevent1/configure.ac	2019-02-05 18:57:05.762000000 +0100
++++ libevent/configure.ac	2019-02-05 18:57:56.193000000 +0100
+@@ -342,6 +342,7 @@
+   accept4 \
+   arc4random \
+   arc4random_buf \
++  arc4random_addrandom \
+   eventfd \
+   epoll_create1 \
+   fcntl \
+diff -Naur libevent1/evutil_rand.c libevent/evutil_rand.c
+--- libevent1/evutil_rand.c	2019-02-05 18:57:05.762000000 +0100
++++ libevent/evutil_rand.c	2019-02-05 18:58:48.174000000 +0100
+@@ -195,8 +195,10 @@
  void
  evutil_secure_rng_add_bytes(const char *buf, size_t n)
  {
@@ -27,3 +22,4 @@ index 284341c..97161e4 100644
 +#endif
  }
  
+ void
