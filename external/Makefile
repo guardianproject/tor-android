@@ -167,7 +167,6 @@ libevent/Makefile:
 	cp libevent-patch-1 libevent
 	-cd libevent && \
 	 	patch -N -p1 --reject-file=- < libevent-patch-1
-	##sed -i 's@\(AC_OUTPUT(Makefile include/Makefile\) test/Makefile sample/Makefile)@\1)@' libevent/configure.in
 	cd libevent && ./autogen.sh
 	cp config.sub libevent
 	cp config.guess libevent
@@ -175,6 +174,7 @@ libevent/Makefile:
 		CC="$(CC)" AR="$(AR)" RANLIB=$(RANLIB) CFLAGS="$(CFLAGS) -I$(EXTERNAL_ROOT)/include" LDFLAGS="$(LDFLAGS)" \
 			./configure \
 				--host=$(HOST) \
+				--disable-libevent-regress \
 				--disable-shared
 
 libevent-build-stamp: libevent/Makefile
