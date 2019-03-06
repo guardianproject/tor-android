@@ -163,7 +163,6 @@ openssl-clean:
 # libevent
 
 libevent/Makefile:
-	sed -i 's@\(SUBDIRS = . include\) sample test@\1@' libevent/Makefile.am
 	cp libevent-patch-1 libevent
 	-cd libevent && \
 	 	patch -N -p1 --reject-file=- < libevent-patch-1
@@ -175,6 +174,7 @@ libevent/Makefile:
 			./configure \
 				--host=$(HOST) \
 				--disable-libevent-regress \
+				--disable-samples \
 				--disable-shared
 
 libevent-build-stamp: libevent/Makefile
