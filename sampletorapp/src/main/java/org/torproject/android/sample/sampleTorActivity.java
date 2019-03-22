@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import org.torproject.android.binary.TorResourceInstaller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
@@ -19,7 +20,9 @@ public class sampleTorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sample_tor);
 
         try {
-            boolean success = new TorResourceInstaller(this,getFilesDir()).installResources();
+            File fileTorBin = new TorResourceInstaller(this,getFilesDir()).installResources();
+
+            boolean success = fileTorBin != null && fileTorBin.canExecute();
 
             String message = "Tor install success? " + success;
 
