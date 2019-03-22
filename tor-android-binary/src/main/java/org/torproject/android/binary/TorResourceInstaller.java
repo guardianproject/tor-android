@@ -30,7 +30,6 @@ public class TorResourceInstaller implements TorServiceConstants {
     public TorResourceInstaller (Context context, File installFolder)
     {
         this.installFolder = installFolder;
-        
         this.context = context;
     }
     
@@ -55,8 +54,10 @@ public class TorResourceInstaller implements TorServiceConstants {
     //        
     /*
      * Extract the Tor resources from the APK file using ZIP
+     *
+     * @File path to the Tor executable
      */
-    public boolean installResources () throws IOException, TimeoutException
+    public File installResources () throws IOException, TimeoutException
     {
         File fileTorLocalFile = new File(installFolder, TOR_ASSET_KEY);
 
@@ -79,18 +80,37 @@ public class TorResourceInstaller implements TorServiceConstants {
             }
         }
 
+        if (fileNativeBin.exists())
+        {
+            if (fileNativeBin.canExecute())
+                return fileNativeBin;
+            else
+            {
+                setExecutable(fileNativeBin);
+
+                if (fileNativeBin.canExecute())
+                    return fileNativeBin;
+            }
+        }
+
         if (fileNativeBin.exists()) {
             InputStream is = new FileInputStream(fileNativeBin);
             streamToFile(is, fileTorLocalFile, false, true);
             setExecutable(fileTorLocalFile);
 
-            return fileTorLocalFile.exists() && fileTorLocalFile.canExecute();
+            if (fileTorLocalFile.exists() && fileTorLocalFile.canExecute())
+                return fileTorLocalFile;
         }
         else
         {
             //let's try another approach
-            return NativeLoader.initNativeLibs(context,fileTorLocalFile);
+            boolean success = NativeLoader.initNativeLibs(context,fileTorLocalFile);
+
+            if (success)
+                return fileTorLocalFile;
         }
+
+        return null;
     }
 
 
