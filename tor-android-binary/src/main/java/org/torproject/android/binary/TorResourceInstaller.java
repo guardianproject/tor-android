@@ -26,11 +26,24 @@ public class TorResourceInstaller implements TorServiceConstants {
     
     File installFolder;
     Context context;
-    
+
+    File fileTorrc;
+    File fileTor;
+
     public TorResourceInstaller (Context context, File installFolder)
     {
         this.installFolder = installFolder;
         this.context = context;
+    }
+
+    public File getTorrcFile ()
+    {
+        return fileTorrc;
+    }
+
+    public File getTorFile ()
+    {
+        return fileTor;
     }
     
     private void deleteDirectory(File file) {
@@ -59,55 +72,55 @@ public class TorResourceInstaller implements TorServiceConstants {
      */
     public File installResources () throws IOException, TimeoutException
     {
-        File fileTorLocalFile = new File(installFolder, TOR_ASSET_KEY);
+        fileTor = new File(installFolder, TOR_ASSET_KEY);
 
         deleteDirectory(installFolder);
         
         installFolder.mkdirs();
 
         installGeoIP();
-        assetToFile(COMMON_ASSET_KEY + TORRC_ASSET_KEY, TORRC_ASSET_KEY, false, false);
+        fileTorrc = assetToFile(COMMON_ASSET_KEY + TORRC_ASSET_KEY, TORRC_ASSET_KEY, false, false);
 
         File fileNativeDir = new File(getNativeLibraryDir(context));
         Log.d(TAG,"listing native files");
         listf(fileNativeDir.getAbsolutePath());
 
-        File fileNativeBin = new File(getNativeLibraryDir(context),TOR_ASSET_KEY + ".so");
-        if (!fileNativeBin.exists())
+        fileTor = new File(getNativeLibraryDir(context),TOR_ASSET_KEY + ".so");
+        if (!fileTor.exists())
         {
             if (getNativeLibraryDir(context).endsWith("arm")) {
-                fileNativeBin = new File(getNativeLibraryDir(context)+"eabi", TOR_ASSET_KEY + ".so");
+                fileTor = new File(getNativeLibraryDir(context)+"eabi", TOR_ASSET_KEY + ".so");
             }
         }
 
-        if (fileNativeBin.exists())
+        if (fileTor.exists())
         {
-            if (fileNativeBin.canExecute())
-                return fileNativeBin;
+            if (fileTor.canExecute())
+                return fileTor;
             else
             {
-                setExecutable(fileNativeBin);
+                setExecutable(fileTor);
 
-                if (fileNativeBin.canExecute())
-                    return fileNativeBin;
+                if (fileTor.canExecute())
+                    return fileTor;
             }
         }
 
-        if (fileNativeBin.exists()) {
-            InputStream is = new FileInputStream(fileNativeBin);
-            streamToFile(is, fileTorLocalFile, false, true);
-            setExecutable(fileTorLocalFile);
+        if (fileTor.exists()) {
+            InputStream is = new FileInputStream(fileTor);
+            streamToFile(is, fileTor, false, true);
+            setExecutable(fileTor);
 
-            if (fileTorLocalFile.exists() && fileTorLocalFile.canExecute())
-                return fileTorLocalFile;
+            if (fileTor.exists() && fileTor.canExecute())
+                return fileTor;
         }
         else
         {
             //let's try another approach
-            boolean success = NativeLoader.initNativeLibs(context,fileTorLocalFile);
+            boolean success = NativeLoader.initNativeLibs(context,fileTor);
 
             if (success)
-                return fileTorLocalFile;
+                return fileTor;
         }
 
         return null;
@@ -156,13 +169,14 @@ public class TorResourceInstaller implements TorServiceConstants {
     /*
      * Reads file from assetPath/assetKey writes it to the install folder
      */
-    private void assetToFile(String assetPath, String assetKey, boolean isZipped, boolean isExecutable) throws IOException {
+    private File assetToFile(String assetPath, String assetKey, boolean isZipped, boolean isExecutable) throws IOException {
         InputStream is = context.getAssets().open(assetPath);
         File outFile = new File(installFolder, assetKey);
         streamToFile(is, outFile, false, isZipped);
         if (isExecutable) {
             setExecutable(outFile);
         }
+        return outFile;
     }
     
 
