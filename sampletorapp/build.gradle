@@ -59,4 +59,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     implementation project(':tor-android-binary')
+    implementation 'com.jrummyapps:android-shell:1.0.1'
+
 }
