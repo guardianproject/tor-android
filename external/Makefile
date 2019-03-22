@@ -290,7 +290,7 @@ tor-clean:
 assets: tor
 	install -d ../tor-android-binary/src/main/libs/$(APP_ABI)
 	-$(STRIP) bin/tor
-	-zip ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so bin/tor
+	-mv bin/tor ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
 
 assets-clean:
 	-rm ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
