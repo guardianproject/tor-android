@@ -72,17 +72,24 @@ public class TorResourceInstaller implements TorServiceConstants {
      */
     public File installResources () throws IOException, TimeoutException
     {
+
         fileTor = new File(installFolder, TOR_ASSET_KEY);
         deleteDirectory(installFolder);
         installFolder.mkdirs();
         installGeoIP();
         fileTorrc = assetToFile(COMMON_ASSET_KEY + TORRC_ASSET_KEY, TORRC_ASSET_KEY, false, false);
 
-        fileTor = new File(getNativeLibraryDir(context),TOR_ASSET_KEY + ".so");
+        File fileNativeDir = new File(getNativeLibraryDir(context));
+        fileTor = new File(fileNativeDir,TOR_ASSET_KEY + ".so");
+
         if (!fileTor.exists())
         {
             if (getNativeLibraryDir(context).endsWith("arm")) {
                 fileTor = new File(getNativeLibraryDir(context)+"eabi", TOR_ASSET_KEY + ".so");
+            }
+            else if (getNativeLibraryDir(context).endsWith("arm64")) {
+                fileNativeDir = new File(fileNativeDir.getParentFile(),"armeabi");
+                fileTor = new File(fileNativeDir,TOR_ASSET_KEY + ".so");
             }
         }
 
@@ -110,7 +117,9 @@ public class TorResourceInstaller implements TorServiceConstants {
         else
         {
             //let's try another approach
+            fileTor = new File(installFolder, TOR_ASSET_KEY);
             fileTor = NativeLoader.initNativeLibs(context,fileTor);
+            setExecutable(fileTor);
 
             if (fileTor != null && fileTor.exists() && fileTor.canExecute())
                 return fileTor;

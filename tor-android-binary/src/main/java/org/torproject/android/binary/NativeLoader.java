@@ -21,7 +21,7 @@ public class NativeLoader {
 
     private final static String TAG = "TorNativeLoader";
 
-    private static boolean loadFromZip(Context context, File destLocalFile, String folder) {
+    private static boolean loadFromZip(Context context, File destLocalFile, String arch) {
 
 
         ZipFile zipFile = null;
@@ -29,9 +29,9 @@ public class NativeLoader {
 
         try {
             zipFile = new ZipFile(context.getApplicationInfo().sourceDir);
-            ZipEntry entry = zipFile.getEntry("lib/" + folder + "/" + LIB_SO_NAME);
+            ZipEntry entry = zipFile.getEntry("lib/" + arch + "/" + LIB_SO_NAME);
             if (entry == null) {
-                throw new Exception("Unable to find file in apk:" + "lib/" + folder + "/" + LIB_NAME);
+                throw new Exception("Unable to find file in apk:" + "lib/" + arch + "/" + LIB_NAME);
             }
 
             //how we wrap this in another stream because the native .so is zipped itself
@@ -78,11 +78,21 @@ public class NativeLoader {
     public static synchronized File initNativeLibs(Context context, File destLocalFile) {
 
         try {
-            String folder = null;
+            String folder = Build.CPU_ABI;
 
+            /**
             try {
 
-                if (Build.CPU_ABI.equalsIgnoreCase("armeabi-v7a")) {
+                if (Build.CPU_ABI.equalsIgnoreCase("arm64-v8a")) {
+                    folder = "arm64-v8a";
+                }
+                else if (Build.CPU_ABI.equalsIgnoreCase("arm64")) {
+                    folder = "arm64";
+                }
+                else if (Build.CPU_ABI.equalsIgnoreCase("x86_64")) {
+                    folder = "x86_64";
+                }
+                else if (Build.CPU_ABI.equalsIgnoreCase("armeabi-v7a")) {
                     folder = "armeabi-v7a";
                 }
                 else if (Build.CPU_ABI.equalsIgnoreCase("armeabi")) {
@@ -95,11 +105,12 @@ public class NativeLoader {
                     folder = "armeabi";
                     //FileLog.e("tmessages", "Unsupported arch: " + Build.CPU_ABI);
                 }
+
             } catch (Exception e) {
                 //  FileLog.e("tmessages", e);
                 Log.e(TAG, e.getMessage(),e);
                 folder = "armeabi";
-            }
+            }**/
 
 
             String javaArch = System.getProperty("os.arch");
