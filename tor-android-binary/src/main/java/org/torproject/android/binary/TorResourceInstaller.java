@@ -73,17 +73,10 @@ public class TorResourceInstaller implements TorServiceConstants {
     public File installResources () throws IOException, TimeoutException
     {
         fileTor = new File(installFolder, TOR_ASSET_KEY);
-
         deleteDirectory(installFolder);
-        
         installFolder.mkdirs();
-
         installGeoIP();
         fileTorrc = assetToFile(COMMON_ASSET_KEY + TORRC_ASSET_KEY, TORRC_ASSET_KEY, false, false);
-
-        File fileNativeDir = new File(getNativeLibraryDir(context));
-        Log.d(TAG,"listing native files");
-        listf(fileNativeDir.getAbsolutePath());
 
         fileTor = new File(getNativeLibraryDir(context),TOR_ASSET_KEY + ".so");
         if (!fileTor.exists())
@@ -117,9 +110,9 @@ public class TorResourceInstaller implements TorServiceConstants {
         else
         {
             //let's try another approach
-            boolean success = NativeLoader.initNativeLibs(context,fileTor);
+            fileTor = NativeLoader.initNativeLibs(context,fileTor);
 
-            if (success)
+            if (fileTor != null && fileTor.exists() && fileTor.canExecute())
                 return fileTor;
         }
 
@@ -236,13 +229,14 @@ public class TorResourceInstaller implements TorServiceConstants {
         // get all the files from a directory
         File[] fList = directory.listFiles();
 
-        for (File file : fList) {
-            if (file.isFile()) {
-                Log.d(TAG,file.getAbsolutePath());
-            } else if (file.isDirectory()) {
-                listf(file.getAbsolutePath());
+        if (fList != null)
+            for (File file : fList) {
+                if (file.isFile()) {
+                    Log.d(TAG,file.getAbsolutePath());
+                } else if (file.isDirectory()) {
+                    listf(file.getAbsolutePath());
+                }
             }
-        }
 
         return fList;
     }

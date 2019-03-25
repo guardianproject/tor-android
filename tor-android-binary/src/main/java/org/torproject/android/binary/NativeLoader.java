@@ -75,7 +75,7 @@ public class NativeLoader {
         return false;
     }
 
-    public static synchronized boolean initNativeLibs(Context context, File destLocalFile) {
+    public static synchronized File initNativeLibs(Context context, File destLocalFile) {
 
         try {
             String folder = null;
@@ -109,7 +109,7 @@ public class NativeLoader {
 
 
             if (loadFromZip(context, destLocalFile, folder)) {
-                return true;
+                return destLocalFile;
             }
 
         } catch (Throwable e) {
@@ -117,6 +117,6 @@ public class NativeLoader {
         }
 
 
-        return false;
+        return null;
     }
 }

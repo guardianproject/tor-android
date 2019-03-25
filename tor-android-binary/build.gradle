@@ -19,6 +19,7 @@ android {
         versionName "0.3.5.8-rc"
 
     }
+
     buildTypes {
         release {
             minifyEnabled false
