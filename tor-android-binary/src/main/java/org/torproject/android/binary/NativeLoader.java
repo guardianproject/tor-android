@@ -25,7 +25,7 @@ public class NativeLoader {
 
 
         ZipFile zipFile = null;
-        ZipInputStream stream = null;
+        InputStream stream = null;
 
         try {
             zipFile = new ZipFile(context.getApplicationInfo().sourceDir);
@@ -35,8 +35,7 @@ public class NativeLoader {
             }
 
             //how we wrap this in another stream because the native .so is zipped itself
-            stream = new ZipInputStream(zipFile.getInputStream(entry));
-            ZipEntry ze = stream.getNextEntry();
+            stream = zipFile.getInputStream(entry);
 
             OutputStream out = new FileOutputStream(destLocalFile);
             byte[] buf = new byte[4096];

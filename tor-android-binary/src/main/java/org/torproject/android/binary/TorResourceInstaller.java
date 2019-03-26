@@ -45,7 +45,8 @@ public class TorResourceInstaller implements TorServiceConstants {
     {
         return fileTor;
     }
-    
+
+    /**
     private void deleteDirectory(File file) {
         if( file.exists() ) {
             if (file.isDirectory()) {
@@ -62,7 +63,7 @@ public class TorResourceInstaller implements TorServiceConstants {
                 
             file.delete();
         }
-    }
+    }**/
 
     //        
     /*
@@ -74,24 +75,12 @@ public class TorResourceInstaller implements TorServiceConstants {
     {
 
         fileTor = new File(installFolder, TOR_ASSET_KEY);
-        deleteDirectory(installFolder);
         installFolder.mkdirs();
         installGeoIP();
         fileTorrc = assetToFile(COMMON_ASSET_KEY + TORRC_ASSET_KEY, TORRC_ASSET_KEY, false, false);
 
         File fileNativeDir = new File(getNativeLibraryDir(context));
         fileTor = new File(fileNativeDir,TOR_ASSET_KEY + ".so");
-
-        if (!fileTor.exists())
-        {
-            if (getNativeLibraryDir(context).endsWith("arm")) {
-                fileTor = new File(getNativeLibraryDir(context)+"eabi", TOR_ASSET_KEY + ".so");
-            }
-            else if (getNativeLibraryDir(context).endsWith("arm64")) {
-                fileNativeDir = new File(fileNativeDir.getParentFile(),"armeabi");
-                fileTor = new File(fileNativeDir,TOR_ASSET_KEY + ".so");
-            }
-        }
 
         if (fileTor.exists())
         {
@@ -114,16 +103,14 @@ public class TorResourceInstaller implements TorServiceConstants {
             if (fileTor.exists() && fileTor.canExecute())
                 return fileTor;
         }
-        else
-        {
-            //let's try another approach
-            fileTor = new File(installFolder, TOR_ASSET_KEY);
-            fileTor = NativeLoader.initNativeLibs(context,fileTor);
-            setExecutable(fileTor);
 
-            if (fileTor != null && fileTor.exists() && fileTor.canExecute())
-                return fileTor;
-        }
+        //let's try another approach
+        fileTor = new File(installFolder, TOR_ASSET_KEY);
+        fileTor = NativeLoader.initNativeLibs(context,fileTor);
+        setExecutable(fileTor);
+
+        if (fileTor != null && fileTor.exists() && fileTor.canExecute())
+            return fileTor;
 
         return null;
     }
