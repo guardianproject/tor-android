@@ -31,11 +31,13 @@ ANDROID_NDK_HOME ?= /opt/android-ndk
 ANDROID_NDK ?= $(ANDROID_NDK_HOME)
 NDK_PLATFORM_LEVEL ?= 16
 NDK_TOOLCHAIN_VERSION=4.9
+NDK_BIT ?= 32
 APP_ABI ?= armeabi
 NDK_ABI ?= $(APP_ABI)
 
 # PIEFLAGS for SDK 16/Android L must be set to -fPIE -pie, but can override for earlier targets 
-PIEFLAGS ?= -fPIE -pie
+//PIEFLAGS ?= -fPIE -pie
+PIEFLAGS ?= -fPIE
 
 ifneq ($(filter arm%, $(APP_ABI)),)
   NDK_ABI := arm
@@ -48,45 +50,53 @@ NDK_SYSROOT=$(ANDROID_NDK_HOME)/platforms/android-$(NDK_PLATFORM_LEVEL)/arch-$(N
 NDK_UNAME := $(shell uname -s | tr '[A-Z]' '[a-z]')
 ifneq ($(filter mips%, $(NDK_ABI)),)
  HOST := $(NDK_ABI)el-linux-android
+ ALTHOST := $(HOST)
 endif
 ifneq ($(filter arm64, $(NDK_ABI)),)
  HOST := aarch64-linux-android
+ ALTHOST := $(HOST)
 endif
 ifneq ($(filter arm, $(NDK_ABI)),)
- HOST := arm-linux-androideabi
+ HOST := armv7a-linux-androideabi
+ ALTHOST := arm-linux-androideabi
 endif
 ifneq ($(filter x86, $(NDK_ABI)),)
  HOST := i686-linux-android
+ ALTHOST := $(HOST)
 endif
 ifneq ($(filter x86_64, $(NDK_ABI)),)
  HOST := x86_64-linux-android
+ ALTHOST := $(HOST)
 endif
 
 NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
 ifneq ($(filter x86%, $(NDK_ABI)),)
  NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
 endif
-NDK_TOOLCHAIN_BASE=$(ANDROID_NDK_HOME)/toolchains/$(NDK_TOOLCHAIN)/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)
+
+//NDK_TOOLCHAIN_BASE=$(ANDROID_NDK_HOME)/toolchains/$(NDK_TOOLCHAIN)/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)
+//NDK_TOOLCHAIN_BASE=/tmp/my-android-toolchain
+NDK_TOOLCHAIN_BASE=$(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)
 
 # include Android's build flags
 TARGET_ARCH_ABI = $(APP_ABI)
 #include $(ANDROID_NDK_HOME)/toolchains/$(NDK_TOOLCHAIN)/setup.mk
 
-CC := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)-gcc --sysroot=$(NDK_SYSROOT)
-CXX := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)-g++ --sysroot=$(NDK_SYSROOT)
-CPP := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)-cpp --sysroot=$(NDK_SYSROOT)
-LD := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)-ld
-AR := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)-ar
-RANLIB := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)-ranlib
+CC := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)$(NDK_PLATFORM_LEVEL)-clang
+CXX := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)$(NDK_PLATFORM_LEVEL)-clang++ --sysroot=$(NDK_SYSROOT)
+CPP := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)$(NDK_PLATFORM_LEVEL)-clang++ --sysroot=$(NDK_SYSROOT)
+LD := $(NDK_TOOLCHAIN_BASE)/bin/$(ALTHOST)-ld
+AR := $(NDK_TOOLCHAIN_BASE)/bin/$(ALTHOST)-ar
+RANLIB := $(NDK_TOOLCHAIN_BASE)/bin/$(ALTHOST)-ranlib
 
 ifeq ($(DEBUG), 1)
 	STRIP := $(NOOP)
 else
-	STRIP := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)-strip --strip-unneeded -R .note -R .comment --strip-debug
+	STRIP := $(NDK_TOOLCHAIN_BASE)/bin/$(ALTHOST)-strip --strip-unneeded -R .note -R .comment --strip-debug
 endif
 
 
-CFLAGS = -DANDROID $(TARGET_CFLAGS) $(PIEFLAGS)
+CFLAGS = -DANDROID $(TARGET_CFLAGS) $(PIEFLAGS) 
 LDFLAGS = -llog $(TARGET_LDFLAGS) $(PIEFLAGS)
 
 # change 'release' to 'debug' for unoptimized debug builds
@@ -129,7 +139,7 @@ ifneq ($(filter mips%, $(NDK_ABI)),)
 endif
 lib/libcrypto.a:
 	cd openssl && \
-		./Configure android -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
+		./Configure linux-generic$(NDK_BIT) -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
 		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr depend && \
 		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr build_libs
 
@@ -137,7 +147,7 @@ lib/libssl.a:
 	cp config.sub openssl
 	cp config.guess openssl
 	cd openssl && \
-		./Configure android -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
+		./Configure linux-generic$(NDK_BIT) -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
 		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr depend && \
 		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr build_libs
 
@@ -172,7 +182,7 @@ libevent/Makefile:
 	cd libevent && \
 		CC="$(CC)" AR="$(AR)" RANLIB=$(RANLIB) CFLAGS="$(CFLAGS) -I$(EXTERNAL_ROOT)/include" LDFLAGS="$(LDFLAGS)" \
 			./configure \
-				--host=$(HOST) \
+				--host=$(ALTHOST) \
 				--disable-libevent-regress \
 				--disable-samples \
 				--disable-shared
@@ -261,7 +271,7 @@ tor/Makefile: tor/configure
                 CC="$(CC)" AR="$(AR)" RANLIB=$(RANLIB) PKG_CONFIG_PATH="$(EXTERNAL_ROOT)/lib/pkgconfig" CFLAGS="$(CFLAGS) -D_FORTIFY_SOURCE=2 -fwrapv -fno-strict-aliasing -fno-strict-overflow" LDFLAGS="$(LDFLAGS)" \
                         LIBS="-L$(EXTERNAL_ROOT)/lib" CFLAGS="-I$(EXTERNAL_ROOT)/include -I$(EXTERNAL_ROOT)/include/event2" \
                         ./configure \
-                                --host=$(HOST) \
+                                --host=$(ALTHOST) \
 				--disable-asciidoc \
 				--enable-static-libevent --with-libevent-dir=$(EXTERNAL_ROOT) \
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
