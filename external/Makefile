@@ -4,11 +4,6 @@
 # Install and prepare the Android OS SDK ( http://source.android.com/download )
 # on Debian or Ubuntu
 
-### these modify the calling shell
-# workaround for cross-compiling bug in autoconf
-export ac_cv_func_malloc_0_nonnull=yes
-export ac_cv_func_setpgrp_void=yes
-
 EXTERNAL_ROOT := $(shell pwd)
 
 DEBUG ?= 0
@@ -301,6 +296,9 @@ tor/configure:
 tor/Makefile: tor/configure
 	cp config.sub tor
 	cp config.guess tor
+	git -C tor checkout configure.ac
+	cd tor && patch -N -p1 --reject-file=- < ../enable-android.patch
+	cd tor && ./autogen.sh
 	cd tor && \
 		AR="$(AR)" \
 		CC="$(CC)" \
@@ -312,14 +310,11 @@ tor/Makefile: tor/configure
 		RANLIB="$(RANLIB)" \
 			./configure \
 				--host=$(ALTHOST) \
+				--enable-android \
+				--enable-lzma \
 				--enable-static-libevent --with-libevent-dir=$(EXTERNAL_ROOT) \
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
-				--disable-asciidoc \
-				--disable-gcc-hardening \
-				--disable-linker-hardening \
-				--disable-systemd \
-				--disable-tool-name-check \
-
+				--enable-zstd
 
 tor-build-stamp: tor/Makefile
 	$(MAKE) -C tor all-am
