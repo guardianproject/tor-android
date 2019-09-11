@@ -25,13 +25,11 @@ endif
 ANDROID_NDK_HOME ?= /opt/android-ndk
 ANDROID_NDK ?= $(ANDROID_NDK_HOME)
 NDK_PLATFORM_LEVEL ?= 16
-NDK_TOOLCHAIN_VERSION=4.9
 NDK_BIT ?= 32
 APP_ABI ?= armeabi
 NDK_ABI ?= $(APP_ABI)
 
 # PIEFLAGS for SDK 16/Android L must be set to -fPIE -pie, but can override for earlier targets 
-//PIEFLAGS ?= -fPIE -pie
 PIEFLAGS ?= -fPIE
 
 ifneq ($(filter arm%, $(APP_ABI)),)
@@ -68,14 +66,7 @@ NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
 ifneq ($(filter x86%, $(NDK_ABI)),)
  NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
 endif
-
-//NDK_TOOLCHAIN_BASE=$(ANDROID_NDK_HOME)/toolchains/$(NDK_TOOLCHAIN)/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)
-//NDK_TOOLCHAIN_BASE=/tmp/my-android-toolchain
 NDK_TOOLCHAIN_BASE=$(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)
-
-# include Android's build flags
-TARGET_ARCH_ABI = $(APP_ABI)
-#include $(ANDROID_NDK_HOME)/toolchains/$(NDK_TOOLCHAIN)/setup.mk
 
 CC := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)$(NDK_PLATFORM_LEVEL)-clang
 CXX := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)$(NDK_PLATFORM_LEVEL)-clang++ --sysroot=$(NDK_SYSROOT)
@@ -354,7 +345,6 @@ clean: openssl-clean libevent-clean lzma-clean zstd-clean tor-clean
 # debugging stuff
 
 showsetup:
-	@echo "NDK_TOOLCHAIN_VERSION: $(NDK_TOOLCHAIN_VERSION)"
 	@echo "NDK_TOOLCHAIN: $(NDK_TOOLCHAIN)"
 	@echo "NDK_PLATFORM_LEVEL: $(NDK_PLATFORM_LEVEL)"
 	@echo "NDK_SYSROOT: $(NDK_SYSROOT)"
