@@ -33,10 +33,12 @@ check_android_dependencies()
 build_external_dependencies()
 {
     check_android_dependencies
-    APP_ABI=armeabi make -C external clean 
-    APP_ABI=armeabi make -C external 
-    APP_ABI=x86 make -C external clean
-    APP_ABI=x86 make -C external 
+    for abi in arm64-v8a armeabi-v7a x86 x86_64; do
+	APP_ABI=$abi make -C external clean
+	APP_ABI=$abi make -C external
+	binary=tor-android-binary/src/main/libs/$abi/tor.so
+	test -e $binary || echo ERROR $abi missing $binary
+    done
 }
 
 build_app()

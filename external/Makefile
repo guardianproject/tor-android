@@ -21,51 +21,55 @@ else
  NDK_PROCESSOR=x86
 endif
 
-# Android NDK setup
 ANDROID_NDK_HOME ?= /opt/android-ndk
-ANDROID_NDK ?= $(ANDROID_NDK_HOME)
-NDK_PLATFORM_LEVEL ?= 16
-NDK_BIT ?= 32
-APP_ABI ?= armeabi
-NDK_ABI ?= $(APP_ABI)
 
-# PIEFLAGS for SDK 16/Android L must be set to -fPIE -pie, but can override for earlier targets 
-PIEFLAGS ?= -fPIE
-
-ifneq ($(filter arm%, $(APP_ABI)),)
-  NDK_ABI := arm
+ifneq ($(filter mips%, $(APP_ABI)),)
+ HOST := $(NDK_ABI)el-linux-android
+ ALTHOST := $(HOST)
+ GREP_CHECK := MIPS
+ NDK_BIT := 32
+ NDK_PLATFORM_LEVEL := 16
+ NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
 endif
-ifneq ($(filter arm64%, $(APP_ABI)),)
+ifneq ($(filter arm64-v8a, $(APP_ABI)),)
+ HOST := aarch64-linux-android
+ ALTHOST := $(HOST)
+ GREP_CHECK := aarch64
  NDK_ABI := arm64
+ NDK_BIT := 64
+ NDK_PLATFORM_LEVEL := 21
+ NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
+endif
+ifneq ($(filter armeabi-v7a, $(APP_ABI)),)
+ HOST := armv7a-linux-androideabi
+ ALTHOST := arm-linux-androideabi
+ GREP_CHECK := EABI5
+ NDK_ABI := arm
+ NDK_BIT := 32
+ NDK_PLATFORM_LEVEL := 16
+ NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
+endif
+ifneq ($(filter x86, $(APP_ABI)),)
+ HOST := i686-linux-android
+ ALTHOST := $(HOST)
+ GREP_CHECK := 80386
+ NDK_ABI := x86
+ NDK_BIT := 32
+ NDK_PLATFORM_LEVEL := 16
+ NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
+endif
+ifneq ($(filter x86_64, $(APP_ABI)),)
+ HOST := x86_64-linux-android
+ ALTHOST := $(HOST)
+ GREP_CHECK := x86-64
+ NDK_ABI := x86_64
+ NDK_BIT := 64
+ NDK_PLATFORM_LEVEL := 21
+ NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
 endif
 
 NDK_SYSROOT=$(ANDROID_NDK_HOME)/platforms/android-$(NDK_PLATFORM_LEVEL)/arch-$(NDK_ABI)
 NDK_UNAME := $(shell uname -s | tr '[A-Z]' '[a-z]')
-ifneq ($(filter mips%, $(NDK_ABI)),)
- HOST := $(NDK_ABI)el-linux-android
- ALTHOST := $(HOST)
-endif
-ifneq ($(filter arm64, $(NDK_ABI)),)
- HOST := aarch64-linux-android
- ALTHOST := $(HOST)
-endif
-ifneq ($(filter arm, $(NDK_ABI)),)
- HOST := armv7a-linux-androideabi
- ALTHOST := arm-linux-androideabi
-endif
-ifneq ($(filter x86, $(NDK_ABI)),)
- HOST := i686-linux-android
- ALTHOST := $(HOST)
-endif
-ifneq ($(filter x86_64, $(NDK_ABI)),)
- HOST := x86_64-linux-android
- ALTHOST := $(HOST)
-endif
-
-NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
-ifneq ($(filter x86%, $(NDK_ABI)),)
- NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
-endif
 NDK_TOOLCHAIN_BASE=$(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)
 
 CC := $(NDK_TOOLCHAIN_BASE)/bin/$(HOST)$(NDK_PLATFORM_LEVEL)-clang
@@ -85,14 +89,8 @@ endif
 CFLAGS = -DANDROID $(TARGET_CFLAGS) $(PIEFLAGS) 
 LDFLAGS = -llog $(TARGET_LDFLAGS) $(PIEFLAGS)
 
-# change 'release' to 'debug' for unoptimized debug builds
-ifeq ($(APP_ABI),armeabi-v7a)
-	CFLAGS += $(TARGET_arm_release_CFLAGS)
-endif
-ifeq ($(APP_ABI),armeabi)
-	CFLAGS += $(TARGET_thumb_release_CFLAGS)
-endif
 
+OUTPUT_FILE := $(EXTERNAL_ROOT)/tor/src/app/tor
 
 
 .PHONY = clean showsetup \
@@ -103,7 +101,14 @@ endif
 	zstd zstd-clean \
 	tor tor-clean
 
-all: assets
+all: test-setup assets
+
+test-setup:
+	test -d $(NDK_SYSROOT)
+	test -x $(AR)
+	test -x $(CC)
+	test -x $(LD)
+	test -x $(RANLIB)
 
 #------------------------------------------------------------------------------#
 # openssl
@@ -312,11 +317,9 @@ tor-build-stamp: tor/Makefile
 	touch tor-build-stamp
 
 tor: lzma zstd libevent openssl tor-build-stamp
-	test -d bin || mkdir bin
-	cp tor/src/app/tor bin
 
 tor-clean:
-	-rm -f bin/tor
+	-rm -f $(OUTPUT_FILE)
 	-rm -f tor-build-stamp
 	-cd tor && \
 		git clean -fdx
@@ -328,9 +331,10 @@ tor-clean:
 #in the libs directly, so it is handled like a shared library for local installation
 
 assets: tor
+	file $(OUTPUT_FILE) | grep $(GREP_CHECK)
 	install -d ../tor-android-binary/src/main/libs/$(APP_ABI)
-	-$(STRIP) bin/tor
-	-mv bin/tor ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
+	cp $(OUTPUT_FILE) ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
+	-$(STRIP) ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
 
 assets-clean:
 	-rm ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
@@ -345,12 +349,14 @@ clean: openssl-clean libevent-clean lzma-clean zstd-clean tor-clean
 # debugging stuff
 
 showsetup:
-	@echo "NDK_TOOLCHAIN: $(NDK_TOOLCHAIN)"
+	@echo "APP_ABI: $(APP_ABI)"
+	@echo "CC: $(CC)"
+	@echo "CFLAGS: $(CFLAGS)"
+	@echo "HOST: $(HOST)"
+	@echo "LD: $(LD)"
+	@echo "LDFLAGS: $(LDFLAGS)"
+	@echo "NDK_ABI: $(NDK_ABI)"
+	@echo "NDK_BIT: $(NDK_BIT)"
 	@echo "NDK_PLATFORM_LEVEL: $(NDK_PLATFORM_LEVEL)"
 	@echo "NDK_SYSROOT: $(NDK_SYSROOT)"
-	@echo "APP_ABI: $(APP_ABI)"
-	@echo "HOST: $(HOST)"
-	@echo "CC: $(CC)"
-	@echo "LD: $(LD)"
-	@echo "CFLAGS: $(CFLAGS)"
-	@echo "LDFLAGS: $(LDFLAGS)"
+	@echo "NDK_TOOLCHAIN: $(NDK_TOOLCHAIN)"
