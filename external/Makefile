@@ -180,7 +180,11 @@ libevent/Makefile:
 	cp config.sub libevent
 	cp config.guess libevent
 	cd libevent && \
-		CC="$(CC)" AR="$(AR)" RANLIB=$(RANLIB) CFLAGS="$(CFLAGS) -I$(EXTERNAL_ROOT)/include" LDFLAGS="$(LDFLAGS)" \
+		AR="$(AR)" \
+		CC="$(CC)" \
+		CFLAGS="$(CFLAGS) -I$(EXTERNAL_ROOT)/include" \
+		LDFLAGS="$(LDFLAGS)" \
+		RANLIB=$(RANLIB) \
 			./configure \
 				--host=$(ALTHOST) \
 				--disable-libevent-regress \
@@ -211,8 +215,25 @@ xz/Makefile:
 	cp config.sub xz
 	cp config.guess xz
 	cd xz && \
-		 CC="$(CC)" CXX="$(CXX)" PKG_CONFIG_PATH="$(EXTERNAL_ROOT)/lib/pkgconfig" AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(CFLAGS) -std=c99" LDFLAGS="$(LDFLAGS)"  \
-		./configure  --host=$(HOST) --disable-shared --enable-static --disable-doc --disable-xz --disable-xzdec --disable-lzmadec --disable-lzmainfo --disable-lzma-links --disable-scripts --prefix=$(EXTERNAL_ROOT)
+		AR="$(AR)" \
+		CC="$(CC)" \
+		CFLAGS="$(CFLAGS) -std=c99" \
+		CXX="$(CXX)" \
+		LDFLAGS="$(LDFLAGS)"  \
+		PKG_CONFIG_PATH="$(EXTERNAL_ROOT)/lib/pkgconfig" \
+		RANLIB="$(RANLIB)" \
+			./configure \
+				--host=$(HOST) \
+				--enable-static \
+				--disable-doc \
+				--disable-lzma-links \
+				--disable-lzmadec \
+				--disable-lzmainfo \
+				--disable-scripts \
+				--disable-shared \
+				--disable-xz \
+				--disable-xzdec \
+				--prefix=$(EXTERNAL_ROOT)
 
 lzma: lzma-build-stamp
 	$(MAKE) -C xz install
@@ -232,8 +253,24 @@ lzma-clean:
 # zstd
 
 zstd: zstd-build-stamp
-	$(MAKE) -C zstd/lib CC="$(CC)" CXX="$(CXX)" AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(CFLAGS)"  LDFLAGS="$(LDFLAGS)" PREFIX="$(EXTERNAL_ROOT)" libzstd.a-mt 
-	$(MAKE) -C zstd/lib CC="$(CC)" CXX="$(CXX)" AR="$(AR)" RANLIB="$(RANLIB)" CFLAGS="$(CFLAGS)"  LDFLAGS="$(LDFLAGS)" PREFIX="$(EXTERNAL_ROOT)" libzstd.pc 
+	$(MAKE) -C zstd/lib \
+		AR="$(AR)" \
+		CC="$(CC)" \
+		CFLAGS="$(CFLAGS)" \
+		CXX="$(CXX)" \
+		LDFLAGS="$(LDFLAGS)" \
+		PREFIX="$(EXTERNAL_ROOT)" \
+		RANLIB="$(RANLIB)" \
+		libzstd.a-mt
+	$(MAKE) -C zstd/lib \
+		AR="$(AR)" \
+		CC="$(CC)" \
+		CFLAGS="$(CFLAGS)" \
+		CXX="$(CXX)" \
+		LDFLAGS="$(LDFLAGS)" \
+		PREFIX="$(EXTERNAL_ROOT)" \
+		RANLIB="$(RANLIB)" \
+		libzstd.pc
 	test -d lib || mkdir lib
 	test -d lib/pkgconfig || mkdir lib/pkgconfig
 	test -d include || mkdir include
@@ -265,14 +302,24 @@ tor/Makefile: tor/configure
 	cp config.sub tor
 	cp config.guess tor
 	cd tor && \
-                CC="$(CC)" AR="$(AR)" RANLIB=$(RANLIB) PKG_CONFIG_PATH="$(EXTERNAL_ROOT)/lib/pkgconfig" CFLAGS="$(CFLAGS) -D_FORTIFY_SOURCE=2 -fwrapv -fno-strict-aliasing -fno-strict-overflow" LDFLAGS="$(LDFLAGS)" \
-                        LIBS="-L$(EXTERNAL_ROOT)/lib" CFLAGS="-I$(EXTERNAL_ROOT)/include -I$(EXTERNAL_ROOT)/include/event2" \
-                        ./configure \
-                                --host=$(ALTHOST) \
-				--disable-asciidoc \
+		AR="$(AR)" \
+		CC="$(CC)" \
+		CFLAGS="$(CFLAGS) -D_FORTIFY_SOURCE=2 -fwrapv -fno-strict-aliasing -fno-strict-overflow" \
+		CFLAGS="-I$(EXTERNAL_ROOT)/include -I$(EXTERNAL_ROOT)/include/event2" \
+		LDFLAGS="$(LDFLAGS)" \
+		LIBS="-L$(EXTERNAL_ROOT)/lib" \
+		PKG_CONFIG_PATH="$(EXTERNAL_ROOT)/lib/pkgconfig" \
+		RANLIB="$(RANLIB)" \
+			./configure \
+				--host=$(ALTHOST) \
 				--enable-static-libevent --with-libevent-dir=$(EXTERNAL_ROOT) \
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
-				--disable-linker-hardening --disable-gcc-hardening --disable-tool-name-check --disable-systemd
+				--disable-asciidoc \
+				--disable-gcc-hardening \
+				--disable-linker-hardening \
+				--disable-systemd \
+				--disable-tool-name-check \
+
 
 tor-build-stamp: tor/Makefile
 	$(MAKE) -C tor all-am
