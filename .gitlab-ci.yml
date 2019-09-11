@@ -58,7 +58,7 @@ test:
 
     - export V=0
     - ./tor-droid-make.sh build
-    - for f in tor-android-binary/src/main/libs/*/tor.so; do sha256sum $f; done
+    - for f in tor-android-binary/src/main/libs/*/libtor.so; do sha256sum $f; done
 
 after_script:
     # this file changes every time but should not be cached

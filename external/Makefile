@@ -262,6 +262,8 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--host=$(ALTHOST) \
 				--enable-android \
 				--enable-lzma \
+				--enable-pic \
+				--enable-restart-debugging \
 				--enable-static-libevent --with-libevent-dir=$(EXTERNAL_ROOT) \
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
 				--enable-zstd \
@@ -287,16 +289,16 @@ tor-clean:
 assets: tor
 	file $(OUTPUT_FILE) | grep $(GREP_CHECK)
 	install -d ../tor-android-binary/src/main/libs/$(APP_ABI)
-	cp $(OUTPUT_FILE) ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
+	cp $(OUTPUT_FILE) ../tor-android-binary/src/main/libs/$(APP_ABI)/libtor.so
 ifneq ($(DEBUG), 1)
-	ls -l  ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
+	ls -l  ../tor-android-binary/src/main/libs/$(APP_ABI)/libtor.so
 	$(NDK_TOOLCHAIN_BASE)/bin/$(ALTHOST)-strip --strip-unneeded -R .note -R .comment --strip-debug \
-		../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
-	ls -l  ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
+		../tor-android-binary/src/main/libs/$(APP_ABI)/libtor.so
+	ls -l  ../tor-android-binary/src/main/libs/$(APP_ABI)/libtor.so
 endif
 
 assets-clean:
-	-rm ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
+	-rm ../tor-android-binary/src/main/libs/$(APP_ABI)/libtor.so
 
 #------------------------------------------------------------------------------#
 # cleanup, cleanup, put the toys away
