@@ -17,10 +17,10 @@ before_script:
       "build-tools;$BUILD_TOOLS_VERSION"
       > /dev/null
   - rm -rf $PWD/android-ndk*
-  - ndk="android-ndk-r19c"
+  - ndk="android-ndk-r20"
   - ndk_zip="${ndk}-linux-x86_64.zip"
   - $wget http://dl.google.com/android/repository/$ndk_zip
-  - echo "4c62514ec9c2309315fd84da6d52465651cdb68605058f231f1e480fcf2692e1  $ndk_zip" > ${ndk_zip}.sha256
+  - echo "57435158f109162f41f2f43d5563d2164e4d5d0364783a9a6fab3ef12cb06ce0  $ndk_zip" > ${ndk_zip}.sha256
   - sha256sum -c ${ndk_zip}.sha256
   - unzip -q $ndk_zip
   - export ANDROID_NDK_HOME=`pwd`/$ndk

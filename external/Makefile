@@ -21,7 +21,18 @@ else
  NDK_PROCESSOR=x86
 endif
 
+# matching NDK revisions are required for reproducible builds
 ANDROID_NDK_HOME ?= /opt/android-ndk
+NDK_REVISION := $(shell sed -n 's,^Pkg.Revision *= *\([^ ]*\),\1,p' $(ANDROID_NDK_HOME)/source.properties)
+NDK_REQUIRED_REVISION := 20.0.5594570
+MIN_NDK_VERSION := 19
+ifeq ($(shell test $(MIN_NDK_VERSION) -gt $(firstword $(subst ., ,$(NDK_REVISION))); echo $$?),0)
+ $(error NDK r$(MIN_NDK_VERSION) or newer required! r$(NDK_REVISION) is installed at $(ANDROID_NDK_HOME).)
+endif
+ifneq ($(NDK_REQUIRED_REVISION), $(NDK_REVISION))
+ $(warning WARNING: NDK $(NDK_REQUIRED_REVISION) required for reproducible builds, $(NDK_REVISION) is installed.)
+endif
+
 
 ifneq ($(filter mips%, $(APP_ABI)),)
  HOST := $(NDK_ABI)el-linux-android
