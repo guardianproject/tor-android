@@ -87,7 +87,6 @@ endif
 
 
 CFLAGS = -DANDROID $(TARGET_CFLAGS) $(PIEFLAGS) 
-LDFLAGS = -llog $(TARGET_LDFLAGS) $(PIEFLAGS)
 
 
 OUTPUT_FILE := $(EXTERNAL_ROOT)/tor/src/app/tor
@@ -174,7 +173,6 @@ libevent/Makefile:
 		AR="$(AR)" \
 		CC="$(CC)" \
 		CFLAGS="$(CFLAGS) -I$(EXTERNAL_ROOT)/include" \
-		LDFLAGS="$(LDFLAGS)" \
 		RANLIB=$(RANLIB) \
 			./configure \
 				--host=$(ALTHOST) \
@@ -210,7 +208,6 @@ xz/Makefile:
 		CC="$(CC)" \
 		CFLAGS="$(CFLAGS) -std=c99" \
 		CXX="$(CXX)" \
-		LDFLAGS="$(LDFLAGS)"  \
 		PKG_CONFIG_PATH="$(EXTERNAL_ROOT)/lib/pkgconfig" \
 		RANLIB="$(RANLIB)" \
 			./configure \
@@ -249,7 +246,6 @@ zstd: zstd-build-stamp
 		CC="$(CC)" \
 		CFLAGS="$(CFLAGS)" \
 		CXX="$(CXX)" \
-		LDFLAGS="$(LDFLAGS)" \
 		PREFIX="$(EXTERNAL_ROOT)" \
 		RANLIB="$(RANLIB)" \
 		libzstd.a-mt
@@ -258,7 +254,6 @@ zstd: zstd-build-stamp
 		CC="$(CC)" \
 		CFLAGS="$(CFLAGS)" \
 		CXX="$(CXX)" \
-		LDFLAGS="$(LDFLAGS)" \
 		PREFIX="$(EXTERNAL_ROOT)" \
 		RANLIB="$(RANLIB)" \
 		libzstd.pc
@@ -300,7 +295,6 @@ tor/Makefile: tor/configure
 		CC="$(CC)" \
 		CFLAGS="$(CFLAGS) -D_FORTIFY_SOURCE=2 -fwrapv -fno-strict-aliasing -fno-strict-overflow" \
 		CFLAGS="-I$(EXTERNAL_ROOT)/include -I$(EXTERNAL_ROOT)/include/event2" \
-		LDFLAGS="$(LDFLAGS)" \
 		LIBS="-L$(EXTERNAL_ROOT)/lib" \
 		PKG_CONFIG_PATH="$(EXTERNAL_ROOT)/lib/pkgconfig" \
 		RANLIB="$(RANLIB)" \
