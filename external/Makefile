@@ -85,9 +85,20 @@ else
 	STRIP := $(NDK_TOOLCHAIN_BASE)/bin/$(ALTHOST)-strip --strip-unneeded -R .note -R .comment --strip-debug
 endif
 
+TZ := UTC
+LC_ALL := C.UTF-8
+SOURCE_DATE_EPOCH := 1234567890
+export LC_ALL TZ SOURCE_DATE_EPOCH
 
-CFLAGS = -DANDROID $(TARGET_CFLAGS) $(PIEFLAGS) 
+REPRODUCIBLE_CFLAGS = \
+  -fbuild-session-timestamp=$(SOURCE_DATE_EPOCH) \
+  -fdebug-prefix-map=OLD=NEW
 
+# for gcc but not clang:
+#  -Wl,--no-insert-timestamp
+#  -fmacro-prefix-map=OLD=NEW
+
+ALL_CFLAGS = $(REPRODUCIBLE_CFLAGS) $(CFLAGS)
 
 OUTPUT_FILE := $(EXTERNAL_ROOT)/tor/src/app/tor
 
@@ -172,7 +183,7 @@ libevent/Makefile:
 	cd libevent && \
 		AR="$(AR)" \
 		CC="$(CC)" \
-		CFLAGS="$(CFLAGS) -I$(EXTERNAL_ROOT)/include" \
+		CFLAGS="$(ALL_CFLAGS) -I$(EXTERNAL_ROOT)/include" \
 		RANLIB=$(RANLIB) \
 			./configure \
 				--host=$(ALTHOST) \
@@ -206,7 +217,7 @@ xz/Makefile:
 	cd xz && \
 		AR="$(AR)" \
 		CC="$(CC)" \
-		CFLAGS="$(CFLAGS) -std=c99" \
+		CFLAGS="$(ALL_CFLAGS) -std=c99" \
 		CXX="$(CXX)" \
 		PKG_CONFIG_PATH="$(EXTERNAL_ROOT)/lib/pkgconfig" \
 		RANLIB="$(RANLIB)" \
@@ -244,7 +255,7 @@ zstd: zstd-build-stamp
 	$(MAKE) -C zstd/lib \
 		AR="$(AR)" \
 		CC="$(CC)" \
-		CFLAGS="$(CFLAGS)" \
+		CFLAGS="$(ALL_CFLAGS)" \
 		CXX="$(CXX)" \
 		PREFIX="$(EXTERNAL_ROOT)" \
 		RANLIB="$(RANLIB)" \
@@ -252,7 +263,7 @@ zstd: zstd-build-stamp
 	$(MAKE) -C zstd/lib \
 		AR="$(AR)" \
 		CC="$(CC)" \
-		CFLAGS="$(CFLAGS)" \
+		CFLAGS="$(ALL_CFLAGS)" \
 		CXX="$(CXX)" \
 		PREFIX="$(EXTERNAL_ROOT)" \
 		RANLIB="$(RANLIB)" \
@@ -293,8 +304,7 @@ tor/Makefile: tor/configure
 	cd tor && \
 		AR="$(AR)" \
 		CC="$(CC)" \
-		CFLAGS="$(CFLAGS) -D_FORTIFY_SOURCE=2 -fwrapv -fno-strict-aliasing -fno-strict-overflow" \
-		CFLAGS="-I$(EXTERNAL_ROOT)/include -I$(EXTERNAL_ROOT)/include/event2" \
+		CFLAGS="$(ALL_CFLAGS) -I$(EXTERNAL_ROOT)/include -I$(EXTERNAL_ROOT)/include/event2" \
 		LIBS="-L$(EXTERNAL_ROOT)/lib" \
 		PKG_CONFIG_PATH="$(EXTERNAL_ROOT)/lib/pkgconfig" \
 		RANLIB="$(RANLIB)" \
@@ -343,6 +353,8 @@ clean: openssl-clean libevent-clean lzma-clean zstd-clean tor-clean
 # debugging stuff
 
 showsetup:
+	@echo "ALL_CFLAGS: $(ALL_CFLAGS)"
+	@echo "ARFLAGS: $(ARFLAGS)"
 	@echo "APP_ABI: $(APP_ABI)"
 	@echo "CC: $(CC)"
 	@echo "CFLAGS: $(CFLAGS)"
@@ -354,3 +366,8 @@ showsetup:
 	@echo "NDK_PLATFORM_LEVEL: $(NDK_PLATFORM_LEVEL)"
 	@echo "NDK_SYSROOT: $(NDK_SYSROOT)"
 	@echo "NDK_TOOLCHAIN: $(NDK_TOOLCHAIN)"
+	@echo "RANLIB: $(RANLIB)"
+	@echo "REPRODUCIBLE_CFLAGS: $(REPRODUCIBLE_CFLAGS)"
+	@echo "LC_ALL: $$LC_ALL"
+	@echo "SOURCE_DATE_EPOCH: $$SOURCE_DATE_EPOCH"
+	@echo "TZ: $$TZ"
