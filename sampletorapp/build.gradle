@@ -5,12 +5,12 @@ android {
 
     defaultConfig {
         applicationId "org.torproject.android.sample"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -21,41 +21,18 @@ android {
         }
     }
 
-    splits {
-
-        // Configures multiple APKs based on ABI. This helps keep the size down, since PT binaries can be large.
-        abi {
-
-            // Enables building multiple APKs per ABI.
-            enable true
-
-            // By default all ABIs are included, so use reset() and include to specify that we only
-            // want APKs for x86 and x86_64.
-
-            // Resets the list of ABIs that Gradle should create APKs for to none.
-            reset()
-
-            // Specifies a list of ABIs that Gradle should create APKs for.
-            include "x86", "armeabi", "armeabi-v7a", "arm64", "x86_64"
-
-            // Specifies that we do not want to also generate a universal APK that includes all ABIs.
-            universalApk true
-        }
-
-
+    packagingOptions {
+        exclude 'META-INF/androidx.localbroadcastmanager_localbroadcastmanager.version'
     }
-
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     implementation 'com.android.support:appcompat-v7:28.0.0'
+
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:core:1.2.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
 
     implementation project(':tor-android-binary')
-    implementation 'com.jrummyapps:android-shell:1.0.1'
-
 }

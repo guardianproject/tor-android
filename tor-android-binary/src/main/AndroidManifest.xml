@@ -1,5 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.torproject.android.binary">
+          package="org.torproject.jni">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application>
+        <service android:name="org.torproject.jni.TorService"/>
+    </application>
 
 </manifest>

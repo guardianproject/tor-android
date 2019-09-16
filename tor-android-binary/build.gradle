@@ -14,20 +14,13 @@ android {
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
 
-    /**
-    sourceSets {
-        main {
-            jni.srcDirs = []
-
-        }
-    }**/
-
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 41500 
+        versionCode 41500
         versionName getVersionName()
 
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -36,23 +29,32 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/androidx.localbroadcastmanager_localbroadcastmanager.version'
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.so'])
+    api 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+
+    androidTestImplementation 'androidx.test:core:1.2.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
 }
 
 apply plugin: 'maven'
 
 uploadArchives {
-        repositories.mavenDeployer {
-                def deployPath = file(getProperty('aar.deployPath'))
-                repository(url: "file://${deployPath.absolutePath}")
-                pom.project {
-                        groupId 'org.torproject'
-                        artifactId 'tor-android-binary'
-                        version getVersionName()
-                }
+    repositories.mavenDeployer {
+        def deployPath = file(getProperty('aar.deployPath'))
+        repository(url: "file://${deployPath.absolutePath}")
+        pom.project {
+            groupId 'org.torproject'
+            artifactId 'tor-android-binary'
+            version getVersionName()
         }
+    }
 }
 
