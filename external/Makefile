@@ -105,7 +105,7 @@ OUTPUT_FILE := $(EXTERNAL_ROOT)/tor/src/app/tor
 
 .PHONY = clean showsetup \
 	assets assets-clean \
-	openssl-static openssl-static-clean \
+	openssl-static openssl-clean \
 	libevent libevent-clean \
 	lzma lzma-clean \
 	zstd zstd-clean \
@@ -123,45 +123,22 @@ test-setup:
 #------------------------------------------------------------------------------#
 # openssl
 
-# Disable rc4 cipher for 64-bit archs, to avoid this link error for tor:
-# external/lib/libcrypto.a(e_rc4_hmac_md5.o):e_rc4_hmac_md5.c:function rc4_hmac_md5_cipher: error: undefined reference to 'rc4_md5_enc'
-OPENSSL_CONF_FLAG=
-ifneq ($(findstring 64, $(NDK_ABI)),)
- OPENSSL_CONF_FLAG+=no-rc4
-endif
+PATH := $(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/linux-x86_64/bin:$(PATH)
 
-# OpenSSL's 'make depend' fails if _MIPS_SZLONG is not set:
-ifneq ($(filter mips%, $(NDK_ABI)),)
- ifneq ($(findstring 64, $(NDK_ABI)),)
-  OPENSSL_CONF_FLAG+=-D_MIPS_SZLONG=64
- else
-  OPENSSL_CONF_FLAG+=-D_MIPS_SZLONG=32 -D__MIPSEL__
- endif
-endif
-lib/libcrypto.a:
-	cd openssl && \
-		./Configure linux-generic$(NDK_BIT) -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
-		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr depend && \
-		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr build_libs
 
-lib/libssl.a:
-	cp config.sub openssl
-	cp config.guess openssl
-	cd openssl && \
-		./Configure linux-generic$(NDK_BIT) -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) -DL_ENDIAN $(OPENSSL_CONF_FLAG) && \
-		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr depend && \
-		make CC="$(CC)" ANDROID_DEV=$(NDK_SYSROOT)/usr build_libs
+openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
+	cd openssl && PATH=$(PATH) \
+		./Configure android-$(NDK_ABI) -D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) \
+			--prefix=$(EXTERNAL_ROOT) --openssldir=$(EXTERNAL_ROOT)
 
-openssl-build-stamp: lib/libcrypto.a lib/libssl.a
+openssl-build-stamp: openssl/Makefile lib/libcrypto.a lib/libssl.a
+	PATH=$(PATH) make -j8 -C openssl depend
+	PATH=$(PATH) make -j8 -C openssl build_libs
 	touch openssl-build-stamp
 
-openssl: openssl-build-stamp
-	test -d lib || mkdir lib
-	test -d include || mkdir include
-	test -d include/openssl || mkdir include/openssl
-	cp openssl/libcrypto.a lib/libcrypto.a
-	cp openssl/libssl.a lib/libssl.a
-	cp openssl/include/openssl/* include/openssl
+openssl-static: openssl-build-stamp
+	make -C openssl install_dev
+	rm lib/*.so*
 
 openssl-clean:
 	-rm openssl-build-stamp
@@ -195,7 +172,7 @@ libevent-build-stamp: libevent/Makefile
 	$(MAKE) -C libevent ./include/event2/event-config.h all-am
 	touch libevent-build-stamp
 
-libevent: openssl libevent-build-stamp
+libevent: openssl-static libevent-build-stamp
 	test -d lib || mkdir lib
 	test -d include || mkdir include
 	cp libevent/.libs/libevent.a lib
@@ -320,7 +297,7 @@ tor-build-stamp: tor/Makefile
 	$(MAKE) -C tor all-am
 	touch tor-build-stamp
 
-tor: lzma zstd libevent openssl tor-build-stamp
+tor: lzma zstd libevent openssl-static tor-build-stamp
 
 tor-clean:
 	-rm -f $(OUTPUT_FILE)
@@ -366,6 +343,7 @@ showsetup:
 	@echo "NDK_PLATFORM_LEVEL: $(NDK_PLATFORM_LEVEL)"
 	@echo "NDK_SYSROOT: $(NDK_SYSROOT)"
 	@echo "NDK_TOOLCHAIN: $(NDK_TOOLCHAIN)"
+	@echo "PATH: $(PATH)"
 	@echo "RANLIB: $(RANLIB)"
 	@echo "REPRODUCIBLE_CFLAGS: $(REPRODUCIBLE_CFLAGS)"
 	@echo "LC_ALL: $$LC_ALL"
