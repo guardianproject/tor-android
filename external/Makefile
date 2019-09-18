@@ -133,6 +133,7 @@ PATH := $(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/linux-x86_64/bin:$(PATH)
 openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
 	cd openssl && PATH=$(PATH) \
 		./Configure \
+			no-shared \
 			android-$(NDK_ABI) \
 			-D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) \
 			--prefix=$(EXTERNAL_ROOT) \
@@ -259,11 +260,12 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--enable-lzma \
 				--enable-static-libevent --with-libevent-dir=$(EXTERNAL_ROOT) \
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
-				--enable-zstd
+				--enable-zstd \
+				--prefix=$(EXTERNAL_ROOT)
 
 tor-build-stamp: tor/Makefile
-	$(MAKE) -C tor all-am
-	touch tor-build-stamp
+	$(MAKE) -C tor
+	touch $@
 
 tor: lzma-build-stamp zstd-build-stamp libevent-build-stamp openssl-build-stamp tor-build-stamp
 
@@ -296,8 +298,8 @@ assets-clean:
 #------------------------------------------------------------------------------#
 # cleanup, cleanup, put the toys away
 
-##clean: openssl-clean libevent-clean tor-clean polipo-clean assets-clean
 clean: openssl-clean libevent-clean lzma-clean zstd-clean tor-clean
+
 
 #------------------------------------------------------------------------------#
 # debugging stuff
