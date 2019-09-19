@@ -140,17 +140,21 @@ openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
 			--openssldir=$(EXTERNAL_ROOT)
 
 openssl-build-stamp: openssl/Makefile
+ifeq ($(V), 0)
+	PATH=$(PATH) make --silent -C openssl install_dev ECHO=':'
+else
 	PATH=$(PATH) make -C openssl install_dev
+endif
 	touch $@
 
 openssl-clean:
 	-rm openssl-build-stamp
 	-rm lib/libcrypto.a
 	-rm lib/libssl.a
-	-make -C openssl uninstall_dev
+	-make -C openssl uninstall_dev > /dev/null
 	-make -C openssl clean
 	-cd openssl && \
-		git clean -fdx
+		git clean -fdx > /dev/null
 
 
 #------------------------------------------------------------------------------#
@@ -175,7 +179,7 @@ libevent-clean:
 	-$(MAKE) -C libevent uninstall
 	-$(MAKE) -C libevent clean
 	-cd libevent && \
-		git clean -fdx
+		git clean -fdx > /dev/null
 
 
 #------------------------------------------------------------------------------#
@@ -209,7 +213,7 @@ lzma-clean:
 	-rm -f lib/liblzma.la
 	-rm -f lzma-build-stamp
 	-cd xz && \
-		git clean -fdx
+		git clean -fdx > /dev/null
 
 
 #------------------------------------------------------------------------------#
@@ -241,7 +245,7 @@ zstd-clean:
 	-$(MAKE) -C zstd uninstall
 	-$(MAKE) -C zstd clean
 	-cd zstd && \
-		git clean -fdx
+		git clean -fdx > /dev/null
 
 
 #------------------------------------------------------------------------------#
@@ -273,9 +277,8 @@ tor-clean:
 	-rm -f $(OUTPUT_FILE)
 	-rm -f tor-build-stamp
 	-cd tor && \
-		git clean -fdx
-	-cd tor && \
-		git reset HEAD --hard
+		git clean -fdx > /dev/null
+
 
 #------------------------------------------------------------------------------#
 #create and clean assets: FYI - tor is stored as a ZIP file with an so extension

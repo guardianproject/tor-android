@@ -52,8 +52,11 @@ test:
         libtool
         make
         patch
+
     - git submodule sync
     - git submodule update --init
+
+    - export V=0
     - ./tor-droid-make.sh build
     - for f in tor-android-binary/src/main/libs/*/tor.so; do sha256sum $f; done
 
