@@ -127,6 +127,11 @@ test-setup:
 
 #------------------------------------------------------------------------------#
 # openssl
+#
+# not all of openssl is needed, only the parts that Tor needs
+# https://trac.torproject.org/projects/tor/ticket/32200
+# https://gitweb.torproject.org/tor.git/tree/src/lib/tls/ciphers.inc
+# https://wiki.openssl.org/index.php/Compilation_and_Installation
 
 PATH := $(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/linux-x86_64/bin:$(PATH)
 
@@ -134,7 +139,10 @@ PATH := $(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/linux-x86_64/bin:$(PATH)
 openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
 	cd openssl && PATH=$(PATH) \
 		./Configure \
-			no-shared \
+			no-comp no-dtls no-ec2m no-psk no-srp no-ssl2 no-ssl3 \
+			no-camellia no-idea no-md2 no-md4 no-mdc2 no-rc2 no-rc4 no-rc5 no-rmd160 no-whirlpool \
+			no-dso no-engine no-hw no-ui-console \
+			no-shared no-unit-test \
 			android-$(NDK_ABI) \
 			-D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) \
 			--prefix=$(EXTERNAL_ROOT) \
