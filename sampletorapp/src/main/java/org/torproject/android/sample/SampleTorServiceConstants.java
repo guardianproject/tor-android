@@ -3,8 +3,6 @@
 
 package org.torproject.android.sample;
 
-import android.content.Intent;
-
 public interface SampleTorServiceConstants {
 
 	String TOR_APP_USERNAME = "org.torproject.android";
