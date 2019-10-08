@@ -12,6 +12,7 @@ import net.freehaven.tor.control.TorControlCommands;
 import net.freehaven.tor.control.TorControlConnection;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -99,6 +100,10 @@ public class TorService extends Service {
         return controlPortFile;
     }
 
+    public static File getControlAuthCookieFile(Context context) {
+        return new File(getAppTorServiceDataDir(context), CONTROL_AUTH_COOKIE_FILE_NAME);
+    }
+
     /**
      * Get the directory that {@link TorService} uses for:
      * <ul>
@@ -136,6 +141,7 @@ public class TorService extends Service {
     private static File appTorServiceDir = null;
     private static File controlPortFile = null;
     private static final String CONTROL_PORT_FILE_NAME = "ControlPort.txt";
+    private static final String CONTROL_AUTH_COOKIE_FILE_NAME = "control_auth_cookie";
 
     // Store the opaque reference as a long (pointer) for the native code
     private long torConfiguration = -1;
@@ -185,7 +191,8 @@ public class TorService extends Service {
     };
 
     /**
-     * This waits for {@link #CONTROL_PORT_FILE_NAME} to be created by {@code tor},
+     * This waits for {@link #CONTROL_PORT_FILE_NAME} and the
+     * {@link #CONTROL_AUTH_COOKIE_FILE_NAME} to be created by {@code tor},
      * then continues on to connect to the {@code ControlPort} as described in
      * that file.
      */
@@ -195,7 +202,7 @@ public class TorService extends Service {
             android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             Socket socket = new Socket(Proxy.NO_PROXY);
             try {
-                final CountDownLatch countDownLatch = new CountDownLatch(1);
+                final CountDownLatch countDownLatch = new CountDownLatch(2);
                 final File controlPortFile = getControlPortFile(TorService.this);
                 FileObserver controlPortFileObserver = new FileObserver(controlPortFile.getParent()) {
                     @Override
@@ -203,7 +210,7 @@ public class TorService extends Service {
                         if ((event & FileObserver.MOVED_TO) == 0) {
                             return;
                         }
-                        if (CONTROL_PORT_FILE_NAME.equals(path)) {
+                        if (CONTROL_PORT_FILE_NAME.equals(path) || CONTROL_AUTH_COOKIE_FILE_NAME.equals(path)) {
                             countDownLatch.countDown();
                         }
                     }
@@ -216,10 +223,16 @@ public class TorService extends Service {
                     throw new IllegalStateException("cannot read " + controlSocket);
                 }
 
+                File controlAuthCookieFile = getControlAuthCookieFile(TorService.this);
+                byte[] controlAuthCookie = new byte[(int) controlAuthCookieFile.length()];
+                FileInputStream fis = new FileInputStream(controlAuthCookieFile);
+                fis.read(controlAuthCookie);
+                fis.close();
+
                 socket.connect(new InetSocketAddress("localhost", 9051));
                 TorControlConnection torControlConnection = new TorControlConnection(socket);
                 torControlConnection.launchThread(true);
-                torControlConnection.authenticate(new byte[0]);
+                torControlConnection.authenticate(controlAuthCookie);
                 torControlConnection.addRawEventListener(startedEventListener);
                 torControlConnection.setEvents(Arrays.asList(TorControlCommands.EVENT_CIRCUIT_STATUS));
 
@@ -256,7 +269,7 @@ public class TorService extends Service {
                             "--DataDirectory", getAppTorServiceDataDir(context).getAbsolutePath(),
                             "--ControlPort", "9051",
                             "--ControlPortWriteToFile", getControlPortFile(context).getAbsolutePath(),
-                            "--CookieAuthentication", "0",
+                            "--CookieAuthentication", "1",
                             //"--ControlSocket", "unix:" + getControlSocketPath(context),
 
                             // can be moved to ControlPort messages
