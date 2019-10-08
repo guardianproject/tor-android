@@ -11,8 +11,10 @@ import net.freehaven.tor.control.RawEventListener;
 import net.freehaven.tor.control.TorControlCommands;
 import net.freehaven.tor.control.TorControlConnection;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -229,7 +231,15 @@ public class TorService extends Service {
                 fis.read(controlAuthCookie);
                 fis.close();
 
-                socket.connect(new InetSocketAddress("localhost", 9051));
+                BufferedReader bufferedReader = new BufferedReader(new FileReader(controlPortFile));
+                String line = bufferedReader.readLine();
+                if (line == null) {
+                    throw new IOException(controlPortFile + " was null!");
+                }
+                bufferedReader.close();
+                String[] hostPort = line.split("=")[1].split(":");
+
+                socket.connect(new InetSocketAddress(hostPort[0], Integer.parseInt(hostPort[1])));
                 TorControlConnection torControlConnection = new TorControlConnection(socket);
                 torControlConnection.launchThread(true);
                 torControlConnection.authenticate(controlAuthCookie);
@@ -237,6 +247,11 @@ public class TorService extends Service {
                 torControlConnection.setEvents(Arrays.asList(TorControlCommands.EVENT_CIRCUIT_STATUS));
 
             } catch (IOException | ArrayIndexOutOfBoundsException | InterruptedException e) {
+                try {
+                    socket.close();
+                } catch (IOException e1) {
+                    // ignored
+                }
                 e.printStackTrace();
                 broadcastStatus(TorService.this, STATUS_STOPPING);
                 TorService.this.stopSelf();
@@ -267,10 +282,9 @@ public class TorService extends Service {
                             "--SyslogIdentityTag", TAG,
                             "--CacheDirectory", new File(getCacheDir(), TAG).getAbsolutePath(),
                             "--DataDirectory", getAppTorServiceDataDir(context).getAbsolutePath(),
-                            "--ControlPort", "9051",
+                            "--ControlPort", "auto",
                             "--ControlPortWriteToFile", getControlPortFile(context).getAbsolutePath(),
                             "--CookieAuthentication", "1",
-                            //"--ControlSocket", "unix:" + getControlSocketPath(context),
 
                             // can be moved to ControlPort messages
                             "--SOCKSPort", "9050",
