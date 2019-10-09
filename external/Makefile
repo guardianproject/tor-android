@@ -8,6 +8,8 @@ EXTERNAL_ROOT := $(shell pwd)
 
 DEBUG ?= 0
 
+MAKE ?= make -j`nproc`
+
 # Android now has 64-bit and 32-bit versions of the NDK for GNU/Linux.  We
 # assume that the build platform uses the appropriate version, otherwise the
 # user building this will have to manually set NDK_PROCESSOR or NDK_TOOLCHAIN.
@@ -150,9 +152,9 @@ openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
 
 openssl-build-stamp: openssl/Makefile
 ifeq ($(V), 0)
-	PATH=$(PATH) make --silent -C openssl install_dev ECHO=':'
+	PATH=$(PATH) make -j`nproc` --silent -C openssl install_dev ECHO=':'
 else
-	PATH=$(PATH) make -C openssl install_dev
+	PATH=$(PATH) make -j`nproc` -C openssl install_dev
 endif
 	touch $@
 
