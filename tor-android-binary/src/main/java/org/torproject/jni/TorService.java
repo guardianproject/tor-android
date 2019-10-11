@@ -3,6 +3,7 @@ package org.torproject.jni;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.FileObserver;
 import android.os.IBinder;
 import android.os.Process;
@@ -136,6 +137,9 @@ public class TorService extends Service {
     private static File controlSocket = null;
     private static final String CONTROL_SOCKET_NAME = "ControlSocket";
 
+    public static int socksPort = -1;
+    public static int httpTunnelPort = -1;
+
     // Store the opaque reference as a long (pointer) for the native code
     private long torConfiguration = -1;
     private int torControlFd = -1;
@@ -156,9 +160,18 @@ public class TorService extends Service {
 
     private native int runMain();
 
+
+    public class LocalBinder extends Binder {
+        public TorService getService() {
+            return TorService.this;
+        }
+    }
+
+    private final IBinder binder = new LocalBinder();
+
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return binder;
     }
 
     @Override
@@ -224,6 +237,10 @@ public class TorService extends Service {
                 torControlConnection.authenticate(new byte[0]);
                 torControlConnection.addRawEventListener(startedEventListener);
                 torControlConnection.setEvents(Arrays.asList(TorControlCommands.EVENT_CIRCUIT_STATUS));
+
+                socksPort = getPortFromGetInfo("net/listeners/socks");
+                httpTunnelPort = getPortFromGetInfo("net/listeners/httptunnel");
+
             } catch (IOException | ArrayIndexOutOfBoundsException | InterruptedException e) {
                 e.printStackTrace();
                 broadcastStatus(TorService.this, STATUS_STOPPING);
@@ -234,6 +251,11 @@ public class TorService extends Service {
 
     private CountDownLatch controlPortThreadStarted;
 
+    private int getPortFromGetInfo(String key) {
+        final String value = getInfo(key);
+        return Integer.parseInt(value.substring(value.lastIndexOf(':') + 1, value.length() - 1));
+    }
+
     /**
      * Start Tor in a {@link Thread} with the minimum required config.  The
      * rest of the config should happen via the Control Port.  First Tor
@@ -242,7 +264,12 @@ public class TorService extends Service {
      * {@link #controlPortThread} to start so it is running before Tor could
      * potentially create the {@code ControlSocket}.  Then finally Tor is
      * started in its own {@code Thread}.
+     * <p>
+     * Tor daemon does not output early debug messages to logcat, only after it
+     * tries to connect to the ports.  So it is important that Tor does not run
+     * into port conflicts when first starting.
      *
+     * @see <a href="https://trac.torproject.org/projects/tor/ticket/32036">#32036  output debug logs to logcat as early as possible on Android</a>
      * @see <a href="https://github.com/torproject/tor/blob/40be20d542a83359ea480bbaa28380b4137c88b2/src/app/config/config.c#L4730">options that must be on the command line</a>
      */
     private void startTorServiceThread() {
@@ -319,8 +346,49 @@ public class TorService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (torControlConnection != null) {
+            torControlConnection.removeRawEventListener(startedEventListener);
+        }
+        shutdownTor(TorControlCommands.SIGNAL_SHUTDOWN);
         mainConfigurationFree();
         broadcastStatus(TorService.this, STATUS_OFF);
+    }
+
+    public int getSocksPort() {
+        return socksPort;
+    }
+
+    public int getHttpTunnelPort() {
+        return httpTunnelPort;
+    }
+
+    /**
+     * @return the value or null on error
+     * @see <a href="https://gitweb.torproject.org/torspec.git/tree/control-spec.txt?id=bf318ccb042757cc47e47e19a63d1d825dcf222b#n527">control-spec GETINFO</a>
+     */
+    public String getInfo(String key) {
+        try {
+            return torControlConnection.getInfo(key);
+        } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Send a signal to the Tor process to shut it down or halt it.
+     * Does not wait for a response, or report errors.
+     *
+     * @see TorControlConnection#shutdownTor(String)
+     */
+    private void shutdownTor(String signal) {
+        try {
+            if (torControlConnection != null) {
+                torControlConnection.shutdownTor(signal);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

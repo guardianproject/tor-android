@@ -50,6 +50,9 @@ dependencies {
     androidTestImplementation 'androidx.test:core:1.2.0'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'info.guardianproject.netcipher:netcipher:2.1.0'
+    androidTestImplementation 'commons-io:commons-io:2.6'
+    androidTestImplementation 'commons-net:commons-net:3.6'
 }
 
 apply plugin: 'maven'
