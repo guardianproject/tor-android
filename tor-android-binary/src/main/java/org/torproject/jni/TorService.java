@@ -11,15 +11,14 @@ import net.freehaven.tor.control.RawEventListener;
 import net.freehaven.tor.control.TorControlCommands;
 import net.freehaven.tor.control.TorControlConnection;
 
-import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
-import java.io.FileReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
@@ -92,19 +91,11 @@ public class TorService extends Service {
         return new File(getAppTorServiceDir(context), "torrc-defaults");
     }
 
-    /**
-     * Tor writes the {@code ControlPort} connection info out to this file,
-     * based on {@code ControlPortWriteToFile}.
-     */
-    public static File getControlPortFile(Context context) {
-        if (controlPortFile == null) {
-            controlPortFile = new File(getAppTorServiceDataDir(context), CONTROL_PORT_FILE_NAME);
+    private static File getControlSocket(Context context) {
+        if (controlSocket == null) {
+            controlSocket = new File(getAppTorServiceDataDir(context), CONTROL_SOCKET_NAME);
         }
-        return controlPortFile;
-    }
-
-    public static File getControlAuthCookieFile(Context context) {
-        return new File(getAppTorServiceDataDir(context), CONTROL_AUTH_COOKIE_FILE_NAME);
+        return controlSocket;
     }
 
     /**
@@ -142,9 +133,8 @@ public class TorService extends Service {
     static String currentStatus = STATUS_OFF;
 
     private static File appTorServiceDir = null;
-    private static File controlPortFile = null;
-    private static final String CONTROL_PORT_FILE_NAME = "ControlPort.txt";
-    private static final String CONTROL_AUTH_COOKIE_FILE_NAME = "control_auth_cookie";
+    private static File controlSocket = null;
+    private static final String CONTROL_SOCKET_NAME = "ControlSocket";
 
     // Store the opaque reference as a long (pointer) for the native code
     private long torConfiguration = -1;
@@ -157,6 +147,8 @@ public class TorService extends Service {
     private native boolean createTorConfiguration();
 
     private native void mainConfigurationFree();
+
+    private native static FileDescriptor prepareFileDescriptor(String path);
 
     private native boolean mainConfigurationSetCommandLine(String[] args);
 
@@ -194,31 +186,29 @@ public class TorService extends Service {
     };
 
     /**
-     * This waits for {@link #CONTROL_PORT_FILE_NAME} and the
-     * {@link #CONTROL_AUTH_COOKIE_FILE_NAME} to be created by {@code tor},
-     * then continues on to connect to the {@code ControlPort} as described in
-     * that file.
+     * This waits for {@link #CONTROL_SOCKET_NAME} to be created by {@code tor},
+     * then continues on to connect to the {@code ControlSocket} as described in
+     * {@link #getControlSocket(Context)}.  As a failsafe, this will only wait
+     * 10 seconds, after that it will check whether the {@code ControlSocket}
+     * file exists, and if not, throw a {@link IllegalStateException}.
      */
-    private Thread controlPortThread = new Thread("ControlPort") {
+    private Thread controlPortThread = new Thread(CONTROL_SOCKET_NAME) {
         @Override
         public void run() {
             android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-            Socket socket = new Socket(Proxy.NO_PROXY);
             try {
-                final CountDownLatch countDownLatch = new CountDownLatch(2);
-                final File controlPortFile = getControlPortFile(TorService.this);
-                FileObserver controlPortFileObserver = new FileObserver(controlPortFile.getParent()) {
+                final CountDownLatch countDownLatch = new CountDownLatch(1);
+                final String observeDir = getAppTorServiceDataDir(TorService.this).getAbsolutePath();
+                FileObserver controlPortFileObserver = new FileObserver(observeDir) {
                     @Override
-                    public void onEvent(int event, @Nullable String path) {
-                        if ((event & FileObserver.MOVED_TO) == 0) {
-                            return;
-                        }
-                        if (CONTROL_PORT_FILE_NAME.equals(path) || CONTROL_AUTH_COOKIE_FILE_NAME.equals(path)) {
+                    public void onEvent(int event, @Nullable String name) {
+                        if ((event & FileObserver.CREATE) > 0 && CONTROL_SOCKET_NAME.equals(name)) {
                             countDownLatch.countDown();
                         }
                     }
                 };
                 controlPortFileObserver.startWatching();
+                controlPortThreadStarted.countDown();
                 countDownLatch.await(10, TimeUnit.SECONDS);
                 controlPortFileObserver.stopWatching();
                 File controlSocket = new File(observeDir, CONTROL_SOCKET_NAME);
@@ -226,33 +216,15 @@ public class TorService extends Service {
                     throw new IllegalStateException("cannot read " + controlSocket);
                 }
 
-                File controlAuthCookieFile = getControlAuthCookieFile(TorService.this);
-                byte[] controlAuthCookie = new byte[(int) controlAuthCookieFile.length()];
-                FileInputStream fis = new FileInputStream(controlAuthCookieFile);
-                fis.read(controlAuthCookie);
-                fis.close();
-
-                BufferedReader bufferedReader = new BufferedReader(new FileReader(controlPortFile));
-                String line = bufferedReader.readLine();
-                if (line == null) {
-                    throw new IOException(controlPortFile + " was null!");
-                }
-                bufferedReader.close();
-                String[] hostPort = line.split("=")[1].split(":");
-
-                socket.connect(new InetSocketAddress(hostPort[0], Integer.parseInt(hostPort[1])));
-                TorControlConnection torControlConnection = new TorControlConnection(socket);
+                FileDescriptor controlSocketFd = prepareFileDescriptor(getControlSocket(TorService.this).getAbsolutePath());
+                InputStream is = new FileInputStream(controlSocketFd);
+                OutputStream os = new FileOutputStream(controlSocketFd);
+                torControlConnection = new TorControlConnection(is, os);
                 torControlConnection.launchThread(true);
-                torControlConnection.authenticate(controlAuthCookie);
+                torControlConnection.authenticate(new byte[0]);
                 torControlConnection.addRawEventListener(startedEventListener);
                 torControlConnection.setEvents(Arrays.asList(TorControlCommands.EVENT_CIRCUIT_STATUS));
-
             } catch (IOException | ArrayIndexOutOfBoundsException | InterruptedException e) {
-                try {
-                    socket.close();
-                } catch (IOException e1) {
-                    // ignored
-                }
                 e.printStackTrace();
                 broadcastStatus(TorService.this, STATUS_STOPPING);
                 TorService.this.stopSelf();
@@ -260,11 +232,16 @@ public class TorService extends Service {
         }
     };
 
+    private CountDownLatch controlPortThreadStarted;
+
     /**
-     * Start tor in a {@link Thread} with the minimum required config.  The
-     * rest of the config should happen via the ControlPort.  This first runs
-     * tor to verify the command line flags.  If they are correct, then the
-     * {@link #controlPortThread} is started, and then the {@code tor Thread}.
+     * Start Tor in a {@link Thread} with the minimum required config.  The
+     * rest of the config should happen via the Control Port.  First Tor
+     * runs with {@code --verify-config} to check the command line flags and
+     * any {@code torrc} config.  If they are correct, then this waits for the
+     * {@link #controlPortThread} to start so it is running before Tor could
+     * potentially create the {@code ControlSocket}.  Then finally Tor is
+     * started in its own {@code Thread}.
      *
      * @see <a href="https://github.com/torproject/tor/blob/40be20d542a83359ea480bbaa28380b4137c88b2/src/app/config/config.c#L4730">options that must be on the command line</a>
      */
@@ -292,9 +269,8 @@ public class TorService extends Service {
                             "--SyslogIdentityTag", TAG,
                             "--CacheDirectory", new File(getCacheDir(), TAG).getAbsolutePath(),
                             "--DataDirectory", getAppTorServiceDataDir(context).getAbsolutePath(),
-                            "--ControlPort", "auto",
-                            "--ControlPortWriteToFile", getControlPortFile(context).getAbsolutePath(),
-                            "--CookieAuthentication", "1",
+                            "--ControlSocket", getControlSocket(context).getAbsolutePath(),
+                            "--CookieAuthentication", "0",
                             "--SOCKSPort", socksPort,
                             "--HTTPTunnelPort", httpTunnelPort,
 
@@ -312,7 +288,9 @@ public class TorService extends Service {
                         throw new IllegalArgumentException("Bad command flags: " + Arrays.toString(verifyLines));
                     }
 
+                    controlPortThreadStarted = new CountDownLatch(1);
                     controlPortThread.start();
+                    controlPortThreadStarted.await();
 
                     String[] runLines = new String[lines.size() - 1];
                     runLines[0] = "tor";
@@ -329,7 +307,7 @@ public class TorService extends Service {
                         throw new IllegalStateException("Tor could not start!");
                     }
 
-                } catch (IllegalStateException | IllegalArgumentException e) {
+                } catch (IllegalStateException | IllegalArgumentException | InterruptedException e) {
                     e.printStackTrace();
                     broadcastStatus(context, STATUS_STOPPING);
                     TorService.this.stopSelf();
