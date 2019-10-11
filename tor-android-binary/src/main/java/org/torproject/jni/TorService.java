@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -273,6 +274,15 @@ public class TorService extends Service {
             @Override
             public void run() {
                 try {
+                    String socksPort = "auto";
+                    if (isPortAvailable(9050)) {
+                        socksPort = Integer.toString(9050);
+                    }
+                    String httpTunnelPort = "auto";
+                    if (isPortAvailable(8118)) {
+                        httpTunnelPort = Integer.toString(8118);
+                    }
+
                     createTorConfiguration();
                     ArrayList<String> lines = new ArrayList<>(Arrays.asList("tor", "--verify-config", // must always be here
                             "--RunAsDaemon", "0",
@@ -285,10 +295,10 @@ public class TorService extends Service {
                             "--ControlPort", "auto",
                             "--ControlPortWriteToFile", getControlPortFile(context).getAbsolutePath(),
                             "--CookieAuthentication", "1",
+                            "--SOCKSPort", socksPort,
+                            "--HTTPTunnelPort", httpTunnelPort,
 
                             // can be moved to ControlPort messages
-                            "--SOCKSPort", "9050",
-                            "--HTTPTunnelPort", "8118",
                             "--LogMessageDomains", "1",
                             "--Log", "debug file " + new File(getCacheDir(), TAG + "-debug.log").getAbsolutePath(),
                             "--TruncateLogFile", "1"
@@ -360,5 +370,15 @@ public class TorService extends Service {
         Intent intent = new Intent(action);
         intent.putExtra(EXTRA_STATUS, currentStatus);
         return intent;
+    }
+
+    private static boolean isPortAvailable(int port) {
+        try {
+            (new ServerSocket(port)).close();
+            return true;
+        } catch (IOException e) {
+            // Could not connect.
+            return false;
+        }
     }
 }
