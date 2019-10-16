@@ -52,13 +52,16 @@ test:
         libtool
         make
         patch
+        pkg-config
 
+    - git submodule foreach git reset --hard
+    - git submodule foreach git clean -fdx
     - git submodule sync
-    - git submodule update --init
+    - git submodule update --init --force
 
     - export V=0
     - ./tor-droid-make.sh build
-    - for f in tor-android-binary/src/main/libs/*/tor.so; do sha256sum $f; done
+    - for f in tor-android-binary/src/main/libs/*/libtor.so; do sha256sum $f; done
 
 after_script:
     # this file changes every time but should not be cached

@@ -104,17 +104,17 @@ export CFLAGS := $(ALL_CFLAGS) -I$(EXTERNAL_ROOT)/include
 
 
 OUTPUT_FILE := $(EXTERNAL_ROOT)/tor/src/app/tor
-
+INSTALL_DIR := $(EXTERNAL_ROOT)/lib/$(APP_ABI)
 
 .PHONY = clean showsetup \
-	assets assets-clean \
+	PREBUILD_SHARED_LIBRARY PREBUILD_SHARED_LIBRARY-clean \
 	openssl-clean \
 	libevent-clean \
 	lzma-clean \
 	zstd-clean \
 	tor tor-clean
 
-all: test-setup assets
+all: test-setup PREBUILD_SHARED_LIBRARY
 
 test-setup:
 	test -d $(NDK_SYSROOT)
@@ -254,18 +254,28 @@ zstd-clean:
 export PKG_CONFIG_PATH := $(EXTERNAL_ROOT)/lib/pkgconfig
 
 tor/Makefile: tor/configure.ac tor/Makefile.am
-	git -C tor checkout configure.ac
-	cd tor && patch -N -p1 --reject-file=- < ../enable-android.patch
+	which pkg-config || (echo "ERROR: pkg-config is required! apt-get install pkg-config"; exit 1)
+	cd tor && \
+		git checkout configure.ac && \
+		patch -N -p1 --reject-file=- < ../0001-use-standard-__ANDROID__-macro-for-detecting-Android.patch && \
+		patch -N -p1 --reject-file=- < ../0002-move-Android-build-setup-into-enable-android-flag.patch && \
+		patch -N -p1 --reject-file=- < ../0003-Android-s-logging-mechanism-is-called-logcat.patch
 	cd tor && ./autogen.sh
 	cd tor && \
 			./configure \
 				--host=$(ALTHOST) \
 				--enable-android \
 				--enable-lzma \
+				--enable-pic \
+				--enable-restart-debugging \
 				--enable-static-libevent --with-libevent-dir=$(EXTERNAL_ROOT) \
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
 				--enable-zstd \
 				--prefix=$(EXTERNAL_ROOT)
+	grep -E '^# *define +HAVE_LZMA +1$$' tor/orconfig.h
+	grep -E '^# *define +HAVE_ZSTD +1$$' tor/orconfig.h
+	grep -E '^# *define +ENABLE_OPENSSL +1$$' tor/orconfig.h
+	grep -E '^# *define +HAVE_TLS_METHOD +1$$' tor/orconfig.h
 
 tor-build-stamp: tor/Makefile
 	$(MAKE) -C tor
@@ -281,22 +291,25 @@ tor-clean:
 
 
 #------------------------------------------------------------------------------#
-#create and clean assets: FYI - tor is stored as a ZIP file with an so extension
-#in the libs directly, so it is handled like a shared library for local installation
+# create and clean libtor.so
 
-assets: tor
+PREBUILD_SHARED_LIBRARY: tor
 	file $(OUTPUT_FILE) | grep $(GREP_CHECK)
-	install -d ../tor-android-binary/src/main/libs/$(APP_ABI)
-	cp $(OUTPUT_FILE) ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
+	install -d $(EXTERNAL_ROOT)/lib/$(APP_ABI)
+	cp $(OUTPUT_FILE) $(INSTALL_DIR)/libtor.so
+	cp openssl/configdata.pm tor/orconfig.h $(INSTALL_DIR)/
 ifneq ($(DEBUG), 1)
-	ls -l  ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
+	ls -l  $(INSTALL_DIR)/libtor.so
 	$(NDK_TOOLCHAIN_BASE)/bin/$(ALTHOST)-strip --strip-unneeded -R .note -R .comment --strip-debug \
-		../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
-	ls -l  ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
+		$(INSTALL_DIR)/libtor.so
+	ls -l  $(INSTALL_DIR)/libtor.so
 endif
+	@echo "check if all the libs got included:"
+	grep "tor_lzma_state_size_precalc" $(INSTALL_DIR)/libtor.so
 
-assets-clean:
-	-rm ../tor-android-binary/src/main/libs/$(APP_ABI)/tor.so
+PREBUILD_SHARED_LIBRARY-clean:
+	-rm $(INSTALL_DIR)/libtor.so
+
 
 #------------------------------------------------------------------------------#
 # cleanup, cleanup, put the toys away

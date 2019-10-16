@@ -1,32 +1,25 @@
-From 0622f64b9f34e882807e5b8fdf903bbc69aaf93b Mon Sep 17 00:00:00 2001
+From 86f96d4ea08c12d53d398aa863b82960ac54c6bd Mon Sep 17 00:00:00 2001
 From: Hans-Christoph Steiner <hans@eds.org>
 Date: Tue, 10 Sep 2019 23:08:02 +0200
-Subject: [PATCH 1/1] move Android build setup into --enable-android flag
+Subject: [PATCH 2/3] move Android build setup into --enable-android flag
 
 ---
- configure.ac | 37 ++++++++++++++++++++++---------------
- 1 file changed, 22 insertions(+), 15 deletions(-)
+ configure.ac | 32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index a639ffaf3..afee6940c 100644
+index bd961e74e..1e7b5439e 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -88,6 +88,27 @@ else
+@@ -95,6 +95,22 @@ else
              [Defined if we're building with OpenSSL or LibreSSL])
  fi
  
 +dnl Enable Android only features.
 +AC_ARG_ENABLE(android,
-+     AS_HELP_STRING(--enable-android, [build with Android features enabled]))
-+AM_CONDITIONAL([USE_ANDROID], [test "x$enable_android" = "xyes"])
++     AS_HELP_STRING(--enable-android, [setup build for Android exeutable/shared library]))
 +
 +if test "x$enable_android" = "xyes"; then
-+  AC_DEFINE([USE_ANDROID], [1], [Compile with Android specific features enabled])
-+
-+  dnl Check if the Android log library is available.
-+  AC_CHECK_HEADERS([android/log.h])
-+  AC_SEARCH_LIBS(__android_log_write, [log])
-+
 +  asciidoc=false
 +  enable_html_manual=no
 +  enable_manpage=no
@@ -34,12 +27,14 @@ index a639ffaf3..afee6940c 100644
 +  enable_system_torrc=no
 +  enable_tool_name_check=no
 +  have_systemd=no
++
++  LIBS="-llog $LIBS"
 +fi
 +
  if test "$enable_static_tor" = "yes"; then
    enable_static_libevent="yes";
    enable_static_openssl="yes";
-@@ -117,7 +138,7 @@ AC_ARG_ENABLE(asciidoc,
+@@ -124,7 +140,7 @@ AC_ARG_ENABLE(asciidoc,
          "yes") asciidoc=true ;;
          "no")  asciidoc=false ;;
          *) AC_MSG_ERROR(bad value for --disable-asciidoc) ;;
@@ -48,7 +43,7 @@ index a639ffaf3..afee6940c 100644
  
  # systemd notify support
  AC_ARG_ENABLE(systemd,
-@@ -227,20 +248,6 @@ if test x$enable_event_tracing_debug = xyes; then
+@@ -234,20 +250,6 @@ if test x$enable_event_tracing_debug = xyes; then
    AC_DEFINE([TOR_EVENT_TRACING_ENABLED], [1], [Compile the event tracing instrumentation])
  fi
  
