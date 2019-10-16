@@ -254,8 +254,9 @@ zstd-clean:
 export PKG_CONFIG_PATH := $(EXTERNAL_ROOT)/lib/pkgconfig
 
 tor/Makefile: tor/configure.ac tor/Makefile.am
-	which pkg-config || (echo "ERROR: pkg-config is required! apt-get install pkg-config"; exit 1)
+	@which pkg-config || (echo "ERROR: pkg-config is required! apt-get install pkg-config"; exit 1)
 	cd tor && \
+		git status && \
 		git checkout configure.ac && \
 		patch -N -p1 --reject-file=- < ../0001-use-standard-__ANDROID__-macro-for-detecting-Android.patch && \
 		patch -N -p1 --reject-file=- < ../0002-move-Android-build-setup-into-enable-android-flag.patch && \
