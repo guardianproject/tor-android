@@ -104,17 +104,17 @@ export CFLAGS := $(ALL_CFLAGS) -I$(EXTERNAL_ROOT)/include
 
 
 OUTPUT_FILE := $(EXTERNAL_ROOT)/tor/src/app/tor
-
+INSTALL_DIR := $(EXTERNAL_ROOT)/lib/$(APP_ABI)
 
 .PHONY = clean showsetup \
-	assets assets-clean \
+	PREBUILD_SHARED_LIBRARY PREBUILD_SHARED_LIBRARY-clean \
 	openssl-clean \
 	libevent-clean \
 	lzma-clean \
 	zstd-clean \
 	tor tor-clean
 
-all: test-setup assets
+all: test-setup PREBUILD_SHARED_LIBRARY
 
 test-setup:
 	test -d $(NDK_SYSROOT)
@@ -283,22 +283,23 @@ tor-clean:
 
 
 #------------------------------------------------------------------------------#
-#create and clean assets: FYI - tor is stored as a ZIP file with an so extension
-#in the libs directly, so it is handled like a shared library for local installation
+# create and clean libtor.so
 
-assets: tor
+PREBUILD_SHARED_LIBRARY: tor
 	file $(OUTPUT_FILE) | grep $(GREP_CHECK)
-	install -d ../tor-android-binary/src/main/libs/$(APP_ABI)
-	cp $(OUTPUT_FILE) ../tor-android-binary/src/main/libs/$(APP_ABI)/libtor.so
+	install -d $(EXTERNAL_ROOT)/lib/$(APP_ABI)
+	cp $(OUTPUT_FILE) $(INSTALL_DIR)/libtor.so
+	cp openssl/configdata.pm tor/orconfig.h $(INSTALL_DIR)/
 ifneq ($(DEBUG), 1)
-	ls -l  ../tor-android-binary/src/main/libs/$(APP_ABI)/libtor.so
+	ls -l  $(INSTALL_DIR)/libtor.so
 	$(NDK_TOOLCHAIN_BASE)/bin/$(ALTHOST)-strip --strip-unneeded -R .note -R .comment --strip-debug \
-		../tor-android-binary/src/main/libs/$(APP_ABI)/libtor.so
-	ls -l  ../tor-android-binary/src/main/libs/$(APP_ABI)/libtor.so
+		$(INSTALL_DIR)/libtor.so
+	ls -l  $(INSTALL_DIR)/libtor.so
 endif
 
-assets-clean:
-	-rm ../tor-android-binary/src/main/libs/$(APP_ABI)/libtor.so
+PREBUILD_SHARED_LIBRARY-clean:
+	-rm $(INSTALL_DIR)/libtor.so
+
 
 #------------------------------------------------------------------------------#
 # cleanup, cleanup, put the toys away
