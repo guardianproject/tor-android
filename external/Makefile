@@ -265,6 +265,7 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--enable-static-libevent --with-libevent-dir=$(EXTERNAL_ROOT) \
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
 				--enable-zstd \
+				--disable-module-dirauth \
 				--prefix=$(EXTERNAL_ROOT)
 	grep -E '^# *define +HAVE_LZMA +1$$' tor/orconfig.h
 	grep -E '^# *define +HAVE_ZSTD +1$$' tor/orconfig.h
