@@ -52,6 +52,7 @@ test:
         libtool
         make
         patch
+        pkg-config
 
     - git submodule sync
     - git submodule update --init

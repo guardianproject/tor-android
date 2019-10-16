@@ -254,6 +254,7 @@ zstd-clean:
 export PKG_CONFIG_PATH := $(EXTERNAL_ROOT)/lib/pkgconfig
 
 tor/Makefile: tor/configure.ac tor/Makefile.am
+	which pkg-config || (echo "ERROR: pkg-config is required! apt-get install pkg-config"; exit 1)
 	cd tor && \
 		git checkout configure.ac && \
 		patch -N -p1 --reject-file=- < ../0001-use-standard-__ANDROID__-macro-for-detecting-Android.patch && \
@@ -271,6 +272,10 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
 				--enable-zstd \
 				--prefix=$(EXTERNAL_ROOT)
+	grep -E '^# *define +HAVE_LZMA +1$$' tor/orconfig.h
+	grep -E '^# *define +HAVE_ZSTD +1$$' tor/orconfig.h
+	grep -E '^# *define +ENABLE_OPENSSL +1$$' tor/orconfig.h
+	grep -E '^# *define +HAVE_TLS_METHOD +1$$' tor/orconfig.h
 
 tor-build-stamp: tor/Makefile
 	$(MAKE) -C tor
@@ -299,6 +304,8 @@ ifneq ($(DEBUG), 1)
 		$(INSTALL_DIR)/libtor.so
 	ls -l  $(INSTALL_DIR)/libtor.so
 endif
+	@echo "check if all the libs got included:"
+	grep "tor_lzma_state_size_precalc" $(INSTALL_DIR)/libtor.so
 
 PREBUILD_SHARED_LIBRARY-clean:
 	-rm $(INSTALL_DIR)/libtor.so
