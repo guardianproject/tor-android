@@ -54,8 +54,10 @@ test:
         patch
         pkg-config
 
+    - git submodule foreach git reset --hard
+    - git submodule foreach git clean -fdx
     - git submodule sync
-    - git submodule update --init
+    - git submodule update --init --force
 
     - export V=0
     - ./tor-droid-make.sh build
