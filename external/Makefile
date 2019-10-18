@@ -257,7 +257,7 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 	@which pkg-config || (echo "ERROR: pkg-config is required! apt-get install pkg-config"; exit 1)
 	cd tor && \
 		git status && \
-		git checkout configure.ac && \
+		git checkout configure.ac src/app/config/config.c src/lib/log/log.c src/lib/log/log.h && \
 		patch -N -p1 --reject-file=- < ../0001-use-standard-__ANDROID__-macro-for-detecting-Android.patch && \
 		patch -N -p1 --reject-file=- < ../0002-move-Android-build-setup-into-enable-android-flag.patch && \
 		patch -N -p1 --reject-file=- < ../0003-Android-s-logging-mechanism-is-called-logcat.patch
