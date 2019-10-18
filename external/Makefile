@@ -36,9 +36,10 @@ endif
 
 
 ifneq ($(filter mips%, $(APP_ABI)),)
- HOST := $(NDK_ABI)el-linux-android
+ HOST := mipsel-linux-android
  ALTHOST := $(HOST)
  GREP_CHECK := MIPS
+ NDK_ABI := mips
  NDK_BIT := 32
  NDK_PLATFORM_LEVEL := 16
  NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
