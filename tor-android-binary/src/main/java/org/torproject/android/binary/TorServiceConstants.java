@@ -7,7 +7,7 @@ public interface TorServiceConstants {
 
     String TAG = "TorBinary";
 	//name of the tor C binary
-	String TOR_ASSET_KEY = "tor";	
+	String TOR_ASSET_KEY = "libtor";	
 	
 	//torrc (tor config file)
 	String TORRC_ASSET_KEY = "torrc";
