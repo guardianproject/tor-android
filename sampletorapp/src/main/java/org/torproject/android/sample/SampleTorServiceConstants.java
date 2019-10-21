@@ -11,7 +11,7 @@ public interface SampleTorServiceConstants {
 	String DIRECTORY_TOR_DATA = "data";
 	
 	//name of the tor C binary
-	String TOR_ASSET_KEY = "tor";	
+	String TOR_ASSET_KEY = "libtor";	
 	
 	//torrc (tor config file)
 	String TORRC_ASSET_KEY = "torrc";
