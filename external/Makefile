@@ -300,6 +300,9 @@ ifneq ($(DEBUG), 1)
 endif
 	@echo "check if all the libs got included:"
 	grep "tor_lzma_state_size_precalc" $(INSTALL_DIR)/libtor.so
+	install -d $(EXTERNAL_ROOT)/test/$(APP_ABI)
+	cp tor/src/test/test tor/src/test/test-memwipe tor/src/test/test-slow \
+		$(EXTERNAL_ROOT)/test/$(APP_ABI)
 
 PREBUILD_SHARED_LIBRARY-clean:
 	-rm $(INSTALL_DIR)/libtor.so

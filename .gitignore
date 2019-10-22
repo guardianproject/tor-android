@@ -24,6 +24,7 @@ build/
 /external/include/
 /external/*-build-stamp
 /external/lib/
+/external/test/
 local.properties
 external/patches/*
 obj
