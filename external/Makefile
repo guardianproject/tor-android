@@ -100,7 +100,7 @@ REPRODUCIBLE_CFLAGS := \
 #  -Wl,--no-insert-timestamp
 #  -fmacro-prefix-map=OLD=NEW
 
-ALL_CFLAGS := $(REPRODUCIBLE_CFLAGS) $(CFLAGS)
+ALL_CFLAGS := $(REPRODUCIBLE_CFLAGS) $(CFLAGS) -Os
 export CFLAGS := $(ALL_CFLAGS) -I$(EXTERNAL_ROOT)/include
 
 
