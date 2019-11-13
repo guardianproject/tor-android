@@ -32,6 +32,7 @@ before_script:
       - tor-android-binary/src/main/libs
       - external/include
       - external/lib
+      - external/test
     expire_in: 1 week
     when: always
   after_script:
@@ -62,6 +63,36 @@ test:
     - export V=0
     - ./tor-droid-make.sh build
     - for f in tor-android-binary/src/main/libs/*/libtor.so; do sha256sum $f; done
+
+    - test -n "$AVD_ARCH"
+        || export AVD_ARCH=$(basename `ls -1d /opt/android-sdk/system-images/android-22/default/* | head -1`)
+    - grep -v '^License' $ANDROID_HOME/system-images/android-$AVD_SDK/$AVD_TAG/$AVD_ARCH/source.properties
+    - adb start-server
+    - ls -l ~/.android
+    - emulator -version
+    - emulator -avd avd$AVD_SDK
+        -no-audio
+        -no-snapstorage
+        -no-window
+        -skip-adb-auth
+        -verbose
+        -wipe-data
+        &
+    - wait-for-emulator
+    - adb devices
+    - adb shell input keyevent 82 &
+
+    # adb shell on older emulators didn't pass the return value, so we need tricks
+    # https://stackoverflow.com/a/58452689
+    - EXITVALUE=0
+    - for f in test test-memwipe test-slow; do
+        printf "\n\n------------------------------------------\n$f\n";
+        adb -e push external/test/$AVD_ARCH/$f /data/local/tmp/;
+        adb -e shell "cd /data/local/tmp; ./$f"'; echo -n $? > '"$f.result";
+        test `adb -e shell "cat /data/local/tmp/$f.result"` = "0" || EXITVALUE=1;
+      done
+    - exit $EXITVALUE
+
 
 after_script:
     # this file changes every time but should not be cached
