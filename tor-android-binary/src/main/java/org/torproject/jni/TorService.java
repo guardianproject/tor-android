@@ -56,6 +56,8 @@ public class TorService extends Service {
      */
     public static final String ACTION_STATUS = "org.torproject.android.intent.action.STATUS";
 
+    public static final String ACTION_ERROR = "org.torproject.android.intent.action.ERROR";
+
     /**
      * {@code String} that contains a status constant: {@link #STATUS_ON},
      * {@link #STATUS_OFF}, {@link #STATUS_STARTING}, or
@@ -336,6 +338,7 @@ public class TorService extends Service {
 
                 } catch (IllegalStateException | IllegalArgumentException | InterruptedException e) {
                     e.printStackTrace();
+                    broadcastError(context, e);
                     broadcastStatus(context, STATUS_STOPPING);
                     TorService.this.stopSelf();
                 }
@@ -408,6 +411,19 @@ public class TorService extends Service {
     static void broadcastStatus(Context context, String currentStatus) {
         TorService.currentStatus = currentStatus;
         Intent intent = getBroadcastIntent(ACTION_STATUS, currentStatus);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        context.sendBroadcast(intent);
+    }
+
+    /**
+     * This might be better handled by {@link android.content.ServiceConnection}
+     * but there is no way to write tests for {@code ServiceConnection}.
+     */
+    static void broadcastError(Context context, Throwable e) {
+        Intent intent = new Intent(ACTION_ERROR);
+        if (e != null) {
+            intent.putExtra(Intent.EXTRA_TEXT, e.getLocalizedMessage());
+        }
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         context.sendBroadcast(intent);
     }
