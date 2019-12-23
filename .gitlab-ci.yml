@@ -38,7 +38,7 @@ before_script:
   after_script:
     - echo "Download debug artifacts from https://gitlab.com/${CI_PROJECT_PATH}/-/jobs"
 
-test:
+android 22 default armeabi-v7a:
   <<: *test-template
   script:
     - apt-get update
@@ -64,20 +64,9 @@ test:
     - ./tor-droid-make.sh build
     - for f in tor-android-binary/src/main/libs/*/libtor.so; do sha256sum $f; done
 
-    - test -n "$AVD_ARCH"
-        || export AVD_ARCH=$(basename `ls -1d /opt/android-sdk/system-images/android-22/default/* | head -1`)
     - grep -v '^License' $ANDROID_HOME/system-images/android-$AVD_SDK/$AVD_TAG/$AVD_ARCH/source.properties
     - adb start-server
-    - ls -l ~/.android
-    - emulator -version
-    - emulator -avd avd$AVD_SDK
-        -no-audio
-        -no-snapstorage
-        -no-window
-        -skip-adb-auth
-        -verbose
-        -wipe-data
-        &
+    - start-emulator
     - wait-for-emulator
     - adb devices
     - adb shell input keyevent 82 &
