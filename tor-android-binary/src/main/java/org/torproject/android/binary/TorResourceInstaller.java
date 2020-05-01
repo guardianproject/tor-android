@@ -95,17 +95,8 @@ public class TorResourceInstaller implements TorServiceConstants {
             }
         }
 
-        if (fileTor.exists()) {
-            InputStream is = new FileInputStream(fileTor);
-            streamToFile(is, fileTor, false, true);
-            setExecutable(fileTor);
-
-            if (fileTor.exists() && fileTor.canExecute())
-                return fileTor;
-        }
-
         //let's try another approach
-        fileTor = new File(installFolder, TOR_ASSET_KEY);
+        fileTor = new File(installFolder, TOR_BINARY_KEY);
         fileTor = NativeLoader.initNativeLibs(context,fileTor);
         setExecutable(fileTor);
 

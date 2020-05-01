@@ -14,10 +14,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import static org.torproject.android.binary.TorServiceConstants.TOR_ASSET_KEY;
+
 public class NativeLoader {
 
-    private final static String LIB_NAME = "tor";
-    private final static String LIB_SO_NAME = "tor.so";
+    private final static String LIB_SO_NAME = TOR_ASSET_KEY + ".so";
 
     private final static String TAG = "TorNativeLoader";
 
@@ -31,7 +32,7 @@ public class NativeLoader {
             zipFile = new ZipFile(context.getApplicationInfo().sourceDir);
             ZipEntry entry = zipFile.getEntry("lib/" + arch + "/" + LIB_SO_NAME);
             if (entry == null) {
-                throw new Exception("Unable to find file in apk:" + "lib/" + arch + "/" + LIB_NAME);
+                throw new Exception("Unable to find file in apk:" + "lib/" + arch + "/" + LIB_SO_NAME);
             }
 
             //how we wrap this in another stream because the native .so is zipped itself
