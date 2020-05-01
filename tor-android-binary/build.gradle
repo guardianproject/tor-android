@@ -1,8 +1,8 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.2'
 
     /**
     sourceSets {
@@ -14,9 +14,9 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 28
-        versionCode 42500 
-        versionName "0.4.2.5"
+        targetSdkVersion 29
+        versionCode 42700
+        versionName "0.4.2.7"
 
     }
 
@@ -41,7 +41,7 @@ uploadArchives {
                 pom.project {
                         groupId 'org.torproject'
                         artifactId 'tor-android-binary'
-                        version "0.4.2.7"
+                        version "0.4.2.7a"
                 }
         }
 }
