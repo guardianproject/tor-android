@@ -21,7 +21,7 @@ and then add the dependency, setting it to the latest version (or any version) w
 
 ```gradle
 dependencies {
-    implementation 'org.torproject:tor-android-binary:0.4.3.6-actual'
+    implementation 'org.torproject:tor-android-binary:0.4.4.6'
 }
 ```
 
