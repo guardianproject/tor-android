@@ -36,8 +36,8 @@ build_external_dependencies()
     for abi in arm64-v8a armeabi-v7a x86 x86_64; do
 	APP_ABI=$abi make -C external clean
 	APP_ABI=$abi make -C external
-	binary=tor-android-binary/src/main/libs/$abi/tor.so
-	test -e $binary || echo ERROR $abi missing $binary
+	binary=external/lib/$abi/libtor.so
+	test -e $binary || (echo ERROR $abi missing $binary; exit 1)
     done
 }
 
@@ -71,8 +71,6 @@ show_options()
 
 option=$1
 build_type="debug"
-name="tor-android-binary"
-target="android-23"
 
 if [ -z $option ]; then
     show_options
@@ -83,13 +81,11 @@ while getopts 'c:b:n:t' opts; do
     case $opts in
         c) clean=clean ;;
         b) build_type=${OPTARG:-$build_type} ;;
-        n) name=${OPTARG:-$Orbot} ;;
-        t) target=${OPTARG:-$target} ;;
     esac
 done
 
 case "$option" in
     "fetch") fetch_submodules $clean ;;
-    "build") build_app $build_type $name $target ;;
+    "build") build_app $build_type ;;
     *) show_options ;;
 esac
