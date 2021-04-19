@@ -36,6 +36,7 @@ before_script:
   artifacts:
     name: "${CI_PROJECT_PATH}_${CI_JOB_STAGE}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA}"
     paths:
+      - tor-android-binary/build/outputs/aar/*.aar
       - tor-android-binary/src/main/libs
       - external/include
       - external/lib
@@ -71,6 +72,9 @@ android 22 default armeabi-v7a:
     - export V=0
     - ./tor-droid-make.sh build
     - for f in tor-android-binary/src/main/libs/*/libtor.so; do sha256sum $f; done
+    - for f in external/lib/*/libtor.so; do sha256sum $f; done
+
+    - ./gradlew assemble
 
     - grep -v '^License' $ANDROID_HOME/system-images/android-$AVD_SDK/$AVD_TAG/$AVD_ARCH/source.properties
     - adb start-server
