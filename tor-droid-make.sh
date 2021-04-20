@@ -33,11 +33,16 @@ check_android_dependencies()
 build_external_dependencies()
 {
     check_android_dependencies
-    for abi in arm64-v8a armeabi-v7a x86 x86_64; do
+    for abi in $abis; do
+	default_abis=`echo $default_abis | sed -E "s,(\s?)$abi(\s?),\1\2,"`
 	APP_ABI=$abi make -C external clean
 	APP_ABI=$abi make -C external
 	binary=external/lib/$abi/libtor.so
 	test -e $binary || (echo ERROR $abi missing $binary; exit 1)
+    done
+    for abi in $default_abis; do
+	echo remove dangling symlink: $abi
+	rm -f tor-android-binary/src/main/jniLibs/$abi
     done
 }
 
@@ -61,15 +66,16 @@ show_options()
     echo "          build   Build the project"
     echo ""
     echo "Options:"
+    echo "          -a      ABI(s) to build (default: \"$default_abis\")"
     echo "          -b      Build type, it can be release or debug (default: debug)"
     echo "          -c      Clean the repository (Used together with the fetch command)"
-    echo "          -n      Project name (default: tor-android-binary)"
-    echo "          -t      Project target (default: android-23)"
     echo ""
     exit
 }
 
 option=$1
+default_abis="arm64-v8a armeabi-v7a x86 x86_64"
+abis=$default_abis
 build_type="debug"
 
 if [ -z $option ]; then
@@ -77,8 +83,9 @@ if [ -z $option ]; then
 fi
 shift
 
-while getopts 'c:b:n:t' opts; do
+while getopts 'a:c:b' opts; do
     case $opts in
+        a) abis=${OPTARG:-$abis} ;;
         c) clean=clean ;;
         b) build_type=${OPTARG:-$build_type} ;;
     esac
