@@ -48,7 +48,17 @@ public class TorService extends Service {
     public static final String VERSION_NAME = org.torproject.jni.BuildConfig.VERSION_NAME;
 
     /**
-     * {@link Intent} send by Orbot with {@code ON/OFF/STARTING/STOPPING} status
+     * Request to transparently start Tor services.
+     */
+    public static final String ACTION_START = "org.torproject.android.intent.action.START";
+
+    /**
+     * Internal request to stop Tor services.
+     */
+    private static final String ACTION_STOP = "org.torproject.android.intent.action.STOP";
+
+    /**
+     * {@link Intent} sent by this app with {@code ON/OFF/STARTING/STOPPING} status
      * included as an {@link #EXTRA_STATUS} {@code String}.  Your app should
      * always receive {@code ACTION_STATUS Intent}s since any other app could
      * start Orbot.  Also, user-triggered starts and stops will also cause
@@ -64,6 +74,15 @@ public class TorService extends Service {
      * {@link #STATUS_STOPPING}
      */
     public static final String EXTRA_STATUS = "org.torproject.android.intent.extra.STATUS";
+
+    /**
+     * A {@link String} {@code packageName} for {@code TorService} to direct its
+     * status reply to, after receiving an {@link #ACTION_START},
+     * {@link #ACTION_STOP}, or {@link #ACTION_STATUS} {@link Intent}. This allows
+     * {@code TorService} to send redundant replies to that single app, rather than
+     * broadcasting to all apps after every request.
+     */
+    public final static String EXTRA_PACKAGE_NAME = "org.torproject.android.intent.extra.PACKAGE_NAME";
 
     /**
      * All tor-related services and daemons are stopped
