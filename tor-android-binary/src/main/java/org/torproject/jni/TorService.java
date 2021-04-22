@@ -152,7 +152,7 @@ public class TorService extends Service {
         System.loadLibrary("tor");
     }
 
-    static String currentStatus = STATUS_OFF;
+    volatile static String currentStatus = STATUS_OFF;
 
     private static File appTorServiceDir = null;
     private static File controlSocket = null;
@@ -200,6 +200,12 @@ public class TorService extends Service {
         super.onCreate();
         broadcastStatus(this, STATUS_STARTING);
         startTorServiceThread();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        sendBroadcastStatusIntent(this);
+        return super.onStartCommand(intent, flags, startId);
     }
 
     /**
@@ -421,6 +427,14 @@ public class TorService extends Service {
      */
     public TorControlConnection getTorControlConnection() {
         return torControlConnection;
+    }
+
+    /**
+     * Broadcasts the current status to any apps following the status of TorService.
+     */
+    static void sendBroadcastStatusIntent(Context context) {
+        Intent intent = getBroadcastIntent(ACTION_STATUS, currentStatus);
+        context.sendBroadcast(intent);
     }
 
     /**
