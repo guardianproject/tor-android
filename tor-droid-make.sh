@@ -57,6 +57,26 @@ build_app()
     fi
 }
 
+release()
+{
+
+    if [ ! -e "$ANDROID_HOME" ]; then
+        echo "ANDROID_HOME must be set!"
+        exit 1
+    fi
+
+    if [ ! -e "$ANDROID_NDK_HOME" ]; then
+        echo "ANDROID_NDK_HOME must be set!"
+        exit 1
+    fi
+
+    # tame the build log to fit into GitLab CI's 4MB limit
+    export V=0
+
+    fetch_submodules clean
+    build_app release
+}
+
 show_options()
 {
     echo "usage: ./tor-droid-make.sh command arguments"
@@ -94,5 +114,6 @@ done
 case "$option" in
     "fetch") fetch_submodules $clean ;;
     "build") build_app $build_type ;;
+    "release") release ;;
     *) show_options ;;
 esac
