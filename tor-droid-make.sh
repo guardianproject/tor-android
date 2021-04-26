@@ -57,6 +57,47 @@ build_app()
     fi
 }
 
+buildinfo()
+{
+    artifact=$1
+    v=$2
+    aar=$3
+    jv=$(java -XshowSettings:properties -version 2>&1 | sed -En 's,.*java\.version\s+=\s+(.*),\1,p')
+    vendor=$(java -XshowSettings:properties -version 2>&1 | sed -En 's,.*java\.vendor\s+=\s+(.*),\1,p')
+    buildinfo=$(printf $aar | sed 's,\.aar$,.buildinfo,')
+    cat > $buildinfo <<EOF
+# https://reproducible-builds.org/docs/jvm/
+buildinfo.version=1.0-SNAPSHOT
+
+name=Tor Android
+group-id=info.guardianproject
+artifact-id=$artifact
+version=$v
+
+# source information
+source.scm.uri=scm:git:https://github.com/guardianproject/tor-android.git
+source.scm.tag=$v
+source.used=scm
+
+# build instructions
+build-tool=$0 release
+
+# effective build environment information
+$(java -XshowSettings:properties -version 2>&1 | sed -En 's,.*(java\.runtime\.version)\s+=\s+(.*),\1=\2,p')
+$(java -XshowSettings:properties -version 2>&1 | sed -En 's,.*(java\.version)\s+=\s+(.*),\1=\2,p')
+$(java -XshowSettings:properties -version 2>&1 | sed -En 's,.*(java\.specification\.version)\s+=\s+(.*),\1=\2,p')
+$(java -XshowSettings:properties -version 2>&1 | sed -En 's,.*(java\.vendor)\s+=\s+(.*),\1=\2,p')
+os.name=$(uname)
+
+ndk.version=$(sed -n 's,^Pkg\.Revision\s*=\s*\([^ ]*\),\1,p' $ANDROID_NDK_HOME/source.properties)
+
+outputs.0.filename=$aar
+outputs.0.length=$(wc -c <$aar)
+outputs.0.checksums.sha526=$(sha256sum $aar | awk '{print $1}')
+outputs.0.checksums.sha512=$(sha512sum $aar | awk '{print $1}')
+EOF
+}
+
 release()
 {
 
@@ -75,6 +116,12 @@ release()
 
     fetch_submodules clean
     build_app release
+    artifact="tor-android"
+    version=$(git describe --tags --always)
+    aar=${artifact}-${version}.aar
+    cd tor-android-binary/build/outputs/aar/
+    mv *-release.aar $aar
+    buildinfo $artifact $version $aar
 }
 
 show_options()
