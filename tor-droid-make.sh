@@ -100,6 +100,11 @@ EOF
 
 release()
 {
+    if [ -n "$(git status --porcelain)" ]; then
+	printf '\nERROR: the git repo must be clean before building:\n\n'
+	git status
+	exit 1
+    fi
 
     if [ ! -e "$ANDROID_HOME" ]; then
         echo "ANDROID_HOME must be set!"

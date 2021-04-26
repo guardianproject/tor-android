@@ -131,4 +131,5 @@ release:
 
     - *setup-template
 
+    - git clean -fdx
     - ./tor-droid-make.sh release
