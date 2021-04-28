@@ -55,6 +55,47 @@ dependencies {
     androidTestImplementation 'commons-net:commons-net:3.6'
 }
 
+
+android.libraryVariants.all { variant ->
+    def name = variant.buildType.name
+    if (name.equals(com.android.builder.core.BuilderConstants.DEBUG)) {
+        return; // Skip debug builds.
+    }
+    def task = project.tasks.create "jar${name.capitalize()}", Jar
+    task.dependsOn variant.javaCompile, sourcesJar, javadocJar
+    task.from variant.javaCompile.destinationDir
+    task.exclude('info/guardianproject/**/BuildConfig.**')
+    artifacts.add('archives', task);
+    task.baseName = 'tor-android'
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+    baseName = 'tor-android-' + getVersionName()
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.compile
+    options.addStringOption('notimestamp')
+    android.libraryVariants.all { variant ->
+        if (variant.name == 'release') {
+            owner.classpath += variant.javaCompile.classpath
+        }
+    }
+    exclude '**/R.html', '**/R.*.html', '**/index.html'
+    failOnError false
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+    baseName = 'tor-android-' + getVersionName()
+}
+
+
 apply plugin: 'maven'
 
 uploadArchives {
@@ -62,8 +103,8 @@ uploadArchives {
         def deployPath = file(getProperty('aar.deployPath'))
         repository(url: "file://${deployPath.absolutePath}")
         pom.project {
-            groupId 'org.torproject'
-            artifactId 'tor-android-binary'
+            groupId 'info.guardianproject'
+            artifactId 'tor-android'
             version getVersionName()
         }
     }
