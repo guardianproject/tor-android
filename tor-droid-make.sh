@@ -98,6 +98,74 @@ outputs.0.checksums.sha512=$(sha512sum $aar | awk '{print $1}')
 EOF
 }
 
+pom()
+{
+    artifact=$1
+    version=$2
+    cat > ${artifact}-${version}.pom <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <packaging>aar</packaging>
+  <groupId>info.guardianproject</groupId>
+  <artifactId>${artifact}</artifactId>
+  <version>${version}</version>
+  <name>tor-android</name>
+  <description>Tor as a native Android Service</description>
+  <url>https://gitweb.torproject.org/tor-android</url>
+  <inceptionYear>2018</inceptionYear>
+  <licenses>
+    <license>
+      <name>BSD-3-clause</name>
+      <url>https://github.com/guardianproject/tor-android/blob/master/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+    <license>
+      <name>BSD-3-clause</name>
+      <url>https://gitweb.torproject.org/tor.git/tree/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+    <license>
+      <name>BSD-3-clause</name>
+      <url>https://github.com/facebook/zstd/blob/dev/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+    <license>
+      <name>BSD-3-clause</name>
+      <url>https://libevent.org/LICENSE.txt</url>
+      <distribution>repo</distribution>
+    </license>
+    <license>
+      <name>OpenSSL</name>
+      <url>http://www.openssl.org/source/license.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>torproject</id>
+      <name>Tor Project</name>
+      <email>torbrowser@torproject.org</email>
+    </developer>
+    <developer>
+      <id>guardianproject</id>
+      <name>Guardian Project</name>
+      <email>support@guardianproject.info</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:git:https://github.com/guardianproject/tor-android.git</connection>
+    <url>https://github.com/guardianproject/tor-android</url>
+  </scm>
+  <issueManagement>
+    <url>https://github.com/guardianproject/tor-android/issues</url>
+    <system>GitHub</system>
+  </issueManagement>
+</project>
+EOF
+}
+
 release()
 {
     if [ -n "$(git status --porcelain)" ]; then
@@ -128,6 +196,7 @@ release()
     cd tor-android-binary/build/outputs/aar/
     mv *-release.aar $aar
     buildinfo $artifact $version $aar
+    pom $artifact $version
 }
 
 show_options()
