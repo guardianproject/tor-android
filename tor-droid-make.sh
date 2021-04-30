@@ -226,11 +226,11 @@ if [ -z $option ]; then
 fi
 shift
 
-while getopts 'a:c:b' opts; do
+while getopts 'a:b:c' opts; do
     case $opts in
         a) abis=${OPTARG:-$abis} ;;
-        c) clean=clean ;;
         b) build_type=${OPTARG:-$build_type} ;;
+        c) clean=clean ;;
     esac
 done
 
