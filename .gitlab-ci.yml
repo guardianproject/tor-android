@@ -132,4 +132,4 @@ release:
     - *setup-template
 
     - git clean -fdx
-    - ./tor-droid-make.sh release
+    - ./tor-droid-make.sh release -f

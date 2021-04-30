@@ -168,7 +168,7 @@ EOF
 
 release()
 {
-    if [ -n "$(git status --porcelain)" ]; then
+    if [ -z "$force" ] && [ -n "$(git status --porcelain)" ]; then
 	printf '\nERROR: the git repo must be clean before building:\n\n'
 	git status
 	exit 1
@@ -212,6 +212,7 @@ show_options()
     echo "          -a      ABI(s) to build (default: \"$default_abis\")"
     echo "          -b      Build type, it can be release or debug (default: debug)"
     echo "          -c      Clean the repository (Used together with the fetch command)"
+    echo "          -f      Force clean all (Used together with the release command)"
     echo ""
     exit
 }
@@ -226,11 +227,12 @@ if [ -z $option ]; then
 fi
 shift
 
-while getopts 'a:b:c' opts; do
+while getopts 'a:b:cf' opts; do
     case $opts in
         a) abis=${OPTARG:-$abis} ;;
         b) build_type=${OPTARG:-$build_type} ;;
         c) clean=clean ;;
+        f) force=force ;;
     esac
 done
 
