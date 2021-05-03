@@ -1,7 +1,7 @@
 
-#stages:
-#  - test
-#  - release
+stages:
+  - test
+  - release
 
 cache:
   paths:
@@ -57,9 +57,6 @@ variables:
       patch
       pkg-config
 
-- dpkg -S ssl.h || true
-- dpkg -l || true
-
 - export GRADLE_USER_HOME=$PWD/.gradle
 - ndk="android-ndk-r21e"  # Long Term Support release
 - export ANDROID_NDK_HOME=/opt/$ndk
@@ -77,7 +74,7 @@ variables:
 
 
 .test-template: &test-template
-#  stage: test
+  stage: test
   image: registry.gitlab.com/fdroid/ci-images-client:latest
   <<: *job-template
   script:
@@ -107,20 +104,15 @@ variables:
     - exit $EXITVALUE
 
 
-#no-accel 22 default x86_64:
-#  <<: *test-template
+no-accel 22 default x86_64:
+  <<: *test-template
 
-#no-accel 24 default armeabi-v7a:
-#  <<: *test-template
-
-no-accel 24 default arm64-v8a:
+no-accel 24 default armeabi-v7a:
   <<: *test-template
 
 
 release:
-#  stage: release
-  tags:
-    - kvm
+  stage: release
   image: debian:buster
   <<: *job-template
   variables:
