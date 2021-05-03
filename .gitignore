@@ -28,3 +28,6 @@ build/
 local.properties
 external/patches/*
 obj
+
+# Vagrant
+/.vagrant/

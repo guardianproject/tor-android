@@ -26,3 +26,6 @@ configure it properly. Learn more at https://torproject.org/
 
 Please see: https://raw.githubusercontent.com/guardianproject/tor-android/master/BUILD
 
+This can be built reproducibly using the included Vagrant VM setup.  That will
+run with either _libvirt_ or VirtualBox.  The provisioning is based on the
+"release" job in _.gitlab-ci.yml_.

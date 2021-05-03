@@ -120,7 +120,8 @@ release:
   script:
     - apt-get --quiet update --yes
     - apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1 default-jdk-headless
-    - wget --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/sdk-tools-linux-${ANDROID_SDK_TOOLS}.zip
+    - wget --quiet --continue --output-document=android-sdk.zip
+          https://dl.google.com/android/repository/sdk-tools-linux-${ANDROID_SDK_TOOLS}.zip
     - echo "92ffee5a1d98d856634e8b71132e8a95d96c83a63fde1099be3d86df3106def9  android-sdk.zip"
           | sha256sum -c
     - export ANDROID_HOME=/opt/android-sdk-linux
