@@ -73,13 +73,16 @@ task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
     baseName = 'tor-android-' + getVersionName()
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
 }
 
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     classpath += configurations.compile
-    options.addStringOption('notimestamp')
+    options.noTimestamp = true
+    options.addStringOption('charset', 'UTF-8') // to match Maven's case
     android.libraryVariants.all { variant ->
         if (variant.name == 'release') {
             owner.classpath += variant.javaCompile.classpath
@@ -93,6 +96,8 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
     baseName = 'tor-android-' + getVersionName()
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
 }
 
 
