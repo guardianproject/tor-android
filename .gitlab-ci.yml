@@ -61,7 +61,7 @@ variables:
 - ndk="android-ndk-r21e"  # Long Term Support release
 - export ANDROID_NDK_HOME=/opt/$ndk
 - ndk_zip="${ndk}-linux-x86_64.zip"
-- $wget http://dl.google.com/android/repository/$ndk_zip
+- $wget https://dl.google.com/android/repository/$ndk_zip
 - echo "ad7ce5467e18d40050dc51b8e7affc3e635c85bd8c59be62de32352328ed467e  $ndk_zip"
       | sha256sum -c
 - unzip -qq -d /opt $ndk_zip
