@@ -330,7 +330,6 @@ public class TorService extends Service {
 
                             // can be moved to ControlPort messages
                             "--LogMessageDomains", "1",
-                            "--Log", "debug file " + new File(getCacheDir(), TAG + "-debug.log").getAbsolutePath(),
                             "--TruncateLogFile", "1"
                     ));
                     String[] verifyLines = lines.toArray(new String[0]);
