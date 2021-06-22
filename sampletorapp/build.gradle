@@ -33,12 +33,13 @@ android {
 }
 
 dependencies {
+    implementation 'info.guardianproject:tor-android:0.4.5.9'
+    implementation 'info.guardianproject:jtorctl:0.4.5.7'
+
     implementation 'com.android.support:appcompat-v7:28.0.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:core:1.2.0'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
-
-    implementation project(':tor-android-binary')
 }
