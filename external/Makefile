@@ -145,14 +145,14 @@ openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
 			no-shared no-unit-test \
 			android-$(NDK_ABI) \
 			-D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) \
-			--prefix=$(EXTERNAL_ROOT) \
-			--openssldir=$(EXTERNAL_ROOT)
+			--prefix=/ \
+			--openssldir=/
 
 openssl-build-stamp: openssl/Makefile
 ifeq ($(V), 0)
-	PATH=$(PATH) make -j`nproc` --silent -C openssl install_dev ECHO=':'
+	PATH=$(PATH) make -j`nproc` --silent -C openssl install_dev DESTDIR=$(EXTERNAL_ROOT) ECHO=':'
 else
-	PATH=$(PATH) make -j`nproc` -C openssl install_dev
+	PATH=$(PATH) make -j`nproc` -C openssl install_dev DESTDIR=$(EXTERNAL_ROOT)
 endif
 	touch $@
 
@@ -176,16 +176,16 @@ libevent/Makefile: libevent/Makefile.am libevent/configure.ac
 				--disable-libevent-regress \
 				--disable-samples \
 				--disable-shared \
-			        --prefix=$(EXTERNAL_ROOT)
+			        --prefix=/
 
 libevent-build-stamp: openssl-build-stamp libevent/Makefile
-	$(MAKE) -C libevent install
+	$(MAKE) -C libevent install DESTDIR=$(EXTERNAL_ROOT)
 	touch $@
 
 libevent-clean:
 	-rm -f lib/libevent.a
 	-rm -f libevent-build-stamp
-	-$(MAKE) -C libevent uninstall
+	-$(MAKE) -C libevent uninstall DESTDIR=$(EXTERNAL_ROOT)
 	-$(MAKE) -C libevent clean
 	-cd libevent && \
 		git clean -fdx > /dev/null
@@ -207,14 +207,14 @@ xz/Makefile: xz/configure.ac xz/Makefile.am
 			--disable-shared \
 			--disable-xz \
 			--disable-xzdec \
-			--prefix=$(EXTERNAL_ROOT)
+			--prefix=/
 
 lzma-build-stamp: xz/Makefile
-	$(MAKE) -C xz install
+	$(MAKE) -C xz install DESTDIR=$(EXTERNAL_ROOT)
 	touch $@
 
 lzma-clean:
-	-$(MAKE) -C xz uninstall
+	-$(MAKE) -C xz uninstall DESTDIR=$(EXTERNAL_ROOT)
 	-$(MAKE) -C xz clean
 	-rm -rf include/lzma
 	-rm -f include/lzma.h
