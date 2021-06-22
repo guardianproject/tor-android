@@ -96,14 +96,12 @@ export SOURCE_DATE_EPOCH := 1234567890
 
 REPRODUCIBLE_CFLAGS := \
   -fbuild-session-timestamp=$(SOURCE_DATE_EPOCH) \
-  -fdebug-prefix-map=OLD=NEW
+  -fdebug-compilation-dir . \
+  -no-canonical-prefixes \
 
-# for gcc but not clang:
-#  -Wl,--no-insert-timestamp
-#  -fmacro-prefix-map=OLD=NEW
 
 ALL_CFLAGS := $(REPRODUCIBLE_CFLAGS) $(CFLAGS) -Os
-export CFLAGS := $(ALL_CFLAGS) -I$(EXTERNAL_ROOT)/include
+export CFLAGS := $(ALL_CFLAGS)
 
 
 OUTPUT_FILE := $(EXTERNAL_ROOT)/tor/src/app/tor
