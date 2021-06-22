@@ -73,6 +73,8 @@ task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
     baseName = 'tor-android-' + getVersionName()
+    dirMode = 0755
+    fileMode = 0644
     preserveFileTimestamps = false
     reproducibleFileOrder = true
 }
