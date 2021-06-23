@@ -8,9 +8,6 @@ cache:
     - .gradle/wrapper
     - .gradle/caches
 
-variables:
-  wget: "wget --quiet --tries=0"
-
 
 .job-template: &job-template
   artifacts:
@@ -58,13 +55,11 @@ variables:
       pkg-config
 
 - export GRADLE_USER_HOME=$PWD/.gradle
-- ndk="android-ndk-r21e"  # Long Term Support release
-- export ANDROID_NDK_HOME=/opt/$ndk
-- ndk_zip="${ndk}-linux-x86_64.zip"
-- $wget https://dl.google.com/android/repository/$ndk_zip
-- echo "ad7ce5467e18d40050dc51b8e7affc3e635c85bd8c59be62de32352328ed467e  $ndk_zip"
-      | sha256sum -c
-- unzip -qq -d /opt $ndk_zip
+
+- git clone --depth=1 https://gitlab.com/fdroid/sdkmanager.git
+- git -C sdkmanager describe --always
+- ndkVersion=$(sed -En 's,NDK_REQUIRED_REVISION *:?= *([0-9.]+).*,\1,p' external/Makefile)
+- ./sdkmanager/sdkmanager.py "ndk;$ndkVersion"
 
 - export AVD_SDK=`echo $CI_JOB_NAME | awk '{print $2}'`
 - export AVD_TAG=`echo $CI_JOB_NAME | awk '{print $3}'`
@@ -115,22 +110,20 @@ release:
   stage: release
   image: debian:buster
   <<: *job-template
-  variables:
-    ANDROID_SDK_TOOLS:   "4333796"
   script:
     - apt-get --quiet update --yes
-    - apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1 default-jdk-headless
-    - wget --quiet --continue --output-document=android-sdk.zip
-          https://dl.google.com/android/repository/sdk-tools-linux-${ANDROID_SDK_TOOLS}.zip
-    - echo "92ffee5a1d98d856634e8b71132e8a95d96c83a63fde1099be3d86df3106def9  android-sdk.zip"
-          | sha256sum -c
-    - export ANDROID_HOME=/opt/android-sdk-linux
-    - unzip -qq -d $ANDROID_HOME android-sdk.zip
-    - chmod +x ./gradlew
+    - apt-get --quiet install --yes
+          default-jdk-headless
+          lib32stdc++6
+          lib32z1
+          python3-requests
+          tar
+
+    - export ANDROID_HOME=/opt/android-sdk
     - mkdir -p $ANDROID_HOME/licenses
     - printf "\n8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb78af6dfcb131a6481e\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
-
     - *setup-template
+    - ./sdkmanager/sdkmanager.py "tools;26.1.1"
 
     - git clean -fdx
     - ./tor-droid-make.sh release -f
