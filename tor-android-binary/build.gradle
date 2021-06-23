@@ -69,14 +69,17 @@ android.libraryVariants.all { variant ->
     task.baseName = 'tor-android'
 }
 
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-    baseName = 'tor-android-' + getVersionName()
+tasks.withType(AbstractArchiveTask) {
     dirMode = 0755
     fileMode = 0644
     preserveFileTimestamps = false
     reproducibleFileOrder = true
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+    baseName = 'tor-android-' + getVersionName()
 }
 
 task javadoc(type: Javadoc) {
@@ -98,8 +101,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
     baseName = 'tor-android-' + getVersionName()
-    preserveFileTimestamps = false
-    reproducibleFileOrder = true
 }
 
 
