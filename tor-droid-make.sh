@@ -198,6 +198,12 @@ release()
     mv *-release.aar $aar
     buildinfo $artifact $version $aar
     pom $artifact $version
+    if gpg --list-secret-keys | grep -Eo '[0-9A-F]{40}'; then
+	for f in ${artifact}-*.*; do
+	    gpg --armor --detach-sign $f
+	done
+    fi
+    jar -cvf bundle.jar ${artifact}-*.*
 }
 
 show_options()
