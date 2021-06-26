@@ -268,7 +268,6 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--enable-android \
 				--enable-lzma \
 				--enable-pic \
-				--enable-restart-debugging \
 				--enable-static-libevent --with-libevent-dir=$(EXTERNAL_ROOT) \
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
 				--enable-zstd \
