@@ -263,7 +263,6 @@ public class TorService extends Service {
                 torControlConnection.launchThread(true);
                 torControlConnection.authenticate(new byte[0]);
                 torControlConnection.addRawEventListener(startedEventListener);
-                torControlConnection.setEvents(Arrays.asList(TorControlCommands.EVENT_CIRCUIT_STATUS));
 
                 socksPort = getPortFromGetInfo("net/listeners/socks");
                 httpTunnelPort = getPortFromGetInfo("net/listeners/httptunnel");
