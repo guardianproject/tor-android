@@ -17,17 +17,36 @@ fetch_submodules()
     git submodule update --init --recursive
 }
 
+# predictable build paths make reproducible builds easier, so this
+# tries to find things at likely standard paths
 check_android_dependencies()
 {
-    if [ -z $ANDROID_HOME ]; then
+    if [ -d /opt/android-sdk ]; then
+	export ANDROID_HOME=/opt/android-sdk
+    elif [ ! -e "$ANDROID_HOME" ]; then
         echo "ANDROID_HOME must be set!"
-        exit
+        exit 1
     fi
+    export ANDROID_SDK_ROOT="$ANDROID_HOME"
 
-    if [ -z $ANDROID_NDK_HOME ]; then
-        echo "ANDROID_NDK_HOME not set and 'ndk-build' not in PATH"
-        exit
+    # openssl wants a var called ANDROID_NDK_HOME
+    if [ ! -e "$ANDROID_NDK_HOME" ]; then
+	ndkVersion=$(sed -En 's,NDK_REQUIRED_REVISION *:?= *([0-9.]+).*,\1,p' external/Makefile)
+	echo $ANDROID_HOME/ndks/$ndkVersion/source.properties
+	if [ -n "$ANDROID_NDK_ROOT" ]; then
+	    export ANDROID_NDK_HOME="$ANDROID_NDK_ROOT"
+	elif [ -e "$ANDROID_HOME/ndks/$ndkVersion/source.properties" ]; then
+	    export ANDROID_NDK_HOME="$ANDROID_HOME/ndks/$ndkVersion"
+	elif [ -e "$ANDROID_HOME/ndk-bundle/source.properties" ]; then
+	    export ANDROID_NDK_HOME="$ANDROID_HOME/ndk-bundle"
+	else
+            echo "ANDROID_NDK_HOME must be set!"
+            exit 1
+	fi
+	export ANDROID_NDK_ROOT=$ANDROID_NDK_HOME
     fi
+    echo "Using Android SDK: $ANDROID_HOME"
+    echo "Using Android NDK: $ANDROID_NDK_HOME"
 }
 
 build_external_dependencies()
@@ -174,15 +193,7 @@ release()
 	exit 1
     fi
 
-    if [ ! -e "$ANDROID_HOME" ]; then
-        echo "ANDROID_HOME must be set!"
-        exit 1
-    fi
-
-    if [ ! -e "$ANDROID_NDK_HOME" ]; then
-        echo "ANDROID_NDK_HOME must be set!"
-        exit 1
-    fi
+    check_android_dependencies
 
     # tame the build log to fit into GitLab CI's 4MB limit
     export V=0

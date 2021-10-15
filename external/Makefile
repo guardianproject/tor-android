@@ -25,7 +25,6 @@ ifeq ($(APP_ABI), )
 endif
 
 # matching NDK revisions are required for reproducible builds
-ANDROID_NDK_HOME ?= /opt/android-ndk
 NDK_REVISION := $(shell sed -n 's,^Pkg.Revision *= *\([^ ]*\),\1,p' $(ANDROID_NDK_HOME)/source.properties)
 NDK_REQUIRED_REVISION := 21.4.7075529
 MIN_NDK_VERSION := 19
