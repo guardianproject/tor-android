@@ -172,6 +172,8 @@ openssl-clean:
 libevent/Makefile: libevent/Makefile.am libevent/configure.ac
 	cd libevent && ./autogen.sh
 	cd libevent && ./configure \
+				LDFLAGS="-L../lib" \
+				CFLAGS="-I../include" \
 				--host=$(ALTHOST) \
 				--disable-libevent-regress \
 				--disable-samples \
