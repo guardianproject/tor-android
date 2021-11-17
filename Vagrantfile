@@ -11,8 +11,7 @@ configfile = YAML.load_file(File.join(srvpath, "/.gitlab-ci.yml"))
 remote_url = 'https://github.com/guardianproject/tor-android.git'
 
 # set up essential environment variables
-env = configfile['variables']
-env = env.merge(configfile['release']['variables'])
+env = Hash.new
 env['CI_PROJECT_DIR'] = '/builds/guardianproject/tor-android'
 env_file = Tempfile.new('env')
 File.chmod(0644, env_file.path)
