@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "org.torproject.android.sample"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -33,10 +33,10 @@ android {
 }
 
 dependencies {
-    implementation 'info.guardianproject:tor-android:0.4.5.9'
+    implementation 'info.guardianproject:tor-android:0.4.6.7'
     implementation 'info.guardianproject:jtorctl:0.4.5.7'
 
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:core:1.2.0'
