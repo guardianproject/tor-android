@@ -1,23 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
-
+    compileSdkVersion 31
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     defaultConfig {
         applicationId "org.torproject.android.sample"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        /*
-          The Android Testing Support Library collects analytics to continuously improve the testing
-          experience. More specifically, it uploads a hash of the package name of the application
-          under test for each invocation. If you do not wish to upload this data, you can opt-out by
-          passing the following argument to the test runner: disableAnalytics "true".
-         */
-        testInstrumentationRunnerArguments disableAnalytics: 'true'
     }
 
     buildTypes {
@@ -27,19 +21,10 @@ android {
         }
     }
 
-    packagingOptions {
-        exclude 'META-INF/androidx.localbroadcastmanager_localbroadcastmanager.version'
-    }
 }
 
 dependencies {
-    implementation 'info.guardianproject:tor-android:0.4.5.9'
+    implementation 'info.guardianproject:tor-android:0.4.6.7'
     implementation 'info.guardianproject:jtorctl:0.4.5.7'
-
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:core:1.2.0'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
 }

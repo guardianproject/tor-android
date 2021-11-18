@@ -36,10 +36,7 @@ class GenericWebViewClient extends WebViewClient {
 
     private int requestCounter;
 
-    private MainActivity mainActivity;
-
-    public GenericWebViewClient(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
+    public GenericWebViewClient() {
         requestCounter = 0;
     }
 
@@ -64,7 +61,7 @@ class GenericWebViewClient extends WebViewClient {
         String urlString = request.getUrl().toString().split("#")[0];
 
         try {
-            HttpURLConnection connection = null;
+            HttpURLConnection connection;
             boolean proxied = true;
             if (proxied) {
                 Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", 9050));

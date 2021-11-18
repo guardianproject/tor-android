@@ -29,40 +29,28 @@ import org.torproject.jni.TorService;
 
 public class MainActivity extends Activity {
 
-    private WebView webView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
-        webView = findViewById(R.id.webview);
-        final TextView statusTextView = findViewById(R.id.status);
+        WebView webView = findViewById(R.id.webview);
+        TextView statusTextView = findViewById(R.id.status);
+
+        GenericWebViewClient webViewClient = new GenericWebViewClient();
+        webViewClient.setRequestCounterListener(requestCount ->
+                runOnUiThread(() -> statusTextView.setText("Request Count: " + requestCount)));
+        webView.setWebViewClient(webViewClient);
 
         registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Toast.makeText(context, intent.getStringExtra(TorService.EXTRA_STATUS), Toast.LENGTH_SHORT).show();
+                String status = intent.getStringExtra(TorService.EXTRA_STATUS);
+                Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
+                webView.loadUrl("https://check.torproject.org/");
+
             }
         }, new IntentFilter(TorService.ACTION_STATUS));
         startService(new Intent(this, TorService.class));
-
-        GenericWebViewClient webViewClient = new GenericWebViewClient(this);
-        webViewClient.setRequestCounterListener(new GenericWebViewClient.RequestCounterListener() {
-            @Override
-            public void countChanged(final int requestCount) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        statusTextView.setText("request count: " + requestCount + " - ");
-                    }
-                });
-            }
-        });
-
-        webView.setWebViewClient(webViewClient);
-        webView.loadUrl("https://check.torproject.org/");
     }
-
 }
