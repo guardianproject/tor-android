@@ -174,6 +174,7 @@ public class TorServiceTest {
         FileUtils.write(torrc, dnsPort + " " + testValue + "\n");
 
         final CountDownLatch startedLatch = new CountDownLatch(1);
+        final CountDownLatch stoppedLatch = new CountDownLatch(1);
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -185,6 +186,8 @@ public class TorServiceTest {
                 Log.i(TAG, "receiver.onReceive: " + status + " " + intent);
                 if (TorService.STATUS_ON.equals(status)) {
                     startedLatch.countDown();
+                } else if (TorService.STATUS_OFF.equals(status)) {
+                    stoppedLatch.countDown();
                 }
             }
         };
@@ -203,12 +206,14 @@ public class TorServiceTest {
         assertEquals(testValue, getConf(torService.getTorControlConnection(), dnsPort));
 
         serviceRule.unbindService();
+        stoppedLatch.await();
     }
 
     @Test
     public void testDownloadingLargeFile() throws TimeoutException, InterruptedException, IOException {
         Assume.assumeTrue("Only works on Android 7.1.2 or higher", Build.VERSION.SDK_INT >= 24);
         final CountDownLatch startedLatch = new CountDownLatch(1);
+        final CountDownLatch stoppedLatch = new CountDownLatch(1);
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -220,6 +225,8 @@ public class TorServiceTest {
                 Log.i(TAG, "receiver.onReceive: " + status + " " + intent);
                 if (TorService.STATUS_ON.equals(status)) {
                     startedLatch.countDown();
+                } else if (TorService.STATUS_OFF.equals(status)) {
+                    stoppedLatch.countDown();
                 }
             }
         };
@@ -252,6 +259,7 @@ public class TorServiceTest {
         IOUtils.copy(connection.getInputStream(), new FileWriter(new File("/dev/null")));
 
         serviceRule.unbindService();
+        stoppedLatch.await();
     }
 
     private static boolean canConnectToSocket(String host, int port) {
