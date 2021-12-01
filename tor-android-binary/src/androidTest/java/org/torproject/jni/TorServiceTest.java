@@ -155,7 +155,7 @@ public class TorServiceTest {
         assertTrue("NetCipher.getHttpURLConnection should use Tor",
                 NetCipher.isNetCipherGetHttpURLConnectionUsingTor());
 
-        URLConnection c = NetCipher.getHttpsURLConnection("https://www.nytimes3xbfgragh.onion/");
+        URLConnection c = NetCipher.getHttpsURLConnection("https://www.nytimesn7cgmftshazwhfgzm37qxb44r64ytbb2dj3x62d2lljsciiyd.onion/");
         Log.i(TAG, "Content-Length: " + c.getContentLength());
         Log.i(TAG, "CONTENTS: " + new String(IOUtils.readFully(c.getInputStream(), 100)));
 
@@ -242,7 +242,7 @@ public class TorServiceTest {
         // ~350MB
         //URL url = new URL("http://dl.google.com/android/ndk/android-ndk-r9b-linux-x86_64.tar.bz2");
         // ~3MB
-        URL url = new URL("http://dl.google.com/android/repository/platform-tools_r24-linux.zip");
+        URL url = new URL("https://dl.google.com/android/repository/platform-tools_r24-linux.zip");
         // 55KB
         //URL url = new URL("https://jcenter.bintray.com/com/android/tools/build/gradle/2.2.3/gradle-2.2.3.jar");
         HttpURLConnection connection = NetCipher.getHttpURLConnection(url);
