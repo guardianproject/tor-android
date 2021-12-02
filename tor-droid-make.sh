@@ -32,11 +32,11 @@ check_android_dependencies()
     # openssl wants a var called ANDROID_NDK_HOME
     if [ ! -e "$ANDROID_NDK_HOME" ]; then
 	ndkVersion=$(sed -En 's,NDK_REQUIRED_REVISION *:?= *([0-9.]+).*,\1,p' external/Makefile)
-	echo $ANDROID_HOME/ndks/$ndkVersion/source.properties
+	echo $ANDROID_HOME/ndk/$ndkVersion/source.properties
 	if [ -n "$ANDROID_NDK_ROOT" ]; then
 	    export ANDROID_NDK_HOME="$ANDROID_NDK_ROOT"
-	elif [ -e "$ANDROID_HOME/ndks/$ndkVersion/source.properties" ]; then
-	    export ANDROID_NDK_HOME="$ANDROID_HOME/ndks/$ndkVersion"
+	elif [ -e "$ANDROID_HOME/ndk/$ndkVersion/source.properties" ]; then
+	    export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/$ndkVersion"
 	elif [ -e "$ANDROID_HOME/ndk-bundle/source.properties" ]; then
 	    export ANDROID_NDK_HOME="$ANDROID_HOME/ndk-bundle"
 	else
