@@ -56,8 +56,8 @@ cache:
 
 - export GRADLE_USER_HOME=$PWD/.gradle
 
-- git clone --depth=1 https://gitlab.com/fdroid/sdkmanager.git
-- git -C sdkmanager describe --always
+- git clone --depth=1 --branch=0.4 https://gitlab.com/fdroid/sdkmanager.git
+- git -C sdkmanager checkout -B master b5a5640fc4cdc151696b2d27a5886119ebd3a8b7
 - ndkVersion=$(sed -En 's,NDK_REQUIRED_REVISION *:?= *([0-9.]+).*,\1,p' external/Makefile)
 - ./sdkmanager/sdkmanager.py "ndk;$ndkVersion"
 
