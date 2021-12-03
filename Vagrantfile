@@ -42,6 +42,9 @@ Vagrant.configure("2") do |config|
     echo 'deb https://deb.debian.org/debian/ buster-updates main' >> /etc/apt/sources.list
     echo 'deb https://deb.debian.org/debian-security/ buster/updates main' >> /etc/apt/sources.list
 
+    apt-get --allow-releaseinfo-change-suite update  # buster went from stable to oldstable
+    apt-get -qy remove grub-pc  # updating grub requires human interaction
+
     mv ~vagrant/env.sh #{sourcepath}
     source #{sourcepath}
     mkdir -p $(dirname $CI_PROJECT_DIR)
