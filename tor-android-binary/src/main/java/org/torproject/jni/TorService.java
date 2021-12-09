@@ -68,6 +68,12 @@ public class TorService extends Service {
     private static final String ACTION_STOP = "org.torproject.android.intent.action.STOP";
 
     /**
+     * A integer intent extra containing the PID of the owning process,
+     * if this service is run in a dedicated process.
+     */
+    public static final String EXTRA_PID = "org.torproject.android.intent.extra.PID";
+
+    /**
      * {@link Intent} sent by this app with {@code ON/OFF/STARTING/STOPPING} status
      * included as an {@link #EXTRA_STATUS} {@code String}.  Your app should
      * always receive {@code ACTION_STATUS Intent}s since any other app could
@@ -210,6 +216,8 @@ public class TorService extends Service {
     @SuppressWarnings({"FieldMayBeFinal"," unused"})
     private int torControlFd = -1;
 
+    private int owningProcessPid = -1;
+
     private volatile TorControlConnection torControlConnection;
 
     /**
@@ -242,6 +250,7 @@ public class TorService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         // TODO send broadcastStatus() here?
+        owningProcessPid = intent.getIntExtra(EXTRA_PID, -1);
         return binder;
     }
 
@@ -351,6 +360,10 @@ public class TorService extends Service {
                         "--LogMessageDomains", "1",
                         "--TruncateLogFile", "1"
                 ));
+                if (owningProcessPid != -1) {
+                    lines.add("--__OwningControllerProcess");
+                    lines.add(Integer.toString(owningProcessPid));
+                }
                 String[] verifyLines = lines.toArray(new String[0]);
                 if (!mainConfigurationSetCommandLine(verifyLines)) {
                     throw new IllegalArgumentException("Setting command line failed: " + Arrays.toString(verifyLines));
