@@ -47,9 +47,10 @@ dependencies {
     api 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
     api 'info.guardianproject:jtorctl:0.4.2.5'
 
-    androidTestImplementation 'androidx.test:core:1.2.0'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test:core:1.4.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test:rules:1.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'info.guardianproject.netcipher:netcipher:2.1.0'
     androidTestImplementation 'commons-io:commons-io:2.6'
     androidTestImplementation 'commons-net:commons-net:3.6'

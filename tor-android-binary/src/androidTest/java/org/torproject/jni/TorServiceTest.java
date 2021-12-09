@@ -155,7 +155,7 @@ public class TorServiceTest {
         assertTrue("NetCipher.getHttpURLConnection should use Tor",
                 NetCipher.isNetCipherGetHttpURLConnectionUsingTor());
 
-        URLConnection c = NetCipher.getHttpsURLConnection("https://www.nytimes3xbfgragh.onion/");
+        URLConnection c = NetCipher.getHttpsURLConnection("https://www.nytimesn7cgmftshazwhfgzm37qxb44r64ytbb2dj3x62d2lljsciiyd.onion/");
         Log.i(TAG, "Content-Length: " + c.getContentLength());
         Log.i(TAG, "CONTENTS: " + new String(IOUtils.readFully(c.getInputStream(), 100)));
 
@@ -174,6 +174,7 @@ public class TorServiceTest {
         FileUtils.write(torrc, dnsPort + " " + testValue + "\n");
 
         final CountDownLatch startedLatch = new CountDownLatch(1);
+        final CountDownLatch stoppedLatch = new CountDownLatch(1);
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -185,6 +186,8 @@ public class TorServiceTest {
                 Log.i(TAG, "receiver.onReceive: " + status + " " + intent);
                 if (TorService.STATUS_ON.equals(status)) {
                     startedLatch.countDown();
+                } else if (TorService.STATUS_OFF.equals(status)) {
+                    stoppedLatch.countDown();
                 }
             }
         };
@@ -203,12 +206,14 @@ public class TorServiceTest {
         assertEquals(testValue, getConf(torService.getTorControlConnection(), dnsPort));
 
         serviceRule.unbindService();
+        stoppedLatch.await();
     }
 
     @Test
     public void testDownloadingLargeFile() throws TimeoutException, InterruptedException, IOException {
         Assume.assumeTrue("Only works on Android 7.1.2 or higher", Build.VERSION.SDK_INT >= 24);
         final CountDownLatch startedLatch = new CountDownLatch(1);
+        final CountDownLatch stoppedLatch = new CountDownLatch(1);
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -220,6 +225,8 @@ public class TorServiceTest {
                 Log.i(TAG, "receiver.onReceive: " + status + " " + intent);
                 if (TorService.STATUS_ON.equals(status)) {
                     startedLatch.countDown();
+                } else if (TorService.STATUS_OFF.equals(status)) {
+                    stoppedLatch.countDown();
                 }
             }
         };
@@ -242,7 +249,7 @@ public class TorServiceTest {
         // ~350MB
         //URL url = new URL("http://dl.google.com/android/ndk/android-ndk-r9b-linux-x86_64.tar.bz2");
         // ~3MB
-        URL url = new URL("http://dl.google.com/android/repository/platform-tools_r24-linux.zip");
+        URL url = new URL("https://dl.google.com/android/repository/platform-tools_r24-linux.zip");
         // 55KB
         //URL url = new URL("https://jcenter.bintray.com/com/android/tools/build/gradle/2.2.3/gradle-2.2.3.jar");
         HttpURLConnection connection = NetCipher.getHttpURLConnection(url);
@@ -252,6 +259,7 @@ public class TorServiceTest {
         IOUtils.copy(connection.getInputStream(), new FileWriter(new File("/dev/null")));
 
         serviceRule.unbindService();
+        stoppedLatch.await();
     }
 
     private static boolean canConnectToSocket(String host, int port) {
