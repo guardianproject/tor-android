@@ -11,7 +11,7 @@ def getVersionName = { ->
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
     buildToolsVersion '28.0.3'
 
     defaultConfig {
