@@ -115,6 +115,10 @@ public class TorService extends Service {
         return new File(getAppTorServiceDir(context), "torrc-defaults");
     }
 
+    public static FileDescriptor getControlSocketFileDescriptor(Context context) {
+        return prepareFileDescriptor(getControlSocket(context).getAbsolutePath());
+    }
+
     private static File getControlSocket(Context context) {
         if (controlSocket == null) {
             controlSocket = new File(getAppTorServiceDataDir(context), CONTROL_SOCKET_NAME);
@@ -264,7 +268,7 @@ public class TorService extends Service {
                     throw new IllegalStateException("cannot read " + controlSocket);
                 }
 
-                FileDescriptor controlSocketFd = prepareFileDescriptor(getControlSocket(TorService.this).getAbsolutePath());
+                FileDescriptor controlSocketFd = getControlSocketFileDescriptor(TorService.this);
                 InputStream is = new FileInputStream(controlSocketFd);
                 OutputStream os = new FileOutputStream(controlSocketFd);
                 torControlConnection = new TorControlConnection(is, os);
