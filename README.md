@@ -7,7 +7,7 @@ daemon.  Binaries are available on Maven Central:
 
 ```gradle
 dependencies {
-    implementation 'info.guardianproject:tor-android:0.4.6.7'
+    implementation 'info.guardianproject:tor-android:0.4.6.8'
     implementation 'info.guardianproject:jtorctl:0.4.5.7'
 }
 ```
