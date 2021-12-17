@@ -42,9 +42,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
  */
 public class TorService extends Service {
 
-    // TODO orbotserver and/or tor-android-server are the borders to use, strip out Prefs and VPN
-    // grep -rF org.torproject.android.service app/src/main/java/ ~/code/guardianproject/orbot/app/src/main/java
-
     public static final String TAG = "TorService";
 
     public static final String VERSION_NAME = org.torproject.jni.BuildConfig.VERSION_NAME;
@@ -200,6 +197,7 @@ public class TorService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        // TODO send broadcastStatus() here?
         return binder;
     }
 
@@ -327,62 +325,60 @@ public class TorService extends Service {
                     }
                     runLock.lock();
                     Log.i(TAG, "Acquired lock");
-                    try {
-                        createTorConfiguration();
-                        ArrayList<String> lines = new ArrayList<>(Arrays.asList("tor", "--verify-config", // must always be here
-                                "--RunAsDaemon", "0",
-                                "-f", getTorrc(context).getAbsolutePath(),
-                                "--defaults-torrc", getDefaultsTorrc(context).getAbsolutePath(),
-                                "--ignore-missing-torrc",
-                                "--SyslogIdentityTag", TAG,
-                                "--CacheDirectory", new File(getCacheDir(), TAG).getAbsolutePath(),
-                                "--DataDirectory", getAppTorServiceDataDir(context).getAbsolutePath(),
-                                "--ControlSocket", getControlSocket(context).getAbsolutePath(),
-                                "--CookieAuthentication", "0",
-                                "--SOCKSPort", socksPort,
-                                "--HTTPTunnelPort", httpTunnelPort,
+                    createTorConfiguration();
+                    ArrayList<String> lines = new ArrayList<>(Arrays.asList("tor", "--verify-config", // must always be here
+                            "--RunAsDaemon", "0",
+                            "-f", getTorrc(context).getAbsolutePath(),
+                            "--defaults-torrc", getDefaultsTorrc(context).getAbsolutePath(),
+                            "--ignore-missing-torrc",
+                            "--SyslogIdentityTag", TAG,
+                            "--CacheDirectory", new File(getCacheDir(), TAG).getAbsolutePath(),
+                            "--DataDirectory", getAppTorServiceDataDir(context).getAbsolutePath(),
+                            "--ControlSocket", getControlSocket(context).getAbsolutePath(),
+                            "--CookieAuthentication", "0",
+                            "--SOCKSPort", socksPort,
+                            "--HTTPTunnelPort", httpTunnelPort,
 
-                                // can be moved to ControlPort messages
-                                "--LogMessageDomains", "1",
-                                "--TruncateLogFile", "1"
-                        ));
-                        String[] verifyLines = lines.toArray(new String[0]);
-                        if (!mainConfigurationSetCommandLine(verifyLines)) {
-                            throw new IllegalArgumentException("Setting command line failed: " + Arrays.toString(verifyLines));
-                        }
-                        int result = runMain(); // run verify
-                        if (result != 0) {
-                            throw new IllegalArgumentException("Bad command flags: " + Arrays.toString(verifyLines));
-                        }
+                            // can be moved to ControlPort messages
+                            "--LogMessageDomains", "1",
+                            "--TruncateLogFile", "1"
+                    ));
+                    String[] verifyLines = lines.toArray(new String[0]);
+                    if (!mainConfigurationSetCommandLine(verifyLines)) {
+                        throw new IllegalArgumentException("Setting command line failed: " + Arrays.toString(verifyLines));
+                    }
+                    int result = runMain(); // run verify
+                    if (result != 0) {
+                        throw new IllegalArgumentException("Bad command flags: " + Arrays.toString(verifyLines));
+                    }
 
-                        controlPortThreadStarted = new CountDownLatch(1);
-                        controlPortThread.start();
-                        controlPortThreadStarted.await();
+                    controlPortThreadStarted = new CountDownLatch(1);
+                    controlPortThread.start();
+                    controlPortThreadStarted.await();
 
-                        String[] runLines = new String[lines.size() - 1];
-                        runLines[0] = "tor";
-                        for (int i = 2; i < lines.size(); i++) {
-                            runLines[i - 1] = lines.get(i);
-                        }
-                        if (!mainConfigurationSetCommandLine(runLines)) {
-                            throw new IllegalArgumentException("Setting command line failed: " + Arrays.toString(runLines));
-                        }
-                        if (!mainConfigurationSetupControlSocket()) {
-                            throw new IllegalStateException("Setting up ControlPort failed!");
-                        }
-                        if (runMain() != 0) {
-                            throw new IllegalStateException("Tor could not start!");
-                        }
-                    } finally {
-                        mainConfigurationFree();
-                        Log.i(TAG, "Releasing lock");
-                        runLock.unlock();
+                    String[] runLines = new String[lines.size() - 1];
+                    runLines[0] = "tor";
+                    for (int i = 2; i < lines.size(); i++) {
+                        runLines[i - 1] = lines.get(i);
+                    }
+                    if (!mainConfigurationSetCommandLine(runLines)) {
+                        throw new IllegalArgumentException("Setting command line failed: " + Arrays.toString(runLines));
+                    }
+                    if (!mainConfigurationSetupControlSocket()) {
+                        throw new IllegalStateException("Setting up ControlPort failed!");
+                    }
+                    if (runMain() != 0) {
+                        throw new IllegalStateException("Tor could not start!");
                     }
 
                 } catch (IllegalStateException | IllegalArgumentException | InterruptedException e) {
                     e.printStackTrace();
                     broadcastError(context, e);
+                } finally {
                     broadcastStatus(context, STATUS_STOPPING);
+                    mainConfigurationFree();
+                    Log.i(TAG, "Releasing lock");
+                    runLock.unlock();
                     TorService.this.stopSelf();
                 }
             }
