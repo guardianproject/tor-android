@@ -209,12 +209,22 @@ release()
     mv *-release.aar $aar
     buildinfo $artifact $version $aar
     pom $artifact $version
+    bundle $artifact $version
+}
+
+# https://help.sonatype.com/repomanager2/staging-releases/artifact-bundles
+bundle()
+{
+    artifact=$1
+    version=$2
+    echo "Looking for GPG keys to sign with:"
     if gpg --list-secret-keys | grep -Eo '[0-9A-F]{40}'; then
-	for f in ${artifact}-*.*; do
+	for f in ${artifact}-*${version}*.*; do
 	    gpg --armor --detach-sign $f
 	done
     fi
-    jar -cvf bundle.jar ${artifact}-*.*
+    # TODO faketime, strip-deterministic, or some other way to set ZIP timestamps
+    jar -cvf bundle-${artifact}-${version}.jar ${artifact}-*${version}*.*
 }
 
 show_options()
@@ -224,6 +234,7 @@ show_options()
     echo "Commands:"
     echo "          fetch   Fetch git submodules"
     echo "          build   Build the project"
+    echo "          bundle  Make Maven artifact bundle JAR"
     echo ""
     echo "Options:"
     echo "          -a      ABI(s) to build (default: \"$default_abis\")"
@@ -256,6 +267,7 @@ done
 case "$option" in
     "fetch") fetch_submodules $clean ;;
     "build") build_app $build_type ;;
+    "bundle") bundle $1 $2 ;;
     "release") release ;;
     *) show_options ;;
 esac
