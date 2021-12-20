@@ -127,3 +127,5 @@ release:
 
     - git clean -fdx
     - ./tor-droid-make.sh release -f
+    - cd tor-android-binary/build/outputs/aar
+    - for f in *.*; do sha256sum $f; done
