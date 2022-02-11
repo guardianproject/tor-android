@@ -84,6 +84,13 @@ public class TorService extends Service {
     public final static String EXTRA_PACKAGE_NAME = "org.torproject.android.intent.extra.PACKAGE_NAME";
 
     /**
+     * The {@link String} {@code packageName} of the app to which this {@code TorService} belongs.
+     * This allows broadcast receivers to distinguish between broadcasts from different apps that
+     * use {@code TorService}.
+     */
+    public final static String EXTRA_SERVICE_PACKAGE_NAME = "org.torproject.android.intent.extra.SERVICE_PACKAGE_NAME";
+
+    /**
      * All tor-related services and daemons are stopped
      */
     public static final String STATUS_OFF = "OFF";
@@ -447,6 +454,7 @@ public class TorService extends Service {
      */
     static void sendBroadcastStatusIntent(Context context) {
         Intent intent = getBroadcastIntent(ACTION_STATUS, currentStatus);
+        intent.putExtra(EXTRA_SERVICE_PACKAGE_NAME, context.getPackageName());
         context.sendBroadcast(intent);
     }
 
@@ -457,7 +465,7 @@ public class TorService extends Service {
     static void broadcastStatus(Context context, String currentStatus) {
         TorService.currentStatus = currentStatus;
         Intent intent = getBroadcastIntent(ACTION_STATUS, currentStatus);
-        intent.putExtra(EXTRA_PACKAGE_NAME, context.getPackageName());
+        intent.putExtra(EXTRA_SERVICE_PACKAGE_NAME, context.getPackageName());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         context.sendBroadcast(intent);
     }
