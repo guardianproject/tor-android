@@ -457,6 +457,7 @@ public class TorService extends Service {
     static void broadcastStatus(Context context, String currentStatus) {
         TorService.currentStatus = currentStatus;
         Intent intent = getBroadcastIntent(ACTION_STATUS, currentStatus);
+        intent.putExtra(EXTRA_PACKAGE_NAME, context.getPackageName());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         context.sendBroadcast(intent);
     }
