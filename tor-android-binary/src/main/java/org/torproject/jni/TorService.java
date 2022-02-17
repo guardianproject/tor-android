@@ -453,8 +453,7 @@ public class TorService extends Service {
      * Broadcasts the current status to any apps following the status of TorService.
      */
     static void sendBroadcastStatusIntent(Context context) {
-        Intent intent = getBroadcastIntent(ACTION_STATUS, currentStatus);
-        intent.putExtra(EXTRA_SERVICE_PACKAGE_NAME, context.getPackageName());
+        Intent intent = getBroadcastIntent(context, ACTION_STATUS, currentStatus);
         context.sendBroadcast(intent);
     }
 
@@ -464,8 +463,7 @@ public class TorService extends Service {
      */
     static void broadcastStatus(Context context, String currentStatus) {
         TorService.currentStatus = currentStatus;
-        Intent intent = getBroadcastIntent(ACTION_STATUS, currentStatus);
-        intent.putExtra(EXTRA_SERVICE_PACKAGE_NAME, context.getPackageName());
+        Intent intent = getBroadcastIntent(context, ACTION_STATUS, currentStatus);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         context.sendBroadcast(intent);
     }
@@ -479,12 +477,14 @@ public class TorService extends Service {
         if (e != null) {
             intent.putExtra(Intent.EXTRA_TEXT, e.getLocalizedMessage());
         }
+        intent.putExtra(EXTRA_SERVICE_PACKAGE_NAME, context.getPackageName());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         context.sendBroadcast(intent);
     }
 
-    private static Intent getBroadcastIntent(String action, String currentStatus) {
+    private static Intent getBroadcastIntent(Context context, String action, String currentStatus) {
         Intent intent = new Intent(action);
+        intent.putExtra(EXTRA_SERVICE_PACKAGE_NAME, context.getPackageName());
         intent.putExtra(EXTRA_STATUS, currentStatus);
         return intent;
     }
