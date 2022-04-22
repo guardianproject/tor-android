@@ -119,9 +119,11 @@ public class TorService extends Service {
         return new File(getAppTorServiceDir(context), "torrc-defaults");
     }
 
-    private static File getControlSocket(Context context) {
+    private static int controlSocketInc = 0;
+
+    private static File getControlSocketFile(Context context) {
         if (controlSocket == null) {
-            controlSocket = new File(getAppTorServiceDataDir(context), CONTROL_SOCKET_NAME);
+            controlSocket = new File(getAppTorServiceDataDir(context), CONTROL_SOCKET_BASE_NAME + (controlSocketInc));
         }
         return controlSocket;
     }
@@ -162,7 +164,7 @@ public class TorService extends Service {
 
     private static File appTorServiceDir = null;
     private static File controlSocket = null;
-    private static final String CONTROL_SOCKET_NAME = "ControlSocket";
+    private static final String CONTROL_SOCKET_BASE_NAME = "ControlSocket";
 
     public static int socksPort = -1;
     public static int httpTunnelPort = -1;
@@ -198,6 +200,7 @@ public class TorService extends Service {
         public TorService getService() {
             return TorService.this;
         }
+
     }
 
     private final IBinder binder = new LocalBinder();
@@ -239,23 +242,25 @@ public class TorService extends Service {
     };
 
     /**
-     * This waits for {@link #CONTROL_SOCKET_NAME} to be created by {@code tor},
+     * This waits for {@link #CONTROL_SOCKET_BASE_NAME} to be created by {@code tor},
      * then continues on to connect to the {@code ControlSocket} as described in
-     * {@link #getControlSocket(Context)}.  As a failsafe, this will only wait
+     * {@link #getControlSocketFile(Context)}.  As a failsafe, this will only wait
      * 10 seconds, after that it will check whether the {@code ControlSocket}
      * file exists, and if not, throw a {@link IllegalStateException}.
      */
-    private Thread controlPortThread = new Thread(CONTROL_SOCKET_NAME) {
+    private Thread controlPortThread = new Thread() {
         @Override
         public void run() {
             android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             try {
                 final CountDownLatch countDownLatch = new CountDownLatch(1);
                 final String observeDir = getAppTorServiceDataDir(TorService.this).getAbsolutePath();
+                final File controlSocketFile = getControlSocketFile(TorService.this);
+                final String controlSocketFileName = controlSocketFile.getName();
                 FileObserver controlPortFileObserver = new FileObserver(observeDir) {
                     @Override
                     public void onEvent(int event, @Nullable String name) {
-                        if ((event & FileObserver.CREATE) > 0 && CONTROL_SOCKET_NAME.equals(name)) {
+                        if ((event & FileObserver.CREATE) > 0 && controlSocketFileName.equals(name)) {
                             countDownLatch.countDown();
                         }
                     }
@@ -264,12 +269,11 @@ public class TorService extends Service {
                 controlPortThreadStarted.countDown();
                 countDownLatch.await(10, TimeUnit.SECONDS);
                 controlPortFileObserver.stopWatching();
-                File controlSocket = new File(observeDir, CONTROL_SOCKET_NAME);
-                if (!controlSocket.canRead()) {
+                if (!controlSocketFile.canRead()) {
                     throw new IllegalStateException("cannot read " + controlSocket);
                 }
 
-                FileDescriptor controlSocketFd = prepareFileDescriptor(getControlSocket(TorService.this).getAbsolutePath());
+                FileDescriptor controlSocketFd = prepareFileDescriptor(getControlSocketFile(TorService.this).getAbsolutePath());
                 InputStream is = new FileInputStream(controlSocketFd);
                 OutputStream os = new FileOutputStream(controlSocketFd);
                 torControlConnection = new TorControlConnection(is, os);
@@ -333,6 +337,8 @@ public class TorService extends Service {
                     runLock.lock();
                     Log.i(TAG, "Acquired lock");
                     createTorConfiguration();
+                    controlSocketInc++; //increment name for controlsocket file to avoid race conditions in RW access
+
                     ArrayList<String> lines = new ArrayList<>(Arrays.asList("tor", "--verify-config", // must always be here
                             "--RunAsDaemon", "0",
                             "-f", getTorrc(context).getAbsolutePath(),
@@ -341,7 +347,7 @@ public class TorService extends Service {
                             "--SyslogIdentityTag", TAG,
                             "--CacheDirectory", new File(getCacheDir(), TAG).getAbsolutePath(),
                             "--DataDirectory", getAppTorServiceDataDir(context).getAbsolutePath(),
-                            "--ControlSocket", getControlSocket(context).getAbsolutePath(),
+                            "--ControlSocket", getControlSocketFile(context).getAbsolutePath(),
                             "--CookieAuthentication", "0",
                             "--SOCKSPort", socksPort,
                             "--HTTPTunnelPort", httpTunnelPort,
