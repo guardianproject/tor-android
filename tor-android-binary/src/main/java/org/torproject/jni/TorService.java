@@ -119,6 +119,25 @@ public class TorService extends Service {
         return new File(getAppTorServiceDir(context), "torrc-defaults");
     }
 
+    public static String getBroadcastPackageName(Context context) {
+        if (broadcastPackageName == UNINITIALIZED) {
+            broadcastPackageName = context.getPackageName();
+        }
+        return broadcastPackageName;
+    }
+
+    /**
+     * Set the Package Name to send the status broadcasts to, or {@code null}
+     * to broadcast to all apps.
+     *
+     * @param packageName The name of the application package to send the
+     *                    status broadcasts to, or null to broadcast to all.
+     * @see Intent#setPackage(String)
+     */
+    public static void setBroadcastPackageName(String packageName) {
+        TorService.broadcastPackageName = packageName;
+    }
+
     private static File getControlSocket(Context context) {
         if (controlSocket == null) {
             controlSocket = new File(getAppTorServiceDataDir(context), CONTROL_SOCKET_NAME);
@@ -163,6 +182,8 @@ public class TorService extends Service {
     private static File appTorServiceDir = null;
     private static File controlSocket = null;
     private static final String CONTROL_SOCKET_NAME = "ControlSocket";
+    private static final String UNINITIALIZED = "UNINITIALIZED";
+    private static String broadcastPackageName = UNINITIALIZED;
 
     public static int socksPort = -1;
     public static int httpTunnelPort = -1;
@@ -453,8 +474,7 @@ public class TorService extends Service {
      * Broadcasts the current status to any apps following the status of TorService.
      */
     static void sendBroadcastStatusIntent(Context context) {
-        Intent intent = getBroadcastIntent(ACTION_STATUS, currentStatus);
-        intent.putExtra(EXTRA_SERVICE_PACKAGE_NAME, context.getPackageName());
+        Intent intent = getBroadcastIntent(context, ACTION_STATUS, currentStatus);
         context.sendBroadcast(intent);
     }
 
@@ -464,8 +484,7 @@ public class TorService extends Service {
      */
     static void broadcastStatus(Context context, String currentStatus) {
         TorService.currentStatus = currentStatus;
-        Intent intent = getBroadcastIntent(ACTION_STATUS, currentStatus);
-        intent.putExtra(EXTRA_SERVICE_PACKAGE_NAME, context.getPackageName());
+        Intent intent = getBroadcastIntent(context, ACTION_STATUS, currentStatus);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         context.sendBroadcast(intent);
     }
@@ -479,12 +498,16 @@ public class TorService extends Service {
         if (e != null) {
             intent.putExtra(Intent.EXTRA_TEXT, e.getLocalizedMessage());
         }
+        intent.setPackage(getBroadcastPackageName(context));
+        intent.putExtra(EXTRA_SERVICE_PACKAGE_NAME, context.getPackageName());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         context.sendBroadcast(intent);
     }
 
-    private static Intent getBroadcastIntent(String action, String currentStatus) {
+    private static Intent getBroadcastIntent(Context context, String action, String currentStatus) {
         Intent intent = new Intent(action);
+        intent.putExtra(EXTRA_SERVICE_PACKAGE_NAME, context.getPackageName());
+        intent.setPackage(getBroadcastPackageName(context));
         intent.putExtra(EXTRA_STATUS, currentStatus);
         return intent;
     }
