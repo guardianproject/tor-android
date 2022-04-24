@@ -192,7 +192,7 @@ public class TorService extends Service {
     private long torConfiguration = -1;
     private int torControlFd = -1;
 
-    private TorControlConnection torControlConnection;
+    private volatile TorControlConnection torControlConnection;
 
     /**
      * This lock must be acquired before calling createTorConfiguration() and
@@ -310,7 +310,7 @@ public class TorService extends Service {
         }
     };
 
-    private CountDownLatch controlPortThreadStarted;
+    private volatile CountDownLatch controlPortThreadStarted;
 
     private int getPortFromGetInfo(String key) {
         final String value = getInfo(key);
