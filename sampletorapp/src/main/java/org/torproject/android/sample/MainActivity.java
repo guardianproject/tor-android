@@ -18,13 +18,19 @@ package org.torproject.android.sample;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import net.freehaven.tor.control.TorControlConnection;
+
 import org.torproject.jni.TorService;
 
 public class MainActivity extends Activity {
@@ -51,6 +57,36 @@ public class MainActivity extends Activity {
 
             }
         }, new IntentFilter(TorService.ACTION_STATUS));
-        startService(new Intent(this, TorService.class));
+
+
+        bindService(new Intent(this, TorService.class), new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+
+                //moved torService to a local variable, since we only need it once
+                TorService torService = ((TorService.LocalBinder) service).getService();
+                TorControlConnection conn = torService.getTorControlConnection();
+
+                while ((conn = torService.getTorControlConnection())==null)
+                {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (conn != null)
+                {
+                    Toast.makeText(MainActivity.this, "Got Tor control connection", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        },BIND_AUTO_CREATE);
+
     }
 }
