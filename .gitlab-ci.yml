@@ -90,7 +90,8 @@ cache:
     # adb shell on older emulators didn't pass the return value, so we need tricks
     # https://stackoverflow.com/a/58452689
     - EXITVALUE=0
-    - for f in test test-memwipe test-slow; do
+    # test-slow too flaky https://gitlab.torproject.org/tpo/core/tor/-/issues/32340
+    - for f in test test-memwipe; do
         printf "\n\n------------------------------------------\n$f\n";
         adb -e push external/test/$AVD_ARCH/$f /data/local/tmp/;
         adb -e shell "cd /data/local/tmp; ./$f"'; echo -n $? > '"$f.result";
