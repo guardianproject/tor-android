@@ -29,8 +29,6 @@ import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.freehaven.tor.control.TorControlConnection;
-
 import org.torproject.jni.TorService;
 
 public class MainActivity extends Activity {
@@ -65,9 +63,8 @@ public class MainActivity extends Activity {
 
                 //moved torService to a local variable, since we only need it once
                 TorService torService = ((TorService.LocalBinder) service).getService();
-                TorControlConnection conn = torService.getTorControlConnection();
 
-                while ((conn = torService.getTorControlConnection())==null)
+                while (torService.getTorControlConnection() ==null)
                 {
                     try {
                         Thread.sleep(500);
@@ -76,10 +73,7 @@ public class MainActivity extends Activity {
                     }
                 }
 
-                if (conn != null)
-                {
-                    Toast.makeText(MainActivity.this, "Got Tor control connection", Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(MainActivity.this, "Got Tor control connection", Toast.LENGTH_LONG).show();
             }
 
             @Override
