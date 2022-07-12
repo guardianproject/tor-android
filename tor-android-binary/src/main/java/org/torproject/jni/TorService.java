@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -44,16 +45,19 @@ public class TorService extends Service {
 
     public static final String TAG = "TorService";
 
+    @SuppressWarnings("unused")
     public static final String VERSION_NAME = org.torproject.jni.BuildConfig.VERSION_NAME;
 
     /**
      * Request to transparently start Tor services.
      */
+    @SuppressWarnings("unused")
     public static final String ACTION_START = "org.torproject.android.intent.action.START";
 
     /**
      * Internal request to stop Tor services.
      */
+    @SuppressWarnings("unused")
     private static final String ACTION_STOP = "org.torproject.android.intent.action.STOP";
 
     /**
@@ -81,6 +85,7 @@ public class TorService extends Service {
      * {@code TorService} to send redundant replies to that single app, rather than
      * broadcasting to all apps after every request.
      */
+    @SuppressWarnings("unused")
     public final static String EXTRA_PACKAGE_NAME = "org.torproject.android.intent.extra.PACKAGE_NAME";
 
     /**
@@ -120,7 +125,7 @@ public class TorService extends Service {
     }
 
     public static String getBroadcastPackageName(Context context) {
-        if (broadcastPackageName == UNINITIALIZED) {
+        if (broadcastPackageName.equals(UNINITIALIZED)) {
             broadcastPackageName = context.getPackageName();
         }
         return broadcastPackageName;
@@ -189,7 +194,9 @@ public class TorService extends Service {
     public static int httpTunnelPort = -1;
 
     // Store the opaque reference as a long (pointer) for the native code
+    @SuppressWarnings({"FieldMayBeFinal", "unused"})
     private long torConfiguration = -1;
+    @SuppressWarnings({"FieldMayBeFinal"," unused"})
     private int torControlFd = -1;
 
     private volatile TorControlConnection torControlConnection;
@@ -297,7 +304,7 @@ public class TorService extends Service {
                 torControlConnection.launchThread(true);
                 torControlConnection.authenticate(new byte[0]);
                 torControlConnection.addRawEventListener(startedEventListener);
-                torControlConnection.setEvents(Arrays.asList(TorControlCommands.EVENT_CIRCUIT_STATUS));
+                torControlConnection.setEvents(Collections.singletonList(TorControlCommands.EVENT_CIRCUIT_STATUS));
 
                 socksPort = getPortFromGetInfo("net/listeners/socks");
                 httpTunnelPort = getPortFromGetInfo("net/listeners/httptunnel");
@@ -424,7 +431,7 @@ public class TorService extends Service {
             Log.i(TAG, "Releasing lock");
             runLock.unlock();
         }
-        shutdownTor(TorControlCommands.SIGNAL_SHUTDOWN);
+        shutdownTor();
         broadcastStatus(TorService.this, STATUS_OFF);
     }
 
@@ -455,10 +462,10 @@ public class TorService extends Service {
      *
      * @see TorControlConnection#shutdownTor(String)
      */
-    private void shutdownTor(String signal) {
+    private void shutdownTor() {
         try {
             if (torControlConnection != null) {
-                torControlConnection.shutdownTor(signal);
+                torControlConnection.shutdownTor(TorControlCommands.SIGNAL_SHUTDOWN);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -479,7 +486,7 @@ public class TorService extends Service {
      * Broadcasts the current status to any apps following the status of TorService.
      */
     static void sendBroadcastStatusIntent(Context context) {
-        Intent intent = getBroadcastIntent(context, ACTION_STATUS, currentStatus);
+        Intent intent = getBroadcastIntent(context, currentStatus);
         context.sendBroadcast(intent);
     }
 
@@ -489,7 +496,7 @@ public class TorService extends Service {
      */
     static void broadcastStatus(Context context, String currentStatus) {
         TorService.currentStatus = currentStatus;
-        Intent intent = getBroadcastIntent(context, ACTION_STATUS, currentStatus);
+        Intent intent = getBroadcastIntent(context, currentStatus);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         context.sendBroadcast(intent);
     }
@@ -509,8 +516,8 @@ public class TorService extends Service {
         context.sendBroadcast(intent);
     }
 
-    private static Intent getBroadcastIntent(Context context, String action, String currentStatus) {
-        Intent intent = new Intent(action);
+    private static Intent getBroadcastIntent(Context context, String currentStatus) {
+        Intent intent = new Intent(TorService.ACTION_STATUS);
         intent.putExtra(EXTRA_SERVICE_PACKAGE_NAME, context.getPackageName());
         intent.setPackage(getBroadcastPackageName(context));
         intent.putExtra(EXTRA_STATUS, currentStatus);
