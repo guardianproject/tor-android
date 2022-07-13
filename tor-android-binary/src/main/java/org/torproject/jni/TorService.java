@@ -408,6 +408,7 @@ public class TorService extends Service {
 
     private int getPortFromGetInfo(String key) {
         final String value = getInfo(key);
+        if (value.trim().isEmpty()) return 0; // port is disabled
         return Integer.parseInt(value.substring(value.lastIndexOf(':') + 1, value.length() - 1));
     }
 
