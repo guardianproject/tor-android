@@ -17,9 +17,11 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -325,16 +327,9 @@ public class TorService extends Service {
         public void run() {
             final Context context = getApplicationContext();
             try {
-                String socksPort = "auto";
-                if (isPortAvailable(9050)) {
-                    socksPort = Integer.toString(9050);
-                }
-                String httpTunnelPort = "auto";
-                if (isPortAvailable(8118)) {
-                    httpTunnelPort = Integer.toString(8118);
-                }
-
                 createTorConfiguration();
+                setDefaultProxyPorts();
+
                 ArrayList<String> lines = new ArrayList<>(Arrays.asList("tor", "--verify-config", // must always be here
                         "--RunAsDaemon", "0",
                         "-f", getTorrc(context).getAbsolutePath(),
@@ -345,9 +340,6 @@ public class TorService extends Service {
                         "--DataDirectory", getAppTorServiceDataDir(context).getAbsolutePath(),
                         "--ControlSocket", getControlSocket(context).getAbsolutePath(),
                         "--CookieAuthentication", "0",
-                        "--SOCKSPort", socksPort,
-                        "--HTTPTunnelPort", httpTunnelPort,
-
                         // can be moved to ControlPort messages
                         "--LogMessageDomains", "1",
                         "--TruncateLogFile", "1"
@@ -390,6 +382,29 @@ public class TorService extends Service {
             }
         }
     };
+
+    private void setDefaultProxyPorts() {
+        String socksPort = "auto";
+        if (isPortAvailable(9050)) {
+            socksPort = Integer.toString(9050);
+        }
+        String httpTunnelPort = "auto";
+        if (isPortAvailable(8118)) {
+            httpTunnelPort = Integer.toString(8118);
+        }
+
+        String defaults = "SOCKSPort " + socksPort;
+        defaults += "\nHTTPTunnelPort " + httpTunnelPort + "\n";
+
+        try {
+            PrintWriter pw = new PrintWriter(new FileWriter(getDefaultsTorrc(this), false));
+            pw.append(defaults);
+            pw.flush();
+            pw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private int getPortFromGetInfo(String key) {
         final String value = getInfo(key);
