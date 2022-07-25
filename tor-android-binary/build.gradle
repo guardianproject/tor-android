@@ -65,7 +65,7 @@ android.libraryVariants.all { variant ->
     def task = project.tasks.create "jar${name.capitalize()}", Jar
     task.dependsOn variant.javaCompile, sourcesJar, javadocJar
     task.from variant.javaCompile.destinationDir
-    task.exclude('info/guardianproject/**/BuildConfig.**')
+    //task.exclude('info/guardianproject/**/BuildConfig.**')
     artifacts.add('archives', task);
     task.baseName = 'tor-android'
 }
