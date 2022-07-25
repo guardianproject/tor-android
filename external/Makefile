@@ -108,6 +108,7 @@ INSTALL_DIR := $(EXTERNAL_ROOT)/lib/$(APP_ABI)
 
 .PHONY = clean showsetup \
 	PREBUILD_SHARED_LIBRARY PREBUILD_SHARED_LIBRARY-clean \
+	zlib-clean \
 	openssl-clean \
 	libevent-clean \
 	lzma-clean \
@@ -225,6 +226,28 @@ lzma-clean:
 	-cd xz && \
 		git clean -fdx > /dev/null
 
+#------------------------------------------------------------------------------#
+# zlib
+
+zlib-build-stamp:
+	cd zlib && ./configure \
+		--static \
+		--prefix=$(EXTERNAL_ROOT)
+	$(MAKE) -C zlib install
+	touch $@
+
+zlib-clean:
+	-$(MAKE) -C zlib uninstall
+	-$(MAKE) -C zlib clean
+	-rm -f lib/libz.a
+	-rm -f lib/pkgconfig/zlib.pc
+	-rm -f include/zconf.h
+	-rm -f include/zlib.h
+	-rm -f zlib-build-stamp
+	-rm -f share/man/man3/zlib.3
+	-cd zlib && \
+		git clean -fdx > /dev/null
+
 
 #------------------------------------------------------------------------------#
 # zstd
@@ -272,6 +295,7 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--enable-pic \
 				--enable-static-libevent --with-libevent-dir=$(EXTERNAL_ROOT) \
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
+				--enable-static-zlib --with-zlib-dir=$(EXTERNAL_ROOT) \
 				--enable-zstd \
 				--disable-module-dirauth \
 				--prefix=$(EXTERNAL_ROOT)
@@ -284,7 +308,7 @@ tor-build-stamp: tor/Makefile
 	$(MAKE) -C tor
 	touch $@
 
-tor: lzma-build-stamp zstd-build-stamp libevent-build-stamp openssl-build-stamp tor-build-stamp
+tor: zlib-build-stamp lzma-build-stamp zstd-build-stamp libevent-build-stamp openssl-build-stamp tor-build-stamp
 
 tor-clean:
 	-rm -f $(OUTPUT_FILE)
@@ -320,7 +344,7 @@ PREBUILD_SHARED_LIBRARY-clean:
 #------------------------------------------------------------------------------#
 # cleanup, cleanup, put the toys away
 
-clean: openssl-clean libevent-clean lzma-clean zstd-clean tor-clean
+clean: zlib-clean openssl-clean libevent-clean lzma-clean zstd-clean tor-clean
 
 
 #------------------------------------------------------------------------------#
