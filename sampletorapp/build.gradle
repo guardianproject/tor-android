@@ -24,7 +24,7 @@ android {
 }
 
 dependencies {
-    implementation 'info.guardianproject:tor-android:0.4.6.7'
+    implementation 'info.guardianproject:tor-android:0.4.7.8.1'
 //    implementation (name:'tor-android-binary-release',ext:'aar') //use this if you want to test your local AAR build
     implementation 'info.guardianproject:jtorctl:0.4.5.7'
     implementation 'androidx.appcompat:appcompat:1.0.0'
