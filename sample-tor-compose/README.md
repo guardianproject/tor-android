@@ -33,3 +33,8 @@ After the Tor Service started, we can start browsing with Tor Network with enter
 - copy GenericWebViewClient from [link](https://github.com/guardianproject/tor-android/blob/74a98cc7bc0d12d6a38509020486df667c556e9f/sampletorapp/src/main/java/org/torproject/android/sample/GenericWebViewClient.java) to app/src/main/java/torcompose/com/ then modify to use kotlin and update package name
 
 - edit MainActivity.kt
+
+# SCREENSHOTS:
+- ![image](https://user-images.githubusercontent.com/20583849/199776823-05769bce-1006-4c46-8b27-0b731c278e74.png)
+
+- ![image](https://user-images.githubusercontent.com/20583849/199776636-cca1a5f0-c3aa-4043-90d4-1fd1e912747c.png)
