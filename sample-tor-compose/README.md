@@ -22,13 +22,17 @@ After the Tor Service started, we can start browsing with Tor Network with enter
 
 - add dependency to gradle
 
+    ```kotlin
     implementation 'info.guardianproject:tor-android:0.4.7.8'
     implementation 'info.guardianproject:jtorctl:0.4.5.7'
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
+    ```
 
 - add permission to manifest
 
+    ```xml
     <uses-permission android:name="android.permission.INTERNET" />
+    ```
 
 - copy GenericWebViewClient from [link](https://github.com/guardianproject/tor-android/blob/74a98cc7bc0d12d6a38509020486df667c556e9f/sampletorapp/src/main/java/org/torproject/android/sample/GenericWebViewClient.java) to app/src/main/java/torcompose/com/ then modify to use kotlin and update package name
 
