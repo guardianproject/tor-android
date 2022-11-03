@@ -66,9 +66,11 @@ fun TorComposeApp(
     val reqCount = remember { mutableStateOf(0) }
     val focusManager = LocalFocusManager.current
 
-    Scaffold {
+    Scaffold { contentPadding ->
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .padding(contentPadding)
+            ,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -147,7 +149,6 @@ fun TorComposeApp(
             AndroidView(
                 factory = {
                     WebView(it).apply {
-                        val webView = this
                         layoutParams = android.view.ViewGroup.LayoutParams(
                             android.view.ViewGroup.LayoutParams.MATCH_PARENT,
                             android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -164,7 +165,7 @@ fun TorComposeApp(
                     }
                 },
                 update = { view ->
-                    view.loadUrl(url.value.toHttpsPrefix() ?: "")
+                    view.loadUrl(url.value.toHttpsPrefix())
                 },
                 modifier = Modifier
                     .fillMaxSize()
@@ -220,7 +221,7 @@ fun onConnectClicked(ctx: Context, status: MutableState<String>) {
     )
 }
 
-fun String.toHttpsPrefix(): String? =
+fun String.toHttpsPrefix(): String =
     if (isNotEmpty() && !startsWith("https://") && !startsWith("http://")) {
         "https://$this"
     } else if (startsWith("http://")) {
