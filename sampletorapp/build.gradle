@@ -1,30 +1,39 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 31
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+    compileSdkVersion 33
     defaultConfig {
         applicationId "org.torproject.android.sample"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
+
+        buildConfigField 'int', 'VERSION_CODE', "${rootProject.ext.versionCode}"
+        buildConfigField 'String', 'VERSION_NAME', "\"${rootProject.ext.versionName}\""
     }
 
     buildTypes {
+        debug {
+
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+
         }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/com.android.tools/proguard/coroutines.pro'
     }
 
 }
 
 dependencies {
-    implementation 'info.guardianproject:tor-android:0.4.7.8.1'
+    implementation 'info.guardianproject:tor-android:0.4.7.8'
 //    implementation (name:'tor-android-binary-release',ext:'aar') //use this if you want to test your local AAR build
     implementation 'info.guardianproject:jtorctl:0.4.5.7'
     implementation 'androidx.appcompat:appcompat:1.5.1'

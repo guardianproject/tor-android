@@ -26,7 +26,7 @@ endif
 
 # matching NDK revisions are required for reproducible builds
 NDK_REVISION := $(shell sed -n 's,^Pkg.Revision *= *\([^ ]*\),\1,p' $(ANDROID_NDK_HOME)/source.properties)
-NDK_REQUIRED_REVISION := 21.4.7075529
+NDK_REQUIRED_REVISION := 25.1.8937393
 MIN_NDK_VERSION := 19
 ifeq ($(shell test $(MIN_NDK_VERSION) -gt $(firstword $(subst ., ,$(NDK_REVISION))); echo $$?),0)
  $(error NDK r$(MIN_NDK_VERSION) or newer required! r$(NDK_REVISION) is installed at $(ANDROID_NDK_HOME).)
@@ -42,7 +42,7 @@ ifneq ($(filter mips%, $(APP_ABI)),)
  GREP_CHECK := MIPS
  NDK_ABI := mips
  NDK_BIT := 32
- NDK_PLATFORM_LEVEL := 16
+ NDK_PLATFORM_LEVEL := 19
  NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
 endif
 ifneq ($(filter arm64-v8a, $(APP_ABI)),)
@@ -60,7 +60,7 @@ ifneq ($(filter armeabi-v7a, $(APP_ABI)),)
  GREP_CHECK := EABI5
  NDK_ABI := arm
  NDK_BIT := 32
- NDK_PLATFORM_LEVEL := 16
+ NDK_PLATFORM_LEVEL := 19
  NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
 endif
 ifneq ($(filter x86, $(APP_ABI)),)
@@ -69,7 +69,7 @@ ifneq ($(filter x86, $(APP_ABI)),)
  GREP_CHECK := 80386
  NDK_ABI := x86
  NDK_BIT := 32
- NDK_PLATFORM_LEVEL := 16
+ NDK_PLATFORM_LEVEL := 19
  NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
 endif
 ifneq ($(filter x86_64, $(APP_ABI)),)
@@ -82,7 +82,7 @@ ifneq ($(filter x86_64, $(APP_ABI)),)
  NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
 endif
 
-NDK_SYSROOT=$(ANDROID_NDK_HOME)/platforms/android-$(NDK_PLATFORM_LEVEL)/arch-$(NDK_ABI)
+##NDK_SYSROOT=$(ANDROID_NDK_HOME)/platforms/android-$(NDK_PLATFORM_LEVEL)/arch-$(NDK_ABI)
 NDK_UNAME := $(shell uname -s | tr '[A-Z]' '[a-z]')
 NDK_TOOLCHAIN_BASE=$(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)
 
@@ -118,7 +118,7 @@ INSTALL_DIR := $(EXTERNAL_ROOT)/lib/$(APP_ABI)
 all: test-setup PREBUILD_SHARED_LIBRARY
 
 test-setup:
-	test -d $(NDK_SYSROOT)
+	##test -d $(NDK_SYSROOT)
 	test -x $(CC)
 	printf 'int main() {return 0;}\n' > .test.c
 	$(CC) $(CFLAGS) .test.c
@@ -327,7 +327,9 @@ PREBUILD_SHARED_LIBRARY: tor
 	cp openssl/configdata.pm tor/orconfig.h $(INSTALL_DIR)/
 ifneq ($(DEBUG), 1)
 	ls -l  $(INSTALL_DIR)/libtor.so
-	$(NDK_TOOLCHAIN_BASE)/bin/$(ALTHOST)-strip --strip-unneeded -R .note -R .comment --strip-debug \
+	##$(NDK_TOOLCHAIN_BASE)/bin/$(ALTHOST)-strip --strip-unneeded -R .note -R .comment --strip-debug \
+	##	$(INSTALL_DIR)/libtor.so
+	$(NDK_TOOLCHAIN_BASE)/bin/llvm-strip --strip-unneeded -R .note -R .comment --strip-debug \
 		$(INSTALL_DIR)/libtor.so
 	ls -l  $(INSTALL_DIR)/libtor.so
 endif
@@ -359,7 +361,7 @@ showsetup:
 	@echo "NDK_ABI: $(NDK_ABI)"
 	@echo "NDK_BIT: $(NDK_BIT)"
 	@echo "NDK_PLATFORM_LEVEL: $(NDK_PLATFORM_LEVEL)"
-	@echo "NDK_SYSROOT: $(NDK_SYSROOT)"
+	##@echo "NDK_SYSROOT: $(NDK_SYSROOT)"
 	@echo "NDK_TOOLCHAIN: $(NDK_TOOLCHAIN)"
 	@echo "PATH: $$PATH"
 	@echo "REPRODUCIBLE_CFLAGS: $(REPRODUCIBLE_CFLAGS)"
