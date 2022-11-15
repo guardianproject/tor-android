@@ -32,7 +32,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-class GenericWebViewClient extends WebViewClient {
+public class GenericWebViewClient extends WebViewClient {
 
     private int requestCounter;
 
