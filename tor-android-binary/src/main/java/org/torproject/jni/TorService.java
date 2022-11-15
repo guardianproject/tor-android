@@ -48,7 +48,7 @@ public class TorService extends Service {
     public static final String TAG = "TorService";
 
     @SuppressWarnings("unused")
-    public static final String VERSION_NAME = org.torproject.jni.BuildConfig.VERSION_NAME;
+    public static final String VERSION_NAME = BuildConfig.VERSION_NAME;
 
     /**
      * Request to transparently start Tor services.

@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 
+
 /* gets the version name from the latest Git tag, stripping the leading 'tor-' off */
 def getVersionName = { ->
     def stdout = new ByteArrayOutputStream()
@@ -11,14 +12,12 @@ def getVersionName = { ->
 }
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion '31.0.0'
+    compileSdkVersion 33
+    buildToolsVersion '33.0.0'
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 31
-        versionCode 47100
-        versionName getVersionName()
+        targetSdkVersion 33
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         /*
@@ -28,6 +27,11 @@ android {
           passing the following argument to the test runner: disableAnalytics "true".
          */
         testInstrumentationRunnerArguments disableAnalytics: 'true'
+
+
+        buildConfigField 'int', 'VERSION_CODE', "${rootProject.ext.versionCode}"
+        buildConfigField 'String', 'VERSION_NAME', "\"${rootProject.ext.versionName}\""
+
     }
 
     buildTypes {
@@ -86,7 +90,6 @@ task sourcesJar(type: Jar) {
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    classpath += configurations.compile
     options.noTimestamp = true
     options.addStringOption('charset', 'UTF-8') // to match Maven's case
     android.libraryVariants.all { variant ->
@@ -104,18 +107,4 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     baseName = 'tor-android-' + getVersionName()
 }
 
-
-apply plugin: 'maven'
-
-uploadArchives {
-    repositories.mavenDeployer {
-        def deployPath = file(getProperty('aar.deployPath'))
-        repository(url: "file://${deployPath.absolutePath}")
-        pom.project {
-            groupId 'info.guardianproject'
-            artifactId 'tor-android'
-            version getVersionName()
-        }
-    }
-}
 
