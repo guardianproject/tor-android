@@ -1,20 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion '31.0.0'
-
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+    compileSdkVersion 33
     defaultConfig {
         applicationId "org.torproject.android.sample"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
+
+        buildConfigField 'int', 'VERSION_CODE', "${rootProject.ext.versionCode}"
+        buildConfigField 'String', 'VERSION_NAME', "\"${rootProject.ext.versionName}\""
     }
 
     packagingOptions {
@@ -26,10 +22,20 @@ android {
 
 
     buildTypes {
+        debug {
+
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+
         }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/com.android.tools/proguard/coroutines.pro'
     }
 
 }
