@@ -137,7 +137,7 @@ PATH := $(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/linux-x86_64/bin:$(PATH)
 
 
 openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
-	cd openssl && PATH=$(PATH) \
+	cd openssl && PATH=$(PATH) && CFLAGS="$(CFLAGS) -Wno-macro-redefined" \
 		./Configure \
 			no-comp no-dtls no-ec2m no-psk no-srp no-ssl2 no-ssl3 \
 			no-camellia no-idea no-md2 no-md4 no-mdc2 no-rc2 no-rc4 no-rc5 no-rmd160 no-whirlpool \
