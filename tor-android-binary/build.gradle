@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'maven-publish'
 
 /* gets the version name from the latest Git tag, stripping the leading 'tor-' off */
 def getVersionName = { ->
@@ -106,5 +106,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
     baseName = 'tor-android-' + getVersionName()
 }
+
+apply from: 'publishLocal.gradle'
 
 
