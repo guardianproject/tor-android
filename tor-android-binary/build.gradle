@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 /* gets the version name from the latest Git tag, stripping the leading 'tor-' off */
 def getVersionName = { ->
@@ -108,5 +109,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 apply from: 'publishLocal.gradle'
+apply from: 'publishMavenCentral.gradle'
 
 
