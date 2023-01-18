@@ -53,6 +53,7 @@ cache:
       make
       patch
       pkg-config
+      po4a
 
 - export GRADLE_USER_HOME=$PWD/.gradle
 
