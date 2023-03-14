@@ -1,0 +1,68 @@
+apply plugin: "com.vanniktech.maven.publish.base"
+
+
+// Publish to Maven Central
+/**
+mavenPublishing {
+  publishToMavenCentral(SonatypeHost.DEFAULT)
+  // or when publishing to https://s01.oss.sonatype.org
+  //publishToMavenCentral(SonatypeHost.S01)
+  signAllPublications()
+}
+**/
+
+
+/**
+          username = SONATYPE_USERNAME
+          password = SONATYPE_PASSWORD
+**/
+
+// If you want to publish your sources as well
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
+    from android.sourceSets.main.kotlin.srcDirs
+}
+
+/**
+artifacts {
+    archives androidSourcesJar
+}**/
+
+
+mavenPublishing {
+  coordinates(LIBRARY_GROUP,LIBRARY_ARTIFACT_ID,LIBRARY_VERSION_NAME)
+
+  pom {
+    name = "Tor Android"
+    description = "torproject.org tor library for Android"
+    inceptionYear = "2010"
+    url = LIBRARY_URL
+    licenses {
+      license {
+	 name = 'BSD-3-Clause'
+         url = 'https://opensource.org/licenses/BSD-3-Clause'
+         distribution = 'https://opensource.org/licenses/BSD-3-Clause'
+      }
+    }
+    developers {
+      developer {
+    	id = 'guardianproject'
+        name = 'Nathan of Guardian Project'
+        email = 'nathan@guardianproject.info'
+        url = "https://github.com/guardianproject/"
+      }
+    }
+    scm {
+    	connection = LIBRARY_GIT_URL
+    	developerConnection = LIBRARY_GIT_URL
+    	url = LIBRARY_URL
+    }
+signing {
+    useGpgCmd()
+    sign publishing.publications
+}
+  }
+  signAllPublications()
+}
+

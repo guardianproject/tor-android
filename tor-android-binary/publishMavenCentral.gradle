@@ -1,10 +1,14 @@
+
 // Publish to Maven Central
 nexusPublishing {
   repositories {
       sonatype {
-          username = System.getenv("OSS_USERNAME")
-          password = System.getenv("OSS_PASSWORD")
-          stagingProfileId = System.getenv("OSS_STAGING_PROFILE_ID")
+	  nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+          snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+          packageGroup = LIBRARY_GROUP
+          username = SONATYPE_USERNAME
+          password = SONATYPE_PASSWORD
+          stagingProfileId = SONATYPE_STAGING_ID
       }
   }
 }
@@ -16,20 +20,21 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.kotlin.srcDirs
 }
 
+/**
 artifacts {
     archives androidSourcesJar
-}
+}**/
 
-afterEvaluate {
+project.afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
 
+                //from components.release
                 groupId LIBRARY_GROUP
                 artifactId LIBRARY_ARTIFACT_ID
                 version LIBRARY_VERSION_NAME
-
-                from components.release
+		artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
                 artifact androidSourcesJar
 
                 pom {
@@ -39,15 +44,15 @@ afterEvaluate {
                     licenses {
                         // Your licensing information
                         license {
-                            name = 'The Apache Software License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            name = 'BSD-3-Clause'
+                            url = 'https://opensource.org/licenses/BSD-3-Clause'
                         }
                     }
                     developers {
                         developer {
-                            id = 'instrap'
-                            name = 'Madrapps'
-                            email = 'madrasappfactory@gmail.com'
+                            id = 'guardianproject'
+                            name = 'Nathan of Guardian Project'
+                            email = 'nathan@guardianproject.info'
                         }
                         // More developers if any...
                     }
@@ -61,13 +66,20 @@ afterEvaluate {
             }
         }
     }
+    repositories {
+        maven {
+            name = "sonatype"
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+
+            credentials {
+                username SONATYPE_USERNAME
+                password SONATYPE_PASSWORD
+            }
+        }
+    }
 }
 
 signing {
-    useInMemoryPgpKeys(
-            System.getenv("OSS_SIGNING_KEY_ID"),
-            System.getenv("OSS_SIGNING_KEY"),
-            System.getenv("OSS_SIGNING_PASSWORD"),
-    )
+    useGpgCmd()
     sign publishing.publications
 }
