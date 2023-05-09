@@ -74,7 +74,7 @@ android.libraryVariants.all { variant ->
     task.from variant.javaCompileProvider.get().destinationDir
     //task.exclude('info/guardianproject/**/BuildConfig.**')
     artifacts.add('archives', task);
-    task.baseName = 'tor-android'
+    task.archiveBaseName = 'tor-android'
 }
 
 tasks.withType(AbstractArchiveTask) {
@@ -87,7 +87,7 @@ tasks.withType(AbstractArchiveTask) {
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
-    baseName = 'tor-android-' + getVersionName()
+    archiveBaseName = 'tor-android-' + getVersionName()
 }
 
 task javadoc(type: Javadoc) {
@@ -107,7 +107,7 @@ task javadoc(type: Javadoc) {
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
-    baseName = 'tor-android-' + getVersionName()
+    archiveBaseName = 'tor-android-' + getVersionName()
 }
 
 //apply from: 'publishLocal.gradle'
