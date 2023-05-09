@@ -43,10 +43,15 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
  * will not be able to function properly since it relies on those events to
  * detect the state of Tor.
  */
+@SuppressWarnings("deprecation")
 public class TorService extends Service {
 
     public static final String TAG = "TorService";
 
+    /**
+     * Hide BuildConfig symbol from javadoc
+     * @hidden
+     */
     @SuppressWarnings("unused")
     public static final String VERSION_NAME = BuildConfig.VERSION_NAME;
 

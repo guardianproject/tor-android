@@ -101,7 +101,6 @@ task javadoc(type: Javadoc) {
         }
     }
     exclude '**/R.html', '**/R.*.html', '**/index.html'
-    failOnError false
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
