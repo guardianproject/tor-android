@@ -99,6 +99,8 @@ task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     options.noTimestamp = true
+    options.addBooleanOption("Xdoclint:none", true)
+    options.addStringOption('Xmaxwarns', '1')
     options.addStringOption('charset', 'UTF-8') // to match Maven's case
     android.libraryVariants.all { variant ->
         if (variant.name == 'release') {
