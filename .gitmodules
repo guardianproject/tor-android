@@ -22,3 +22,7 @@
 	path = external/zlib
 	url = https://github.com/madler/zlib
 	ignore = dirty
+[submodule "external/elf-cleaner"]
+	path = external/elf-cleaner
+	url = https://github.com/termux/termux-elf-cleaner
+	ignore = dirty

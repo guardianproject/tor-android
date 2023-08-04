@@ -331,6 +331,7 @@ ifneq ($(DEBUG), 1)
 	##	$(INSTALL_DIR)/libtor.so
 	$(NDK_TOOLCHAIN_BASE)/bin/llvm-strip --strip-unneeded -R .note -R .comment --strip-debug \
 		$(INSTALL_DIR)/libtor.so
+	$(EXTERNAL_ROOT)/bin/termux-elf-cleaner --api-level $(NDK_PLATFORM_LEVEL) $(INSTALL_DIR)/libtor.so
 	ls -l  $(INSTALL_DIR)/libtor.so
 endif
 	@echo "check if all the libs got included:"

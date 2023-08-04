@@ -52,6 +52,10 @@ check_android_dependencies()
 build_external_dependencies()
 {
     check_android_dependencies
+    if [ -f external/bin/termux-elf-cleaner ]; then
+        make -C external -f build-tools clean
+    fi
+    make -C external -f build-tools
     for abi in $abis; do
 	default_abis=`echo $default_abis | sed -E "s,(\s?)$abi(\s?),\1\2,"`
 	APP_ABI=$abi make -C external clean
