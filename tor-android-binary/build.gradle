@@ -42,9 +42,16 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
     packagingOptions {
         exclude 'META-INF/androidx.localbroadcastmanager_localbroadcastmanager.version'
     }
+
+    namespace 'org.torproject.jni'
 }
 
 dependencies {
@@ -68,11 +75,11 @@ android.libraryVariants.all { variant ->
         return; // Skip debug builds.
     }
     def task = project.tasks.create "jar${name.capitalize()}", Jar
-    task.dependsOn variant.javaCompile, sourcesJar, javadocJar
-    task.from variant.javaCompile.destinationDir
+    task.dependsOn variant.javaCompileProvider, sourcesJar, javadocJar
+    task.from variant.javaCompileProvider.get().destinationDir
     //task.exclude('info/guardianproject/**/BuildConfig.**')
     artifacts.add('archives', task);
-    task.baseName = 'tor-android'
+    task.archiveBaseName = 'tor-android'
 }
 
 tasks.withType(AbstractArchiveTask) {
@@ -85,27 +92,28 @@ tasks.withType(AbstractArchiveTask) {
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
-    baseName = 'tor-android-' + getVersionName()
+    archiveBaseName = 'tor-android-' + getVersionName()
 }
 
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     options.noTimestamp = true
+    options.addBooleanOption("Xdoclint:none", true)
+    options.addStringOption('Xmaxwarns', '1')
     options.addStringOption('charset', 'UTF-8') // to match Maven's case
     android.libraryVariants.all { variant ->
         if (variant.name == 'release') {
-            owner.classpath += variant.javaCompile.classpath
+            owner.classpath += variant.javaCompileProvider.get().classpath
         }
     }
     exclude '**/R.html', '**/R.*.html', '**/index.html'
-    failOnError false
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
-    baseName = 'tor-android-' + getVersionName()
+    archiveBaseName = 'tor-android-' + getVersionName()
 }
 
 //apply from: 'publishLocal.gradle'

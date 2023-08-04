@@ -38,6 +38,7 @@ android {
         exclude 'META-INF/com.android.tools/proguard/coroutines.pro'
     }
 
+    namespace 'org.torproject.android.sample'
 }
 
 dependencies {
