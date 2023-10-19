@@ -291,6 +291,7 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 			./configure \
 				--host=$(ALTHOST) \
 				--enable-android \
+				--enable-gpl \
 				--enable-lzma \
 				--enable-pic \
 				--enable-static-libevent --with-libevent-dir=$(EXTERNAL_ROOT) \
