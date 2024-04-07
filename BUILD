@@ -9,7 +9,6 @@ Orbot includes, in the external directory, git repo submodules of:
 	- JTorControl: The Tor Control Library for Java
 
 Please install the following prerequisites (instructions for each follows):
-	ant: http://ant.apache.org/
 	Android Native Dev Kit or NDK (for C/C++ code):
         http://developer.android.com/sdk/ndk/index.html
 	Android Software Dev Kit or SDK (for Java code):
