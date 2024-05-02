@@ -18,7 +18,7 @@ Please install the following prerequisites (instructions for each follows):
 	sudo apt install autotools-dev
 	sudo apt install automake
 	sudo apt install autogen autoconf libtool gettext-base autopoint
-	sudo apt install git make g++ po4a pkg-config default-jdk
+	sudo apt install git make g++ po4a pkg-config openjdk-17-jdk openjdk-17-jre
 ```
 
 You will need to run the 'android' command in the SDK to install the necessary
