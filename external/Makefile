@@ -135,6 +135,8 @@ test-setup:
 
 PATH := $(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/linux-x86_64/bin:$(PATH)
 
+# openssl3.0.x looks for NDK with the word root instead of home in the var name
+export ANDROID_NDK_ROOT=$(ANDROID_NDK_HOME)
 
 openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
 	cd openssl && PATH=$(PATH) && CFLAGS="$(CFLAGS) -Wno-macro-redefined" \
