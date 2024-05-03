@@ -265,9 +265,9 @@ zstd-build-stamp:
 	cp zstd/lib/libzstd.a lib
 	cp zstd/lib/libzstd.pc lib/pkgconfig
 	cp zstd/lib/zstd.h include
-	cp zstd/lib/common/zstd_errors.h include
 	cp zstd/lib/deprecated/zbuff.h include
-	cp zstd/lib/dictBuilder/zdict.h include
+	cp zstd/lib/zstd_errors.h include
+	cp zstd/lib/zdict.h include
 	touch $@
 
 zstd-clean:
