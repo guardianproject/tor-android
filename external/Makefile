@@ -60,7 +60,7 @@ ifneq ($(filter armeabi-v7a, $(APP_ABI)),)
  GREP_CHECK := EABI5
  NDK_ABI := arm
  NDK_BIT := 32
- NDK_PLATFORM_LEVEL := 19
+ NDK_PLATFORM_LEVEL := 21
  NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
 endif
 ifneq ($(filter x86, $(APP_ABI)),)
@@ -69,7 +69,7 @@ ifneq ($(filter x86, $(APP_ABI)),)
  GREP_CHECK := 80386
  NDK_ABI := x86
  NDK_BIT := 32
- NDK_PLATFORM_LEVEL := 19
+ NDK_PLATFORM_LEVEL := 21
  NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
 endif
 ifneq ($(filter x86_64, $(APP_ABI)),)
