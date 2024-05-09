@@ -1,4 +1,3 @@
-
 ## Tor Android
 
 This is native Android `TorService` built on the Tor shared library built for
@@ -25,7 +24,7 @@ configure it properly. Learn more at https://torproject.org/
 
 ## How to Build
 
-Please see: https://raw.githubusercontent.com/guardianproject/tor-android/master/BUILD
+Please see: https://raw.githubusercontent.com/guardianproject/tor-android/master/BUILD.md
 
 This can be built reproducibly using the included Vagrant VM setup.  That will
 run with either _libvirt_ or VirtualBox.  The provisioning is based on the
