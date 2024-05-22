@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 //apply plugin: 'signing'
-apply plugin: 'com.vanniktech.maven.publish'
+//apply plugin: 'com.vanniktech.maven.publish'
 
 /* gets the version name from the latest Git tag, stripping the leading 'tor-' off */
 def getVersionName = { ->
@@ -116,7 +116,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     archiveBaseName = 'tor-android-' + getVersionName()
 }
 
-//apply from: 'publishLocal.gradle'
+apply from: 'publishLocal.gradle'
 //apply from: 'publishMavenCentral.gradle'
 //apply from: 'publishMavenCentralAlt.gradle'
 
@@ -126,15 +126,3 @@ signing {
     sign publishing.publications
 }
 **/
-
-publishing {
-        repositories {
-           maven {
-              url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
-              credentials {
-                  username = ossrhUsername
-                  password = ossrhPassword
-               }
-              }
-             }
-            }
