@@ -143,7 +143,7 @@ openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
 		./Configure \
 			no-comp no-dtls no-ec2m no-psk no-srp no-ssl3 \
 			no-camellia no-idea no-md2 no-md4 no-mdc2 no-rc2 no-rc4 no-rc5 no-rmd160 no-whirlpool \
-			no-dso no-hw no-ui-console \
+			no-dso no-ui-console \
 			no-shared no-tests \
 			android-$(NDK_ABI) \
 			-D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) \
