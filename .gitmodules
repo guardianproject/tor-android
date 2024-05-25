@@ -14,10 +14,6 @@
 	path = external/zstd
 	url = https://github.com/facebook/zstd.git
 	ignore = dirty
-[submodule "external/xz"]
-	path = external/xz
-	url = https://git.tukaani.org/xz.git
-	ignore = dirty
 [submodule "external/zlib"]
 	path = external/zlib
 	url = https://github.com/madler/zlib
