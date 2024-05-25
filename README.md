@@ -11,6 +11,12 @@ dependencies {
 }
 ```
 
+Apps using tor-android need to declare the `INTERNET` permission in their Android Manifest file:
+
+```xml
+    <uses-permission android:name="android.permission.INTERNET"/>
+```
+
 Tor protects your privacy on the internet by hiding the connection 
 between your Internet address and the services you use. We believe Tor
 is reasonably secure, but please ensure you read the instructions and
