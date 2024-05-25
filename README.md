@@ -16,6 +16,16 @@ between your Internet address and the services you use. We believe Tor
 is reasonably secure, but please ensure you read the instructions and
 configure it properly. Learn more at https://torproject.org/
 
+## Minimum Requirements 
+
+In order to use tor-android you need to target Android API 21 or higher. 
+
+It runs on the following hardware architectures:
+- arm64-v8a 
+- armeabi-v7a
+- x86
+- x86_64
+
 ## Tor Frequently Asked Questions:
         
 - https://2019.www.torproject.org/docs/faq
