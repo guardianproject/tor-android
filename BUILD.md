@@ -23,7 +23,7 @@ export ANDROID_NDK_HOME=~/Android/Sdk/ndk/25.2.9519653
 Be sure that you have all of the git submodules up-to-date:
 ```bash
 ./tor-droid-make.sh fetch
-```bash
+```
 
 To build, run:
 ```bash
