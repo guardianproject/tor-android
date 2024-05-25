@@ -2,8 +2,19 @@
 
 This is native Android `TorService` built on the Tor shared library built for
 Android.  The included _libtor.so_ binaries can also be used directly as a tor
-daemon.  Binaries are available on Maven Central:
+daemon.  Binaries are available on the <a href="https://github.com/guardianproject/gpmaven">Guardian Project Maven Repo</a>:
 
+First add the repo to your top level `build.gradle` project:
+```gradle
+allprojects {
+    repositories {
+        // ...
+        maven { url "https://raw.githubusercontent.com/guardianproject/gpmaven/master" }
+    }
+}
+```
+
+Then add the `tor-android` and `jtorctl` dependencies to your project:
 ```gradle
 dependencies {
     implementation 'info.guardianproject:tor-android:0.4.8.11'
@@ -24,7 +35,7 @@ configure it properly. Learn more at https://torproject.org/
 
 ## Minimum Requirements 
 
-In order to use tor-android you need to target Android API 21 or higher. 
+In order to use tor-android you need to target Android **API 21** or higher. 
 
 It runs on the following hardware architectures:
 - arm64-v8a 
