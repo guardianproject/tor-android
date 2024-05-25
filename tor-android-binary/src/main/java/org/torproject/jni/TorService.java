@@ -214,8 +214,6 @@ public class TorService extends Service {
      */
     private static final ReentrantLock runLock = new ReentrantLock();
 
-    private native String apiGetProviderVersion();
-
     private native boolean createTorConfiguration();
 
     private native void mainConfigurationFree();
