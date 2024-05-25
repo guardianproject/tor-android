@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 33
+    compileSdk 33
     defaultConfig {
         applicationId "org.torproject.android.sample"
         minSdkVersion 21
@@ -18,7 +18,7 @@ android {
     }
     lintOptions {
           abortOnError false
-      }
+    }
 
 
     buildTypes {
