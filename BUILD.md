@@ -6,7 +6,7 @@ First install the prerequisite packages:
 sudo apt install autotools-dev
 sudo apt install automake
 sudo apt install autogen autoconf libtool gettext-base autopoint
-sudo apt install git make g++ po4a pkg-config openjdk-17-jdk openjdk-17-jre
+sudo apt install git make g++ pkg-config openjdk-17-jdk openjdk-17-jre
 ```
 
 Then obtain the Android SDK and NDK. The Android SDK is installed by default with Android Studio, and the NDK can be downloaded from within Android Studio's SDK manager.
