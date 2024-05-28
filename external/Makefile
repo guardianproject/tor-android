@@ -28,6 +28,7 @@ endif
 NDK_REVISION := $(shell sed -n 's,^Pkg.Revision *= *\([^ ]*\),\1,p' $(ANDROID_NDK_HOME)/source.properties)
 NDK_REQUIRED_REVISION := 25.2.9519653
 MIN_NDK_VERSION := 21 
+NDK_PLATFORM_LEVEL := 21
 ifeq ($(shell test $(MIN_NDK_VERSION) -gt $(firstword $(subst ., ,$(NDK_REVISION))); echo $$?),0)
  $(error NDK r$(MIN_NDK_VERSION) or newer required! r$(NDK_REVISION) is installed at $(ANDROID_NDK_HOME).)
 endif
@@ -35,23 +36,12 @@ ifneq ($(NDK_REQUIRED_REVISION), $(NDK_REVISION))
  $(warning WARNING: NDK $(NDK_REQUIRED_REVISION) required for reproducible builds, $(NDK_REVISION) is installed.)
 endif
 
-
-ifneq ($(filter mips%, $(APP_ABI)),)
- HOST := mipsel-linux-android
- ALTHOST := $(HOST)
- GREP_CHECK := MIPS
- NDK_ABI := mips
- NDK_BIT := 32
- NDK_PLATFORM_LEVEL := 21 
- NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
-endif
 ifneq ($(filter arm64-v8a, $(APP_ABI)),)
  HOST := aarch64-linux-android
  ALTHOST := $(HOST)
  GREP_CHECK := aarch64
  NDK_ABI := arm64
  NDK_BIT := 64
- NDK_PLATFORM_LEVEL := 21
  NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
 endif
 ifneq ($(filter armeabi-v7a, $(APP_ABI)),)
@@ -60,7 +50,6 @@ ifneq ($(filter armeabi-v7a, $(APP_ABI)),)
  GREP_CHECK := EABI5
  NDK_ABI := arm
  NDK_BIT := 32
- NDK_PLATFORM_LEVEL := 21
  NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
 endif
 ifneq ($(filter x86, $(APP_ABI)),)
@@ -69,7 +58,6 @@ ifneq ($(filter x86, $(APP_ABI)),)
  GREP_CHECK := 80386
  NDK_ABI := x86
  NDK_BIT := 32
- NDK_PLATFORM_LEVEL := 21
  NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
 endif
 ifneq ($(filter x86_64, $(APP_ABI)),)
@@ -78,7 +66,6 @@ ifneq ($(filter x86_64, $(APP_ABI)),)
  GREP_CHECK := x86-64
  NDK_ABI := x86_64
  NDK_BIT := 64
- NDK_PLATFORM_LEVEL := 21
  NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
 endif
 
