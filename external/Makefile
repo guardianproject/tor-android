@@ -290,6 +290,7 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--enable-zstd \
 				--disable-module-dirauth \
 				--disable-asciidoc \
+				--disable-system-torrc \
 				--prefix=$(EXTERNAL_ROOT)
 	grep -E '^# *define +HAVE_LZMA +1$$' tor/orconfig.h
 	grep -E '^# *define +HAVE_ZSTD +1$$' tor/orconfig.h
