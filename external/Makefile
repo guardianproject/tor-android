@@ -253,7 +253,6 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--enable-static-openssl --with-openssl-dir=$(EXTERNAL_ROOT) \
 				--enable-static-zlib --with-zlib-dir=$(EXTERNAL_ROOT) \
 				--enable-zstd \
-				--disable-module-dirauth \
 				--disable-asciidoc \
 				--disable-system-torrc \
 				--prefix=$(EXTERNAL_ROOT)
