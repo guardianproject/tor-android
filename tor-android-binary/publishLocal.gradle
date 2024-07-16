@@ -9,9 +9,9 @@ project.afterEvaluate {
     publishToMavenLocal { 
         def groupId = LIBRARY_GROUP 
         def artifactId = LIBRARY_ARTIFACT_ID 
-        def versionName = LIBRARY_VERSION_NAME + "-local" 
+        def versionName = LIBRARY_VERSION_NAME
         def debugSuffix = "-debug" 
-        def releaseSuffix = "-release" 
+        def releaseSuffix = "" //-release" 
         publishing { 
             publications { 
                 LibraryRelease(MavenPublication) { 
