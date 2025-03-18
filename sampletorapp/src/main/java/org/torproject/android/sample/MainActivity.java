@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
 
         GenericWebViewClient webViewClient = new GenericWebViewClient();
         webViewClient.setRequestCounterListener(requestCount ->
-                runOnUiThread(() -> statusTextView.setText("Request Count: " + requestCount)));
+                runOnUiThread(() -> statusTextView.setText("tor-android v: " + TorService.VERSION_NAME + " - Request Count: " + requestCount)));
         webView.setWebViewClient(webViewClient);
 
         registerReceiver(new BroadcastReceiver() {
