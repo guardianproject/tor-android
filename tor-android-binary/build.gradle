@@ -90,7 +90,7 @@ tasks.withType(AbstractArchiveTask) {
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+    archiveClassifier.set("sources")
     archiveBaseName = 'tor-android-' + getVersionName()
 }
 
@@ -110,7 +110,7 @@ task javadoc(type: Javadoc) {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    archiveClassifier.set('javadoc')
     from javadoc.destinationDir
     archiveBaseName = 'tor-android-' + getVersionName()
 }
