@@ -2,7 +2,7 @@ apply plugin: 'maven-publish'
 
 task sourceJar(type: Jar) { 
     from android.sourceSets.main.java.srcDirs 
-    classifier "sources" 
+    archiveClassifier.set("sources") 
 } 
 
 project.afterEvaluate {
@@ -15,14 +15,14 @@ project.afterEvaluate {
         publishing { 
             publications { 
                 LibraryRelease(MavenPublication) { 
-                    from components.release 
+                    from components.findByName("release") 
                     artifact(sourceJar) 
                     setGroupId groupId 
                     setArtifactId artifactId 
                     version versionName + releaseSuffix 
                 } 
                 LibraryDebug(MavenPublication) { 
-                    from components.debug 
+                    from components.findByName("debug")
                     artifact(sourceJar) 
                     setGroupId groupId 
                     setArtifactId artifactId 
