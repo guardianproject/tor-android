@@ -4,7 +4,7 @@ android {
     compileSdk 33
     defaultConfig {
         applicationId "org.torproject.android.sample"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
