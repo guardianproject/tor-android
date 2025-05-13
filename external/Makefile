@@ -164,7 +164,7 @@ libevent/Makefile: libevent/Makefile.am libevent/configure.ac
 				CFLAGS="-I../include" \
 				--host=$(ALTHOST) \
 				--disable-libevent-regress \
-				--disable-samples \
+				--dq	isable-samples \
 				--disable-openssl \
 				--disable-shared \
 			        --prefix=/
@@ -254,6 +254,7 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--enable-static-zlib --with-zlib-dir=$(EXTERNAL_ROOT) \
 				--enable-zstd \
 				--disable-lzma \
+				--disable-module-relay \
 				--disable-module-dirauth \
 				--disable-asciidoc \
 				--disable-tool-name-check \
