@@ -164,7 +164,7 @@ libevent/Makefile: libevent/Makefile.am libevent/configure.ac
 				CFLAGS="-I../include" \
 				--host=$(ALTHOST) \
 				--disable-libevent-regress \
-				--dq	isable-samples \
+				--disable-samples \
 				--disable-openssl \
 				--disable-shared \
 			        --prefix=/
