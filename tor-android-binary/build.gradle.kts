@@ -4,6 +4,7 @@ plugins {
     id("com.android.library")
     id("maven-publish")
     id("signing")
+    id("io.deepmedia.tools.deployer") version "0.16.0"
 }
 
 fun getVersionName(): String {
@@ -17,11 +18,11 @@ fun getVersionName(): String {
 
 android {
     namespace = "org.torproject.jni"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["disableAnalytics"] = "true"
 
@@ -56,6 +57,9 @@ android {
         resources {
             excludes += "META-INF/androidx.localbroadcastmanager_localbroadcastmanager.version"
         }
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -116,12 +120,75 @@ afterEvaluate {
             			password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
         		}
     		}
+		// Sonatype OSSRH
+            maven {
+                name = "ossrh-staging-api"
+                url = uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = project.findProperty("ossrh.user") as String
+                    password = project.findProperty("ossrh.pass") as String
+                }
+            }
 	}
 
     }
 
     signing {
+        useGpgCmd()
         sign(publishing.publications["release"])
     }
 }
 
+
+deployer {
+
+content {
+    androidComponents("release", "merged") {
+        // Optional configuration, invoked on each component.
+    }
+}
+
+// In the deployer{} block, or within a spec declaration...
+projectInfo {
+   // Project name. Defaults to rootProject.name
+   name.set("tor-android")
+   // Project description. Defaults to rootProject.name
+   description.set("tor for android")
+   // Project url
+   url.set("https://github.com/guardianproject/tor-android")
+   // Package group id. Defaults to project's group
+   groupId.set("info.guardianproject")
+   // Package artifact. Defaults to project's archivesName or project.name
+   artifactId.set("tor-android")
+   // Project SCM information. Defaults to project.url
+   scm {
+       // or: fromGithub("deepmedia", "MavenDeployer")
+       // or: fromBitbucket("deepmedia", "MavenDeployer")
+       // or: set url, connection and developerConnection directly
+   }
+   // Licenses. Apache 2.0 and MIT are built-in
+   license(MIT)
+   // Developers
+   developer("guardianproject", "nathan@guardianproject.info")
+}
+
+    localSpec {
+        directory.set(file("/tmp/tor-android"))
+    }
+
+// Common configuration...
+
+    centralPortalSpec {
+        // Take these credentials from the Generate User Token page at https://central.sonatype.com/account
+        auth.user.set(secret("ossrh.user"))
+        auth.password.set(secret("ossrh.pass"))
+
+        // Signing is required
+        signing.key.set(secret("signing.keyId"))
+        signing.password.set(secret("signing.passphrase"))
+       allowMavenCentralSync = false
+
+    }
+
+
+}

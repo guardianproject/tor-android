@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.0.0"
+kotlin = "2.1.20"
 android-gradle = "8.9.2" # https://developer.android.com/studio/releases/gradle-plugin
 jreleaser = "1.12.0"
 
