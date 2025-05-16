@@ -1,0 +1,11 @@
+[versions]
+kotlin = "2.0.0"
+android-gradle = "8.9.2" # https://developer.android.com/studio/releases/gradle-plugin
+jreleaser = "1.12.0"
+
+[bundles]
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "android-gradle" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }

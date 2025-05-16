@@ -1,0 +1,42 @@
+project:
+  name: tor-android
+  version: 0.4.8.16
+  description: Tor Android
+  authors:
+    - Guardian Project
+  license: Apache-2.0
+  website: https://github.com/guardianproject/tor-android
+  links:
+    homepage: https://github.com/guardianproject/tor-android
+
+release:
+  github:
+    owner: n8fr8
+    name: n8fr8
+    tagName: '{{projectVersion}}'
+    releaseName: 'v{{projectVersion}}'
+    draft: false
+    prerelease: false
+    changelog:
+      formatted: ALWAYS
+
+signing:
+  active: ALWAYS
+  armored: true
+  passphrase: '{{gpgPassphrase}}'
+
+deploy:
+  maven:
+    central:
+      active: ALWAYS
+      url: https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/
+      snapshotUrl: https://s01.oss.sonatype.org/content/repositories/snapshots/
+      coordinates:
+        groupId: info.guardianproject
+        artifactId: tor-android
+      signing:
+        active: ALWAYS
+      credentials:
+        username: {{ossrhUsername}}
+        password: {{ossrhPassword}}
+
