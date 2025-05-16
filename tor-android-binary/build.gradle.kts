@@ -1,4 +1,4 @@
-ort java.io.ByteArrayOutputStream
+import java.io.ByteArrayOutputStream
 
 plugins {
     id("com.android.library")
