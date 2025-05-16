@@ -1,9 +1,10 @@
-import java.io.ByteArrayOutputStream
+ort java.io.ByteArrayOutputStream
 
 plugins {
     id("com.android.library")
     id("maven-publish")
     id("signing")
+    id("org.jreleaser") version "1.11.0" // Use latest stable
 }
 
 fun getVersionName(): String {
@@ -107,21 +108,9 @@ afterEvaluate {
                 }
             }
         }
-	repositories {
-    		maven {
-        		name = "GitHubPackages"
-        		url = uri("https://maven.pkg.github.com/guardianproject/tor-android")
-        		credentials {
-            			username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-            			password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
-        		}
-    		}
-	}
-
     }
 
     signing {
         sign(publishing.publications["release"])
     }
 }
-
