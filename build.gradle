@@ -1,4 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+
 buildscript {
     repositories {
         mavenCentral()
@@ -30,3 +31,5 @@ ext {
     LIBRARY_URL = "https://github.com/guardianproject/tor-android"
     LIBRARY_GIT_URL = "https://github.com/guardianproject/tor-android"
 }
+
+
