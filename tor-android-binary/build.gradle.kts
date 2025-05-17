@@ -82,6 +82,18 @@ dependencies {
     androidTestImplementation("commons-net:commons-net:3.6")
 }
 
+tasks {
+    val sourcesJar by creating(Jar::class) {
+        archiveBaseName.set("tor-android-" + getVersionName())
+        archiveClassifier.set("sources")
+        from(android.sourceSets.getByName("main").java.srcDirs)
+    }
+
+    artifacts {
+        archives(sourcesJar)
+    }
+}
+
 afterEvaluate {
     publishing {
         publications {
