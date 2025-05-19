@@ -210,6 +210,7 @@ release()
     aar=${artifact}-${version}.aar
     cd tor-android-binary/build/outputs/aar/
     mv ../../libs/${artifact}-${version}-*.jar ./
+    mv ../../intermediates/java_doc_jar/release/release-javadoc.jar ./${artifact}-${version}-javadoc.jar
     mv *-release.aar $aar
     buildinfo $artifact $version $aar
     pom $artifact $version
