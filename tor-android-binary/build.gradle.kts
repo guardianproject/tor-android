@@ -101,7 +101,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "info.guardianproject" // ← Your group ID
                 artifactId = "tor-android"       // ← Your artifact ID
-                version = "0.4.8.16"
+                version = "0.4.8.16.1"
 
                 pom {
                     name.set("TorAndroid")
