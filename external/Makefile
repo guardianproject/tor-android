@@ -27,8 +27,8 @@ endif
 # matching NDK revisions are required for reproducible builds
 NDK_REVISION := $(shell sed -n 's,^Pkg.Revision *= *\([^ ]*\),\1,p' $(ANDROID_NDK_HOME)/source.properties)
 NDK_REQUIRED_REVISION := 25.2.9519653
-MIN_NDK_VERSION := 21 
-NDK_PLATFORM_LEVEL := 21
+MIN_NDK_VERSION := 24
+NDK_PLATFORM_LEVEL := 24
 ifeq ($(shell test $(MIN_NDK_VERSION) -gt $(firstword $(subst ., ,$(NDK_REVISION))); echo $$?),0)
  $(error NDK r$(MIN_NDK_VERSION) or newer required! r$(NDK_REVISION) is installed at $(ANDROID_NDK_HOME).)
 endif

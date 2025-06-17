@@ -21,8 +21,8 @@ allprojects {
 }
 
 ext {
-    minSdkVersion = 21
-    targetSdkVersion = 34
+    minSdkVersion = 24
+    targetSdkVersion = 35
     versionCode = 4816
     versionName = "0.4.8.16"
     LIBRARY_GROUP = "info.guardianproject"
