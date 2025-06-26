@@ -7,10 +7,13 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.9.2'
-//        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.24.0' // NEW
         classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.4.10.2' // NEW
 
     }
+}
+
+plugins {
+  id("com.gradleup.nmcp.aggregation").version("0.2.1")
 }
 
 allprojects {
@@ -31,5 +34,22 @@ ext {
     LIBRARY_URL = "https://github.com/guardianproject/tor-android"
     LIBRARY_GIT_URL = "https://github.com/guardianproject/tor-android"
 }
+
+
+nmcpAggregation {
+    centralPortal {
+
+        username = providers.gradleProperty("sonatype.user").get()
+        password = providers.gradleProperty("sonatype.token").get()
+
+        // publish manually from the portal
+        //publishingType = "USER_MANAGED"
+        // or if you want to publish automatically
+        publishingType = "AUTOMATIC"
+    }
+  
+  publishAllProjectsProbablyBreakingProjectIsolation()
+}
+
 
 

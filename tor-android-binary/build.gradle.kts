@@ -4,13 +4,9 @@ plugins {
     id("com.android.library")
     id("maven-publish")
     id("signing")
-    id("com.gradleup.nmcp").version("0.1.4")
 }
 
 group = "info.guardianproject"
-
-val sonatypeCentralUser = findProperty("sonatypeCentralUser") as String?
-val sonatypeCentralToken = findProperty("sonatypeCentralToken") as String?
 
 fun getVersionName(): String {
     val stdout = ByteArrayOutputStream()
@@ -146,17 +142,6 @@ afterEvaluate {
         sign(publishing.publications["release"])
     }
 
-}
-
-nmcp {
-    centralPortal {
-        username = sonatypeCentralUser
-        password = sonatypeCentralToken
-        // publish manually from the portal
-        publishingType = "USER_MANAGED"
-        // or if you want to publish automatically
-        //publishingType = "AUTOMATIC"
-    }
 }
 
 
