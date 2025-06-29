@@ -11,13 +11,10 @@ sudo apt install git make g++ pkg-config openjdk-17-jdk openjdk-17-jre
 
 Then obtain the Android SDK and NDK. The Android SDK is installed by default with Android Studio, and the NDK can be downloaded from within Android Studio's SDK manager.
 
-for now, tor-android is built with NDK toolchain 25.2.9519654
-
 Then set these environment variables for the SDK and NDK:
-
 ```bash
 export ANDROID_HOME=~/Android/Sdk
-export ANDROID_NDK_HOME=~/Android/Sdk/ndk/25.2.9519653
+export ANDROID_NDK_HOME=~/Android/Sdk/ndk/29.0.13113456
 ```
 
 Be sure that you have all of the git submodules up-to-date:
