@@ -1,8 +1,20 @@
 ## Tor Android
 
 This is native Android `TorService` built on the Tor shared library built for
-Android.  The included _libtor.so_ binaries can also be used directly as a tor
-daemon.  Binaries are available on the <a href="https://github.com/guardianproject/gpmaven">Guardian Project Maven Repo</a>:
+Android.  The included `libtor.so` binaries can also be used directly as a tor
+daemon.
+
+Currently, Tor Android is built with the following versions of `tor`, `libevent`, `openssl`, `zlib` and `zstd`:
+
+| Component | Version  |
+|:--------- | --------:|
+| tor       | [0.4.8.16](https://forum.torproject.org/t/stable-release-0-4-8-16/18062) |
+| libevent  | [2.1.12](https://github.com/libevent/libevent/releases/tag/release-2.1.12-stable)   |
+| OpenSSL   | [3.0.16](https://github.com/openssl/openssl/releases/tag/openssl-3.0.16)    |
+| zlib   | [1.3.1](https://github.com/madler/zlib/releases/tag/v1.3.1)    |
+| zstd | [1.5.6](https://github.com/facebook/zstd/releases/tag/v1.5.6)    |
+
+Tor Android binaries are available on the <a href="https://github.com/guardianproject/gpmaven">Guardian Project Maven Repo</a>:
 
 First add the repo to your top level `build.gradle` project:
 ```gradle
