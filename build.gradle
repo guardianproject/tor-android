@@ -39,8 +39,8 @@ ext {
 nmcpAggregation {
     centralPortal {
 
-        username = providers.gradleProperty("sonatype.user").get()
-        password = providers.gradleProperty("sonatype.token").get()
+        username = providers.gradleProperty("sonatype.user").getOrNull()
+        password = providers.gradleProperty("sonatype.token").getOrNull()
 
         // publish manually from the portal
         //publishingType = "USER_MANAGED"
