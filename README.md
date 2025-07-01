@@ -8,11 +8,11 @@ Currently, Tor Android is built with the following versions of `tor`, `libevent`
 
 | Component | Version  |
 |:--------- | --------:|
-| tor       | [0.4.8.16](https://forum.torproject.org/t/stable-release-0-4-8-16/18062) |
+| tor       | [0.4.8.17](https://forum.torproject.org/t/stable-release-0-4-8-17/) |
 | libevent  | [2.1.12](https://github.com/libevent/libevent/releases/tag/release-2.1.12-stable)   |
-| OpenSSL   | [3.0.16](https://github.com/openssl/openssl/releases/tag/openssl-3.0.16)    |
+| OpenSSL   | [3.5.0](https://github.com/openssl/openssl/releases/tag/openssl-3.5.0)    |
 | zlib   | [1.3.1](https://github.com/madler/zlib/releases/tag/v1.3.1)    |
-| zstd | [1.5.6](https://github.com/facebook/zstd/releases/tag/v1.5.6)    |
+| zstd | [1.5.7](https://github.com/facebook/zstd/releases/tag/v1.5.7)    |
 
 Tor Android binaries are available on the <a href="https://github.com/guardianproject/gpmaven">Guardian Project Maven Repo</a>:
 
