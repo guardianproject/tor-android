@@ -12,7 +12,7 @@ MAKE ?= make -j`nproc`
 
 # Android now has 64-bit and 32-bit versions of the NDK for GNU/Linux.  We
 # assume that the build platform uses the appropriate version, otherwise the
-# user building this will have to manually set NDK_PROCESSOR or NDK_TOOLCHAIN.
+# user building this will have to manually set NDK_PROCESSOR.
 CPU := $(shell uname -m)
 ifeq ($(CPU),x86_64)
  NDK_PROCESSOR=x86_64
@@ -42,7 +42,6 @@ ifneq ($(filter arm64-v8a, $(APP_ABI)),)
  GREP_CHECK := aarch64
  NDK_ABI := arm64
  NDK_BIT := 64
- NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
 endif
 ifneq ($(filter armeabi-v7a, $(APP_ABI)),)
  HOST := armv7a-linux-androideabi
@@ -50,7 +49,6 @@ ifneq ($(filter armeabi-v7a, $(APP_ABI)),)
  GREP_CHECK := EABI5
  NDK_ABI := arm
  NDK_BIT := 32
- NDK_TOOLCHAIN := $(HOST)-$(NDK_TOOLCHAIN_VERSION)
 endif
 ifneq ($(filter x86, $(APP_ABI)),)
  HOST := i686-linux-android
@@ -58,7 +56,6 @@ ifneq ($(filter x86, $(APP_ABI)),)
  GREP_CHECK := 80386
  NDK_ABI := x86
  NDK_BIT := 32
- NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
 endif
 ifneq ($(filter x86_64, $(APP_ABI)),)
  HOST := x86_64-linux-android
@@ -66,10 +63,8 @@ ifneq ($(filter x86_64, $(APP_ABI)),)
  GREP_CHECK := x86-64
  NDK_ABI := x86_64
  NDK_BIT := 64
- NDK_TOOLCHAIN := $(NDK_ABI)-$(NDK_TOOLCHAIN_VERSION)
 endif
 
-##NDK_SYSROOT=$(ANDROID_NDK_HOME)/platforms/android-$(NDK_PLATFORM_LEVEL)/arch-$(NDK_ABI)
 NDK_UNAME := $(shell uname -s | tr '[A-Z]' '[a-z]')
 NDK_TOOLCHAIN_BASE=$(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)
 
@@ -104,7 +99,6 @@ INSTALL_DIR := $(EXTERNAL_ROOT)/lib/$(APP_ABI)
 all: test-setup PREBUILD_SHARED_LIBRARY
 
 test-setup:
-	##test -d $(NDK_SYSROOT)
 	test -x $(CC)
 	printf 'int main() {return 0;}\n' > .test.c
 	$(CC) $(CFLAGS) .test.c
@@ -289,8 +283,6 @@ PREBUILD_SHARED_LIBRARY: tor
 	cp openssl/configdata.pm tor/orconfig.h $(INSTALL_DIR)/
 ifneq ($(DEBUG), 1)
 	ls -l  $(INSTALL_DIR)/libtor.so
-	##$(NDK_TOOLCHAIN_BASE)/bin/$(ALTHOST)-strip --strip-unneeded -R .note -R .comment --strip-debug \
-	##	$(INSTALL_DIR)/libtor.so
 	$(NDK_TOOLCHAIN_BASE)/bin/llvm-strip --strip-unneeded -R .note -R .comment --strip-debug \
 		$(INSTALL_DIR)/libtor.so
 	$(EXTERNAL_ROOT)/bin/termux-elf-cleaner --api-level $(NDK_PLATFORM_LEVEL) $(INSTALL_DIR)/libtor.so
@@ -322,8 +314,6 @@ showsetup:
 	@echo "NDK_ABI: $(NDK_ABI)"
 	@echo "NDK_BIT: $(NDK_BIT)"
 	@echo "NDK_PLATFORM_LEVEL: $(NDK_PLATFORM_LEVEL)"
-	##@echo "NDK_SYSROOT: $(NDK_SYSROOT)"
-	@echo "NDK_TOOLCHAIN: $(NDK_TOOLCHAIN)"
 	@echo "PATH: $$PATH"
 	@echo "REPRODUCIBLE_CFLAGS: $(REPRODUCIBLE_CFLAGS)"
 	@echo "SOURCE_DATE_EPOCH: $$SOURCE_DATE_EPOCH"
