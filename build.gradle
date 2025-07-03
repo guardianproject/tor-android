@@ -26,8 +26,8 @@ allprojects {
 ext {
     minSdkVersion = 24
     targetSdkVersion = 35
-    versionCode = 4816
-    versionName = "0.4.8.16"
+    versionCode = 4817
+    versionName = "0.4.8.17"
     LIBRARY_GROUP = "info.guardianproject"
     LIBRARY_ARTIFACT_ID = "tor-android"
     LIBRARY_VERSION_NAME = versionName
