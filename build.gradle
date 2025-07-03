@@ -13,7 +13,7 @@ buildscript {
 }
 
 plugins {
-  id("com.gradleup.nmcp.aggregation").version("0.2.1")
+  id("com.gradleup.nmcp.aggregation").version("1.0.0-rc.1")
 }
 
 allprojects {
@@ -22,6 +22,9 @@ allprojects {
         google()
     }
 }
+
+def sonatypeUser = project.findProperty('sonatype.user') // Safe way to access, returns null if not found
+def sonatypeToken = project.findProperty('sonatype.token') // Safe way to access, returns null if not found
 
 ext {
     minSdkVersion = 24
@@ -33,14 +36,16 @@ ext {
     LIBRARY_VERSION_NAME = versionName
     LIBRARY_URL = "https://github.com/guardianproject/tor-android"
     LIBRARY_GIT_URL = "https://github.com/guardianproject/tor-android"
+    SONATYPE_USER = "" + sonatypeUser
+    SONATYPE_TOKEN = "" + sonatypeToken
 }
 
 
 nmcpAggregation {
     centralPortal {
-
-        username = providers.gradleProperty("sonatype.user").getOrNull()
-        password = providers.gradleProperty("sonatype.token").getOrNull()
+       
+        username = rootProject.ext.SONATYPE_USER
+        password = rootProject.ext.SONATYPE_TOKEN
 
         // publish manually from the portal
         //publishingType = "USER_MANAGED"
