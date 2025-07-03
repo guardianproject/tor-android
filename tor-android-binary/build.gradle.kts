@@ -95,9 +95,9 @@ afterEvaluate {
         publications {
             create<MavenPublication>("release") {
                 from(components["release"])
-                groupId = "info.guardianproject" // ← Your group ID
-                artifactId = "tor-android"       // ← Your artifact ID
-                version = "0.4.8.16.2"
+                groupId = rootProject.extra["LIBRARY_GROUP"].toString()
+                artifactId = rootProject.extra["LIBRARY_ARTIFACT_ID"].toString()
+                version = rootProject.extra["versionName"].toString()
 
                 pom {
                     name.set("TorAndroid")
