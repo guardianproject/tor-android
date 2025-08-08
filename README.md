@@ -68,3 +68,21 @@ Please see: https://raw.githubusercontent.com/guardianproject/tor-android/master
 This can be built reproducibly using the included Vagrant VM setup.  That will
 run with either _libvirt_ or VirtualBox.  The provisioning is based on the
 "release" job in _.gitlab-ci.yml_.
+
+## Publishing
+
+Once you build the binaries, you can use gradle tasks to publish this in various ways, if you have the right credentials
+
+Publish to your local Maven repository:
+./gradlew publishToMavenLocal
+
+Publish to Github packages:
+./gradlew publishReleasePublicationToGitHubPackagesRepository
+
+Publish to Gradle Central:
+./gradlew publishAggregationToCentralPortal
+
+
+
+
+
