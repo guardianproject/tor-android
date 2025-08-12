@@ -36,16 +36,16 @@ ext {
     LIBRARY_VERSION_NAME = versionName
     LIBRARY_URL = "https://github.com/guardianproject/tor-android"
     LIBRARY_GIT_URL = "https://github.com/guardianproject/tor-android"
-    SONATYPE_USER = "" + sonatypeUser
-    SONATYPE_TOKEN = "" + sonatypeToken
+    SONATYPE_USER = sonatypeUser
+    SONATYPE_TOKEN = sonatypeToken
 }
 
 
 nmcpAggregation {
     centralPortal {
        
-        username = rootProject.ext.SONATYPE_USER
-        password = rootProject.ext.SONATYPE_TOKEN
+        username = sonatypeUser
+        password = sonatypeToken
 
         // publish manually from the portal
         //publishingType = "USER_MANAGED"
