@@ -88,6 +88,15 @@ tasks {
     artifacts {
         archives(sourcesJar)
     }
+
+    // Configure all Jar tasks to use reproducible timestamps
+    withType<Jar> {
+        isReproducibleFileOrder = true
+        isPreserveFileTimestamps = false
+        // Set a fixed timestamp for reproducible builds (Unix epoch)
+        fileMode = 0644
+        dirMode = 0755
+    }
 }
 
 afterEvaluate {
