@@ -26,7 +26,7 @@ endif
 
 # matching NDK revisions are required for reproducible builds
 NDK_REVISION := $(shell sed -n 's,^Pkg.Revision *= *\([^ ]*\),\1,p' $(ANDROID_NDK_HOME)/source.properties)
-NDK_REQUIRED_REVISION := 28.1.13356709
+NDK_REQUIRED_REVISION := 28.2.13676358
 MIN_NDK_VERSION := 24
 NDK_PLATFORM_LEVEL := 24
 ifeq ($(shell test $(MIN_NDK_VERSION) -gt $(firstword $(subst ., ,$(NDK_REVISION))); echo $$?),0)
