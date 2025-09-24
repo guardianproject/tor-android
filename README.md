@@ -10,7 +10,7 @@ Currently, Tor Android is built with the following versions of `tor`, `libevent`
 |:--------- | --------:|
 | tor       | [0.4.8.17](https://forum.torproject.org/t/stable-release-0-4-8-17/) |
 | libevent  | [2.1.12](https://github.com/libevent/libevent/releases/tag/release-2.1.12-stable)   |
-| OpenSSL   | [3.5.2](https://github.com/openssl/openssl/releases/tag/openssl-3.5.2)    |
+| OpenSSL   | [3.5.3](https://github.com/openssl/openssl/releases/tag/openssl-3.5.3)    |
 | zlib   | [1.3.1](https://github.com/madler/zlib/releases/tag/v1.3.1)    |
 | zstd | [1.5.7](https://github.com/facebook/zstd/releases/tag/v1.5.7)    |
 
