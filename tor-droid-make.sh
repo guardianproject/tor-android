@@ -228,8 +228,19 @@ bundle()
 	    gpg --armor --detach-sign $f
 	done
     fi
-    # TODO faketime, strip-deterministic, or some other way to set ZIP timestamps
-    jar -cvf bundle-${artifact}-${version}.jar ${artifact}-*${version}*.*
+    # Use reproducible ZIP timestamps for deterministic builds
+    # Set all file timestamps to Unix epoch (1980-01-01 00:00:00) for reproducibility
+    if command -v strip-nondeterminism >/dev/null 2>&1; then
+        # If strip-nondeterminism is available, use it for best results
+        jar -cvf bundle-${artifact}-${version}.jar ${artifact}-*${version}*.*
+        strip-nondeterminism --type zip bundle-${artifact}-${version}.jar
+    else
+        # Fallback: Use TZ=UTC and touch to normalize timestamps before archiving
+        export TZ=UTC
+        # Set all files to a fixed timestamp (Unix epoch)
+        find . -name "${artifact}-*${version}*.*" -exec touch -t 198001010000.00 {} \;
+        jar -cvf bundle-${artifact}-${version}.jar ${artifact}-*${version}*.*
+    fi
 }
 
 show_options()

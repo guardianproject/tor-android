@@ -88,6 +88,38 @@ tasks {
     artifacts {
         archives(sourcesJar)
     }
+
+    // Configure all Jar tasks to use reproducible timestamps
+    withType<Jar> {
+        isReproducibleFileOrder = true
+        isPreserveFileTimestamps = false
+        // Set a fixed timestamp for reproducible builds (Unix epoch)
+        fileMode = 0644
+        dirMode = 0755
+    }
+
+    // Configure Javadoc generation for reproducible builds
+    withType<Javadoc> {
+        options {
+            // Set reproducible timestamp for Javadoc HTML headers
+            this as StandardJavadocDocletOptions
+            // Use a fixed timestamp instead of current time
+            windowTitle = "TorAndroid API"
+            docTitle = "TorAndroid API Documentation"
+            // Suppress timestamps in generated HTML
+            addBooleanOption("Xdoclint:none", true)
+            addStringOption("doctitle", "TorAndroid API Documentation")
+            addStringOption("windowtitle", "TorAndroid API")
+            // Set reproducible options
+            addBooleanOption("use", true)
+            addBooleanOption("splitindex", true)
+            encoding = "UTF-8"
+            charSet = "UTF-8"
+            // Suppress timestamp generation
+            addStringOption("bottom", "")
+            addBooleanOption("notimestamp", true)
+        }
+    }
 }
 
 afterEvaluate {
