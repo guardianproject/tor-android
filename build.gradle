@@ -29,8 +29,8 @@ def sonatypeToken = project.findProperty('sonatype.token') // Safe way to access
 ext {
     minSdkVersion = 24
     targetSdkVersion = 35
-    versionCode = 48171
-    versionName = "0.4.8.17.1"
+    versionCode = 48180
+    versionName = "0.4.8.18.0"
     LIBRARY_GROUP = "info.guardianproject"
     LIBRARY_ARTIFACT_ID = "tor-android"
     LIBRARY_VERSION_NAME = versionName
