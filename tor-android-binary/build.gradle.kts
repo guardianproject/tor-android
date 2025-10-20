@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         minSdk = 24
-        targetSdk = 35
+        testOptions.targetSdk = 35
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["disableAnalytics"] = "true"
 
@@ -74,7 +74,7 @@ dependencies {
 }
 
 tasks {
-    val sourcesJar by creating(Jar::class) {
+    val sourcesJar by registering(Jar::class) {
         archiveBaseName.set("tor-android-" + getVersionName.standardOutput.asText.get().trim())
         archiveClassifier.set("sources")
         from(android.sourceSets.getByName("main").java.srcDirs)
