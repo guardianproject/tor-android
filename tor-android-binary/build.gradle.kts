@@ -8,13 +8,8 @@ plugins {
 
 group = "info.guardianproject"
 
-fun getVersionName(): String {
-    val stdout = ByteArrayOutputStream()
-    exec {
-        commandLine("git", "describe", "--tags", "--always")
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+val getVersionName = providers.exec {
+    commandLine("git", "describe", "--tags", "--always")
 }
 
 android {
@@ -80,7 +75,7 @@ dependencies {
 
 tasks {
     val sourcesJar by creating(Jar::class) {
-        archiveBaseName.set("tor-android-" + getVersionName())
+        archiveBaseName.set("tor-android-" + getVersionName.standardOutput.asText.get().trim())
         archiveClassifier.set("sources")
         from(android.sourceSets.getByName("main").java.srcDirs)
     }
