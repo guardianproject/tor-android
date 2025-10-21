@@ -87,7 +87,7 @@ tasks {
 }
 
 tasks.dokkaJavadoc.configure {
-    outputDirectory.set(projectDir.resolve("src/main/java"))
+    outputDirectory.set(layout.buildDirectory.dir("dokka/javadoc"))
 }
 
 tasks.register<Jar>("javadocJar") {
