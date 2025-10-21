@@ -2,9 +2,11 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     id("com.android.library")
+    id("org.jetbrains.kotlin.android").version("2.2.20")
+    id("org.jetbrains.dokka").version("2.1.0")
+    id("org.jetbrains.dokka-javadoc").version("2.1.0")
     id("maven-publish")
     id("signing")
-    id("org.jetbrains.dokka")
 }
 
 group = "info.guardianproject"
@@ -86,13 +88,13 @@ tasks {
     }
 }
 
-tasks.dokkaJavadoc.configure {
+tasks.dokkaGeneratePublicationJavadoc.configure {
     outputDirectory.set(layout.buildDirectory.dir("dokka/javadoc"))
 }
 
 tasks.register<Jar>("javadocJar") {
-    dependsOn(tasks.dokkaJavadoc)
-    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
+    dependsOn(tasks.dokkaGeneratePublicationJavadoc)
+    from(tasks.dokkaGeneratePublicationJavadoc.flatMap { it.outputDirectory })
     archiveClassifier.set("javadoc")
 }
 
