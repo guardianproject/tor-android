@@ -4,17 +4,13 @@ plugins {
     id("com.android.library")
     id("maven-publish")
     id("signing")
+    id("org.jetbrains.dokka")
 }
 
 group = "info.guardianproject"
 
-fun getVersionName(): String {
-    val stdout = ByteArrayOutputStream()
-    exec {
-        commandLine("git", "describe", "--tags", "--always")
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
+val getVersionName = providers.exec {
+    commandLine("git", "describe", "--tags", "--always")
 }
 
 android {
@@ -23,7 +19,7 @@ android {
 
     defaultConfig {
         minSdk = 24
-        targetSdk = 35
+        testOptions.targetSdk = 35
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["disableAnalytics"] = "true"
 
@@ -79,8 +75,8 @@ dependencies {
 }
 
 tasks {
-    val sourcesJar by creating(Jar::class) {
-        archiveBaseName.set("tor-android-" + getVersionName())
+    val sourcesJar by registering(Jar::class) {
+        archiveBaseName.set("tor-android-" + getVersionName.standardOutput.asText.get().trim())
         archiveClassifier.set("sources")
         from(android.sourceSets.getByName("main").java.srcDirs)
     }
@@ -88,6 +84,16 @@ tasks {
     artifacts {
         archives(sourcesJar)
     }
+}
+
+tasks.dokkaJavadoc.configure {
+    outputDirectory.set(projectDir.resolve("src/main/java"))
+}
+
+tasks.register<Jar>("javadocJar") {
+    dependsOn(tasks.dokkaJavadoc)
+    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
+    archiveClassifier.set("javadoc")
 }
 
 afterEvaluate {
