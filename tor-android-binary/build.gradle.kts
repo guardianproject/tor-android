@@ -4,6 +4,7 @@ plugins {
     id("com.android.library")
     id("maven-publish")
     id("signing")
+    id("org.jetbrains.dokka")
 }
 
 group = "info.guardianproject"
@@ -83,6 +84,16 @@ tasks {
     artifacts {
         archives(sourcesJar)
     }
+}
+
+tasks.dokkaJavadoc.configure {
+    outputDirectory.set(projectDir.resolve("src/main/java"))
+}
+
+tasks.register<Jar>("javadocJar") {
+    dependsOn(tasks.dokkaJavadoc)
+    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
+    archiveClassifier.set("javadoc")
 }
 
 afterEvaluate {

@@ -7,13 +7,12 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.13.0'
-        classpath 'org.jetbrains.dokka:dokka-gradle-plugin:1.4.10.2' // NEW
-
     }
 }
 
 plugins {
   id("com.gradleup.nmcp.aggregation").version("1.0.0-rc.1")
+  id("org.jetbrains.dokka").version("2.0.0")
 }
 
 allprojects {

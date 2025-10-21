@@ -76,7 +76,7 @@ build_app()
     if [ -z $1 ] || [ $1 = 'debug' ]; then
         ./gradlew assembleDebug
     else
-        ./gradlew assembleRelease sourcesJar
+        ./gradlew assembleRelease javadocJar sourcesJar
     fi
 }
 
@@ -210,6 +210,7 @@ release()
     aar=${artifact}-${version}.aar
     cd tor-android-binary/build/outputs/aar/
     mv ../../libs/${artifact}-${version}-*.jar ./
+    mv ../../libs/tor-android-binary-javadoc.jar ./${artifact}-${version}-javadoc.jar
     mv *-release.aar $aar
     buildinfo $artifact $version $aar
     pom $artifact $version
