@@ -1,10 +1,8 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
     id("com.android.library")
-    id("org.jetbrains.kotlin.android").version("2.2.20")
-    id("org.jetbrains.dokka").version("2.1.0")
-    id("org.jetbrains.dokka-javadoc").version("2.1.0")
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.dokka.javadoc)
     id("maven-publish")
     id("signing")
 }
@@ -64,16 +62,16 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.so"))))
-    api("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
-    api("info.guardianproject:jtorctl:0.4.5.7")
+    api(libs.androidx.localbroadcast)
+    api(libs.jtorctl)
 
-    androidTestImplementation("androidx.test:core:1.4.0")
-    androidTestImplementation("androidx.test:runner:1.4.0")
-    androidTestImplementation("androidx.test:rules:1.4.0")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("info.guardianproject.netcipher:netcipher:2.1.0")
-    androidTestImplementation("commons-io:commons-io:2.11.0")
-    androidTestImplementation("commons-net:commons-net:3.6")
+    androidTestImplementation(libs.androidx.core)
+    androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.netcipher)
+    androidTestImplementation(libs.commons.io)
+    androidTestImplementation(libs.commons.net)
 }
 
 tasks {
