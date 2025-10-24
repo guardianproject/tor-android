@@ -8,7 +8,7 @@ commons-io = "2.11.0"
 commons-net = "3.6"
 dokka = "2.1.0"
 jtorctl = "0.4.5.7"
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 netcipher = "2.1.0"
 nmcp = "1.0.0-rc.1"
 
