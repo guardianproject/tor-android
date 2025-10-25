@@ -74,16 +74,10 @@ dependencies {
     androidTestImplementation(libs.commons.net)
 }
 
-tasks {
-    val sourcesJar by registering(Jar::class) {
-        archiveBaseName.set("tor-android-" + getVersionName.standardOutput.asText.get().trim())
-        archiveClassifier.set("sources")
-        from(android.sourceSets.getByName("main").java.srcDirs)
-    }
-
-    artifacts {
-        archives(sourcesJar)
-    }
+tasks.register<Jar>("sourcesJar") {
+    archiveBaseName.set("tor-android-" + getVersionName.standardOutput.asText.get().trim())
+    archiveClassifier.set("sources")
+    from(android.sourceSets.getByName("main").java.srcDirs)
 }
 
 tasks.dokkaGeneratePublicationJavadoc.configure {
