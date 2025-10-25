@@ -88,8 +88,9 @@ tasks.dokkaGeneratePublicationJavadoc.configure {
 
 tasks.register<Jar>("javadocJar") {
     dependsOn(tasks.dokkaGeneratePublicationJavadoc)
-    from(tasks.dokkaGeneratePublicationJavadoc.flatMap { it.outputDirectory })
+    archiveBaseName.set("tor-android-" + getVersionName.standardOutput.asText.get().trim())
     archiveClassifier.set("javadoc")
+    from(tasks.dokkaGeneratePublicationJavadoc.flatMap { it.outputDirectory })
 }
 
 afterEvaluate {
