@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.agp_version = "8.13.0"
+    ext.agp_version = "8.13.1"
     repositories {
         mavenCentral()
         google()
