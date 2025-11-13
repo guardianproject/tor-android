@@ -1,13 +1,30 @@
 [versions]
-kotlin = "2.1.20"
-android-gradle = "8.10.0" # https://developer.android.com/studio/releases/gradle-plugin
-jreleaser = "1.12.0"
-mavencentraluploader = "1.0.0"
+androidx-core = "1.4.0"
+androidx-junit = "1.1.3"
+androidx-localbroadcast = "1.1.0"
+androidx-rules = "1.4.0"
+androidx-runner = "1.4.0"
+commons-io = "2.11.0"
+commons-net = "3.6"
+dokka = "2.1.0"
+jtorctl = "0.4.5.7"
+kotlin = "2.2.21"
+netcipher = "2.1.0"
+nmcp = "1.0.0-rc.1"
 
-[bundles]
+[libraries]
+androidx-core = { module = "androidx.test:core", version.ref = "androidx-core" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-junit" }
+androidx-localbroadcast = { module = "androidx.localbroadcastmanager:localbroadcastmanager", version.ref = "androidx-localbroadcast" }
+androidx-rules = { module = "androidx.test:rules", version.ref = "androidx-rules" }
+androidx-runner = { module = "androidx.test:runner", version.ref = "androidx-runner" }
+commons-io = { module = "commons-io:commons-io", version.ref = "commons-io" }
+commons-net = { module = "commons-net:commons-net", version.ref = "commons-net" }
+jtorctl = { module = "info.guardianproject:jtorctl", version.ref = "jtorctl" }
+netcipher = { module = "info.guardianproject.netcipher:netcipher", version.ref = "netcipher" }
 
 [plugins]
-android-library = { id = "com.android.library", version.ref = "android-gradle" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "dokka" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-jreleaser = { id = "org.jreleaser", version.ref = "jreleaser" }
-maven-central-uploader = { id = "com.kernelflux.maven.publish", version.ref = "mavencentraluploader" }
+nmcp-aggregation = { id = "com.gradleup.nmcp.aggregation", version.ref = "nmcp" }

@@ -1,11 +1,13 @@
-import java.io.ByteArrayOutputStream
-
 plugins {
     id("com.android.library")
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.dokka)
+    alias(libs.plugins.dokka.javadoc)
     id("maven-publish")
     id("signing")
-    id("org.jetbrains.dokka")
 }
+
+kotlin { jvmToolchain(21) }
 
 group = "info.guardianproject"
 
@@ -46,8 +48,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     packaging {
@@ -62,38 +64,33 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.so"))))
-    api("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
-    api("info.guardianproject:jtorctl:0.4.5.7")
+    api(libs.androidx.localbroadcast)
+    api(libs.jtorctl)
 
-    androidTestImplementation("androidx.test:core:1.4.0")
-    androidTestImplementation("androidx.test:runner:1.4.0")
-    androidTestImplementation("androidx.test:rules:1.4.0")
-    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-    androidTestImplementation("info.guardianproject.netcipher:netcipher:2.1.0")
-    androidTestImplementation("commons-io:commons-io:2.11.0")
-    androidTestImplementation("commons-net:commons-net:3.6")
+    androidTestImplementation(libs.androidx.core)
+    androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.netcipher)
+    androidTestImplementation(libs.commons.io)
+    androidTestImplementation(libs.commons.net)
 }
 
-tasks {
-    val sourcesJar by registering(Jar::class) {
-        archiveBaseName.set("tor-android-" + getVersionName.standardOutput.asText.get().trim())
-        archiveClassifier.set("sources")
-        from(android.sourceSets.getByName("main").java.srcDirs)
-    }
-
-    artifacts {
-        archives(sourcesJar)
-    }
+tasks.register<Jar>("sourcesJar") {
+    archiveBaseName.set("tor-android-" + getVersionName.standardOutput.asText.get().trim())
+    archiveClassifier.set("sources")
+    from(android.sourceSets.getByName("main").java.srcDirs)
 }
 
-tasks.dokkaJavadoc.configure {
-    outputDirectory.set(projectDir.resolve("src/main/java"))
+tasks.dokkaGeneratePublicationJavadoc.configure {
+    outputDirectory.set(layout.buildDirectory.dir("dokka/javadoc"))
 }
 
 tasks.register<Jar>("javadocJar") {
-    dependsOn(tasks.dokkaJavadoc)
-    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
+    dependsOn(tasks.dokkaGeneratePublicationJavadoc)
+    archiveBaseName.set("tor-android-" + getVersionName.standardOutput.asText.get().trim())
     archiveClassifier.set("javadoc")
+    from(tasks.dokkaGeneratePublicationJavadoc.flatMap { it.outputDirectory })
 }
 
 afterEvaluate {
