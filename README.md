@@ -29,7 +29,7 @@ allprojects {
 Then add the `tor-android` and `jtorctl` dependencies to your project:
 ```gradle
 dependencies {
-    implementation 'info.guardianproject:tor-android:0.4.8.18'
+    implementation 'info.guardianproject:tor-android:0.4.8.19'
     implementation 'info.guardianproject:jtorctl:0.4.5.7'
 }
 ```
@@ -66,21 +66,21 @@ It runs on the following hardware architectures:
 Please see: https://raw.githubusercontent.com/guardianproject/tor-android/master/BUILD.md
 
 This can be built reproducibly using the included Vagrant VM setup.  That will
-run with either _libvirt_ or VirtualBox.  The provisioning is based on the
-"release" job in _.gitlab-ci.yml_.
+run with either `libvirt` or VirtualBox.  The provisioning is based on the
+"release" job in `.gitlab-ci.yml`.
 
 ## Publishing
 
 Once you build the binaries, you can use gradle tasks to publish this in various ways, if you have the right credentials
 
 Publish to your local Maven repository:
-./gradlew publishToMavenLocal
+`./gradlew publishToMavenLocal`
 
 Publish to Github packages:
-./gradlew publishReleasePublicationToGitHubPackagesRepository
+`./gradlew publishReleasePublicationToGitHubPackagesRepository`
 
 Publish to Gradle Central:
-./gradlew publishAggregationToCentralPortal
+`./gradlew publishAggregationToCentralPortal`
 
 
 
