@@ -1,7 +1,6 @@
 package org.torproject.jni;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -203,7 +202,7 @@ public class TorServiceTest {
         torService = ((TorService.LocalBinder) binder).getService();
         startedLatch.await();
 
-        assertEquals(testValue, getConf(torService.getTorControlConnection(), dnsPort));
+        assertEquals(testValue, getConf(torService.getTorControlConnection()));
 
         serviceRule.unbindService();
         stoppedLatch.await();
@@ -289,10 +288,10 @@ public class TorServiceTest {
      * Return the value of the first match as a {@link String}, with the quotes
      * stripped off.
      */
-    private static String getConf(TorControlConnection torControlConnection, String key) {
+    private static String getConf(TorControlConnection torControlConnection) {
         try {
-            List<ConfigEntry> configEntries = torControlConnection.getConf(key);
-            return configEntries.get(0).value;
+            List<ConfigEntry> configEntries = torControlConnection.getConf("DNSPort");
+            return configEntries.getFirst().value;
             //return value.substring(1, value.length() - 1);
         } catch (IOException | NullPointerException e) {
             e.printStackTrace();

@@ -146,6 +146,8 @@ public class TorService extends Service {
      *                    status broadcasts to, or null to broadcast to all.
      * @see Intent#setPackage(String)
      */
+    @SuppressWarnings("unused")
+
     public static void setBroadcastPackageName(String packageName) {
         TorService.broadcastPackageName = packageName;
     }
@@ -262,7 +264,7 @@ public class TorService extends Service {
         public void onEvent(String keyword, String data) {
             if (TorService.STATUS_STARTING.equals(TorService.currentStatus)
                     && TorControlCommands.EVENT_CIRCUIT_STATUS.equals(keyword)
-                    && data != null && data.length() > 0) {
+                    && data != null && !data.isEmpty()) {
                 String[] tokenArray = data.split(" ");
                 if (tokenArray.length > 1 && TorControlCommands.CIRC_EVENT_BUILT.equals(tokenArray[1])) {
                     TorService.broadcastStatus(TorService.this, TorService.STATUS_ON);
