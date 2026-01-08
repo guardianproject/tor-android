@@ -65,7 +65,7 @@ public class TorService extends Service {
      * Internal request to stop Tor services.
      */
     @SuppressWarnings("unused")
-    private static final String ACTION_STOP = "org.torproject.android.intent.action.STOP";
+    public static final String ACTION_STOP = "org.torproject.android.intent.action.STOP";
 
     /**
      * {@link Intent} sent by this app with {@code ON/OFF/STARTING/STOPPING} status

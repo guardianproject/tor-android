@@ -14,10 +14,10 @@ Currently, Tor Android is built with the following versions of `tor`, `libevent`
 | zlib   | [1.3.1](https://github.com/madler/zlib/releases/tag/v1.3.1)    |
 | zstd | [1.5.7](https://github.com/facebook/zstd/releases/tag/v1.5.7)    |
 
-Tor Android binaries are available on the <a href="https://github.com/guardianproject/gpmaven">Guardian Project Maven Repo</a>:
+Tor Android binaries are available on the [Guardian Project Maven Repo](https://github.com/guardianproject/gpmaven)
 
 First add the repo to your top level `build.gradle` project:
-```gradle
+```groovy
 allprojects {
     repositories {
         // ...
@@ -27,7 +27,7 @@ allprojects {
 ```
 
 Then add the `tor-android` and `jtorctl` dependencies to your project:
-```gradle
+```groovy
 dependencies {
     implementation 'info.guardianproject:tor-android:0.4.8.19'
     implementation 'info.guardianproject:jtorctl:0.4.5.7'
@@ -50,10 +50,10 @@ configure it properly. Learn more at https://torproject.org/
 In order to use tor-android you need to target Android **API 24** or higher. 
 
 It runs on the following hardware architectures:
-- arm64-v8a 
-- armeabi-v7a
-- x86
-- x86_64
+- `arm64-v8a` 
+- `armeabi-v7a`
+- `x86`
+- `x86_64`
 
 ## Tor Frequently Asked Questions:
         

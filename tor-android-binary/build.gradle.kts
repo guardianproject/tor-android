@@ -17,11 +17,11 @@ val getVersionName = providers.exec {
 
 android {
     namespace = "org.torproject.jni"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
-        testOptions.targetSdk = 35
+        testOptions.targetSdk = 36
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["disableAnalytics"] = "true"
 
@@ -67,7 +67,6 @@ dependencies {
     api(libs.androidx.localbroadcast)
     api(libs.jtorctl)
 
-    androidTestImplementation(libs.androidx.core)
     androidTestImplementation(libs.androidx.runner)
     androidTestImplementation(libs.androidx.rules)
     androidTestImplementation(libs.androidx.junit)
@@ -127,24 +126,19 @@ afterEvaluate {
                 }
             }
         }
-	repositories {
-    		maven {
-        		name = "GitHubPackages"
-        		url = uri("https://maven.pkg.github.com/guardianproject/tor-android")
-        		credentials {
-            			username = findProperty("gpr.user") as String?
-            			password = findProperty("gpr.key") as String?
-        		}
-    		}
-	}
-
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/guardianproject/tor-android")
+                credentials {
+                    username = findProperty("gpr.user") as String?
+                    password = findProperty("gpr.key") as String?
+                }
+            }
+        }
     }
-
 
     signing {
         sign(publishing.publications["release"])
     }
-
 }
-
-
