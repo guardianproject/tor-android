@@ -29,8 +29,8 @@ allprojects {
 Then add the `tor-android` and `jtorctl` dependencies to your project:
 ```groovy
 dependencies {
-    implementation 'info.guardianproject:tor-android:0.4.8.19'
-    implementation 'info.guardianproject:jtorctl:0.4.5.7'
+    implementation("info.guardianproject:tor-android:0.4.8.21.2")
+    implementation("info.guardianproject:jtorctl:0.4.5.7")
 }
 ```
 
@@ -61,7 +61,7 @@ It runs on the following hardware architectures:
 - https://support.torproject.org/faq/
 
 
-## How to Build
+## Building `tor-android`
 
 Please see: https://raw.githubusercontent.com/guardianproject/tor-android/master/BUILD.md
 
@@ -69,7 +69,36 @@ This can be built reproducibly using the included Vagrant VM setup.  That will
 run with either `libvirt` or VirtualBox.  The provisioning is based on the
 "release" job in `.gitlab-ci.yml`.
 
-## Publishing
+## Preparing for a release 
+
+#### `build.gradle`
+
+Update these fields in `build.gradle`. For `tor` 0.4.8.22 the first digits of `versionCode` and the `versionName` string are the version of `tor` used. `versionCode` ends in a `0`.
+
+```groovy
+    versionCode = 48220
+    versionName = "0.4.8.22"
+```
+
+If you are making new releases of `tor-android` that don't include a new update of tor, change the last digit 
+of `versionCode` and add a field onto `versionName`, ie:
+
+```groovy
+    versionCode = 48221
+    versionName = "0.4.8.22.1"
+```
+
+#### `README.md`
+Update the versions of the dependencies in the table, as well as the field which contains copy+paste instructions
+on how to add `tor-android` to a gradle project.
+
+#### `gradle.properties`
+Update `VERSION_NAME` to the version of `tor` used in this build, ie `VERSION_NAME=0.4.8.22`
+
+#### `sampletorapp/build.gradle`
+Update the version of `tor-android` used in the sample app's gradle configuration. 
+
+## Publishing `tor-android`
 
 Once you build the binaries, you can use gradle tasks to publish this in various ways, if you have the right credentials
 
