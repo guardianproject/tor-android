@@ -45,16 +45,17 @@ public class MainActivity extends Activity {
         WebView webView = findViewById(R.id.webview);
         TextView statusTextView = findViewById(R.id.status);
 
-        GenericWebViewClient webViewClient = new GenericWebViewClient();
+        var webViewClient = new GenericWebViewClient();
         webViewClient.setRequestCounterListener(requestCount ->
                 runOnUiThread(() -> statusTextView.setText("Request Count: " + requestCount)));
         webView.setWebViewClient(webViewClient);
 
+        // sample app crashes without this 3rd RECEIVER_NOT_EXPORTED flag when >= 33
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    String status = intent.getStringExtra(TorService.EXTRA_STATUS);
+                    var status = intent.getStringExtra(TorService.EXTRA_STATUS);
                     Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
                     webView.loadUrl("https://check.torproject.org/");
 
@@ -64,14 +65,13 @@ public class MainActivity extends Activity {
             registerReceiver(new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    String status = intent.getStringExtra(TorService.EXTRA_STATUS);
+                    var status = intent.getStringExtra(TorService.EXTRA_STATUS);
                     Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
                     webView.loadUrl("https://check.torproject.org/");
 
                 }
             }, new IntentFilter(TorService.ACTION_STATUS));
         }
-
 
         bindService(new Intent(this, TorService.class), new ServiceConnection() {
             @Override
@@ -80,8 +80,7 @@ public class MainActivity extends Activity {
                 //moved torService to a local variable, since we only need it once
                 TorService torService = ((TorService.LocalBinder) service).getService();
 
-                while (torService.getTorControlConnection() ==null)
-                {
+                while (torService.getTorControlConnection() == null) {
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
@@ -94,9 +93,8 @@ public class MainActivity extends Activity {
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
-
+                Log.d("SampleTorApp", "service disconnected");
             }
-        },BIND_AUTO_CREATE);
-
+        }, BIND_AUTO_CREATE);
     }
 }

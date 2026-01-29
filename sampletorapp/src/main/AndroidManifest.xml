@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:installLocation="internalOnly">
 
+    <!-- NEEDED FOR TOR-ANDROID -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application

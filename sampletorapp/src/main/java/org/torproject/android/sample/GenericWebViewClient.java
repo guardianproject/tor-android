@@ -23,8 +23,6 @@ import android.webkit.WebViewClient;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -62,7 +60,7 @@ public class GenericWebViewClient extends WebViewClient {
 
         try {
             HttpURLConnection connection;
-            boolean proxied = true;
+            var proxied = true;
             if (proxied) {
                 Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", 9050));
                 connection = (HttpURLConnection) new URL(urlString).openConnection(proxy);
@@ -76,25 +74,24 @@ public class GenericWebViewClient extends WebViewClient {
             }
 
             // transform response to required format for WebResourceResponse parameters
-            InputStream in = new BufferedInputStream(connection.getInputStream());
-            String encoding = connection.getContentEncoding();
+            var in = new BufferedInputStream(connection.getInputStream());
+            var encoding = connection.getContentEncoding();
             connection.getHeaderFields();
-            Map<String, String> responseHeaders = new HashMap<>();
+            var responseHeaders = new HashMap<String, String>();
             for (String key : connection.getHeaderFields().keySet()) {
                 responseHeaders.put(key, connection.getHeaderField(key));
             }
 
-            String mimeType = "text/plain";
+            var mimeType = "text/plain";
             if (connection.getContentType() != null && !connection.getContentType().isEmpty()) {
                 mimeType = connection.getContentType().split("; ")[0];
             }
 
             return new WebResourceResponse(mimeType, encoding, connection.getResponseCode(), connection.getResponseMessage(), responseHeaders, in);
             //return new WebResourceResponse(mimeType, "binary", in);
-        } catch (UnsupportedEncodingException e) {
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
         // failed doing proxied http request: return empty response
-        return new WebResourceResponse("text/plain", "UTF-8", 204, "No Content", new HashMap<String, String>(), new ByteArrayInputStream(new byte[]{}));
+        return new WebResourceResponse("text/plain", "UTF-8", 204, "No Content", new HashMap<>(), new ByteArrayInputStream(new byte[]{}));
     }
 }
