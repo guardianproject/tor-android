@@ -34,6 +34,11 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+
     packagingOptions {
         exclude("META-INF/com.android.tools/proguard/coroutines.pro")
     }
