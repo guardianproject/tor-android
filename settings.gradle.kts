@@ -1,0 +1,1 @@
+include(":tor-android-binary", ":sampletorapp")

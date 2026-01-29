@@ -1,42 +1,42 @@
-apply plugin: 'com.android.application'
+apply plugin: "com.android.application"
 
 android {
-    compileSdk 35
+    namespace = "org.torproject.android.sample"
+    compileSdkVersion(36)
+    buildFeatures {
+        buildConfig = true
+    }
     defaultConfig {
-        applicationId "org.torproject.android.sample"
-        minSdkVersion 24
-        targetSdkVersion 35
-        versionCode 1
-        versionName "1.0"
+        applicationId("org.torproject.android.sample")
+        minSdkVersion(26)
+        targetSdkVersion(36)
+        versionCode(1)
+        versionName("1.0")
 
-        buildConfigField 'int', 'VERSION_CODE', "${rootProject.ext.versionCode}"
-        buildConfigField 'String', 'VERSION_NAME', "\"${rootProject.ext.versionName}\""
+        buildConfigField("int", "VERSION_CODE", "${rootProject.ext.versionCode}")
+        buildConfigField("String", "VERSION_NAME", "\"${rootProject.ext.versionName}\"")
     }
 
     packagingOptions {
-        exclude 'META-INF/com.android.tools/proguard/coroutines.pro'
+        exclude("META-INF/com.android.tools/proguard/coroutines.pro")
     }
     lintOptions {
-          abortOnError false
+        abortOnError = false
     }
 
 
     buildTypes {
         debug {
-
         }
 
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled = false
         }
     }
 
     packagingOptions {
-        exclude 'META-INF/com.android.tools/proguard/coroutines.pro'
+        exclude("META-INF/com.android.tools/proguard/coroutines.pro")
     }
-
-    namespace 'org.torproject.android.sample'
 }
 
 repositories {
@@ -44,10 +44,16 @@ repositories {
 }
 
 dependencies {
-    implementation 'info.guardianproject:tor-android:0.4.8.16'
-    //implementation (name:'tor-android-binary-release',ext:'aar') //use this if you want to test your local AAR build
-    implementation 'info.guardianproject:jtorctl:0.4.5.7'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
+    // tor-android and jtorctl (apps based off this sample don't need the noinspection comments)
+    //noinspection UseTomlInstead
+    implementation("info.guardianproject:tor-android:0.4.8.21.2")
+    //noinspection UseTomlInstead
+    implementation("info.guardianproject:jtorctl:0.4.5.7")
 
+    // to use a locally built .AAR of tor-android, replace the above with:
+    //implementation (name:"tor-android-binary-release",ext:"aar")
+
+    // other android dependencies:
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.localbroadcast)
 }

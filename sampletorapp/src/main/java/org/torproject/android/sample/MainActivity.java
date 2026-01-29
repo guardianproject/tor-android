@@ -16,6 +16,7 @@
 
 package org.torproject.android.sample;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -23,8 +24,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +36,7 @@ import org.torproject.jni.TorService;
 
 public class MainActivity extends Activity {
 
+    @SuppressLint({"UnspecifiedRegisterReceiverFlag", "SetTextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,15 +50,27 @@ public class MainActivity extends Activity {
                 runOnUiThread(() -> statusTextView.setText("Request Count: " + requestCount)));
         webView.setWebViewClient(webViewClient);
 
-        registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String status = intent.getStringExtra(TorService.EXTRA_STATUS);
-                Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
-                webView.loadUrl("https://check.torproject.org/");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    String status = intent.getStringExtra(TorService.EXTRA_STATUS);
+                    Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
+                    webView.loadUrl("https://check.torproject.org/");
 
-            }
-        }, new IntentFilter(TorService.ACTION_STATUS));
+                }
+            }, new IntentFilter(TorService.ACTION_STATUS), RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    String status = intent.getStringExtra(TorService.EXTRA_STATUS);
+                    Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
+                    webView.loadUrl("https://check.torproject.org/");
+
+                }
+            }, new IntentFilter(TorService.ACTION_STATUS));
+        }
 
 
         bindService(new Intent(this, TorService.class), new ServiceConnection() {
@@ -69,7 +85,7 @@ public class MainActivity extends Activity {
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Log.e("SampleTorApp", e.toString());
                     }
                 }
 
