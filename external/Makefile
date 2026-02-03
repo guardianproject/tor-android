@@ -113,7 +113,7 @@ test-setup:
 # https://gitweb.torproject.org/tor.git/tree/src/lib/tls/ciphers.inc
 # https://wiki.openssl.org/index.php/Compilation_and_Installation
 
-PATH := $(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/linux-x86_64/bin:$(PATH)
+PATH := $(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSOR)/bin:$(PATH)
 
 # openssl3.0.x looks for NDK with the word root instead of home in the var name
 export ANDROID_NDK_ROOT=$(ANDROID_NDK_HOME)
@@ -180,7 +180,7 @@ libevent-clean:
 # zlib
 
 zlib-build-stamp:
-	cd zlib && ./configure \
+	cd zlib && AR=$(NDK_TOOLCHAIN_BASE)/bin/llvm-ar CHOST=$(NDK_ABI) ./configure \
 		--static \
 		--prefix=$(EXTERNAL_ROOT)
 	$(MAKE) -C zlib install
@@ -238,7 +238,7 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 	@which pkg-config || (echo "ERROR: pkg-config is required! apt-get install pkg-config"; exit 1)
 	cd tor && ./autogen.sh
 	cd tor && \
-			./configure \
+			CPPFLAGS="$(CPPFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/$(NDK_UNAME)" ./configure \
 				--host=$(ALTHOST) \
 				--enable-android \
 				--enable-gpl \
