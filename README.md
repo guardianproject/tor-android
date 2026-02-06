@@ -65,6 +65,8 @@ It runs on the following hardware architectures:
 
 Please see: https://raw.githubusercontent.com/guardianproject/tor-android/master/BUILD.md
 
+`tor-android` is generally built on Linux, but it can also be built on [macOS](https://github.com/guardianproject/tor-android/pull/186)
+
 This can be built reproducibly using the included Vagrant VM setup.  That will
 run with either `libvirt` or VirtualBox.  The provisioning is based on the
 "release" job in `.gitlab-ci.yml`.
