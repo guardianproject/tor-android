@@ -16,12 +16,10 @@ android {
         buildConfigField("int", "VERSION_CODE", "${rootProject.ext.versionCode}")
         buildConfigField("String", "VERSION_NAME", "\"${rootProject.ext.versionName}\"")
     }
-
     packagingOptions {
-        exclude("META-INF/com.android.tools/proguard/coroutines.pro")
-    }
-    lintOptions {
-        abortOnError = false
+        resources {
+            excludes += ['META-INF/com.android.tools/proguard/coroutines.pro', 'META-INF/com.android.tools/proguard/coroutines.pro']
+        }
     }
 
 
@@ -38,10 +36,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
-
-    packagingOptions {
-        exclude("META-INF/com.android.tools/proguard/coroutines.pro")
+    lint {
+        abortOnError false
     }
+
 }
 
 repositories {
