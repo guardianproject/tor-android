@@ -258,7 +258,6 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--prefix=$(EXTERNAL_ROOT)
 	grep -E '^# *define +HAVE_ZSTD +1$$' tor/orconfig.h
 	grep -E '^# *define +ENABLE_OPENSSL +1$$' tor/orconfig.h
-	grep -E '^# *define +HAVE_TLS_METHOD +1$$' tor/orconfig.h
 
 tor-build-stamp: tor/Makefile
 	$(MAKE) -C tor
