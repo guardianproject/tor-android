@@ -34,8 +34,8 @@ git cherry-pick ee116cd7ea37bc2570b42324704a82d34676591d \
 	&& git cherry-pick b7e02e08584f7dd8cc3f0c006a0a75065457921c \
 	&& git cherry-pick 48db35c3017ba07df31f2b9da1263230f01cc86a \
 	&& git cherry-pick 8950c43d7aabf4d981335f8859c8540fdaadb2ad \
-	&& git cherry-pick b6f1d925388368e298439655b78608d0b47a78d7 \
-	&& git cherry-pick 037c9d36ea72ce15052ce61a3b9e435cad42d6fa \
+	&& git cherry-pick --keep-redundant-commits b6f1d925388368e298439655b78608d0b47a78d7 \
+	&& git cherry-pick --keep-redundant-commits 037c9d36ea72ce15052ce61a3b9e435cad42d6fa \
 	&& git cherry-pick ecb70c77dffc5eea7014f22f8bc54eb6b8f47512 \
 	&& git cherry-pick 5f6e8570a2465229e92e9d2b5a378acec8749556 \
 	&& git cherry-pick a3aecdf3c82c0cc689d62f9cfeb57b6be364cde0 \
