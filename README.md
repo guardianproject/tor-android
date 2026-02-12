@@ -8,7 +8,7 @@ Currently, Tor Android is built with the following versions of `tor`, `libevent`
 
 | Component | Version  |
 |:--------- | --------:|
-| tor       | [0.4.8.22](https://forum.torproject.org/t/release-candidate-and-stable-release-0-4-8-22-and-0-4-9-4-rc/21160) |
+| tor       | [0.4.9.5](https://forum.torproject.org/c/news/tor-release-announcement/28) |
 | libevent  | [2.1.12](https://github.com/libevent/libevent/releases/tag/release-2.1.12-stable)   |
 | OpenSSL   | [3.5.5](https://github.com/openssl/openssl/releases/tag/openssl-3.5.5)    |
 | zlib   | [1.3.1](https://github.com/madler/zlib/releases/tag/v1.3.1)    |
@@ -29,7 +29,7 @@ allprojects {
 Then add the `tor-android` and `jtorctl` dependencies to your project:
 ```groovy
 dependencies {
-    implementation("info.guardianproject:tor-android:0.4.8.22")
+    implementation("info.guardianproject:tor-android:0.4.9.5")
     implementation("info.guardianproject:jtorctl:0.4.5.7")
 }
 ```
