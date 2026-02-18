@@ -1,24 +1,28 @@
-apply plugin: "com.android.application"
-
+plugins {
+    id("com.android.application")
+}
 android {
     namespace = "org.torproject.android.sample"
-    compileSdkVersion(36)
+    compileSdk = 36
     buildFeatures {
         buildConfig = true
     }
     defaultConfig {
-        applicationId("org.torproject.android.sample")
-        minSdkVersion(26)
-        targetSdkVersion(36)
-        versionCode(1)
-        versionName("1.0")
+        applicationId = "org.torproject.android.sample"
+        minSdk = 24
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0"
 
-        buildConfigField("int", "VERSION_CODE", "${rootProject.ext.versionCode}")
-        buildConfigField("String", "VERSION_NAME", "\"${rootProject.ext.versionName}\"")
+        buildConfigField("int", "VERSION_CODE", "${rootProject.extra["versionCode"]}")
+        buildConfigField("String", "VERSION_NAME", "\"${rootProject.extra["versionName"]}\"")
     }
     packagingOptions {
         resources {
-            excludes += ['META-INF/com.android.tools/proguard/coroutines.pro', 'META-INF/com.android.tools/proguard/coroutines.pro']
+            excludes += listOf(
+                "META-INF/com.android.tools/proguard/coroutines.pro",
+                "META-INF/com.android.tools/proguard/coroutines.pro"
+            )
         }
     }
 
@@ -28,7 +32,7 @@ android {
         }
 
         release {
-            minifyEnabled = false
+            isMinifyEnabled = false
         }
     }
 
@@ -37,19 +41,19 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
     lint {
-        abortOnError false
+        abortOnError = false
     }
 
 }
 
 repositories {
-    maven { url "https://raw.githubusercontent.com/guardianproject/gpmaven/master" }
+    maven(uri("https://raw.githubusercontent.com/guardianproject/gpmaven/master"))
 }
 
 dependencies {
     // tor-android and jtorctl (apps based off this sample don't need the noinspection comments)
     //noinspection UseTomlInstead
-    implementation("info.guardianproject:tor-android:0.4.8.21.2")
+    implementation("info.guardianproject:tor-android:0.4.9.5")
     //noinspection UseTomlInstead
     implementation("info.guardianproject:jtorctl:0.4.5.7")
 

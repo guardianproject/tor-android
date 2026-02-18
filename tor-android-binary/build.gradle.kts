@@ -1,6 +1,5 @@
 plugins {
     id("com.android.library")
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dokka)
     alias(libs.plugins.dokka.javadoc)
     id("maven-publish")
@@ -11,7 +10,7 @@ kotlin { jvmToolchain(21) }
 
 group = "info.guardianproject"
 
-val getVersionName = providers.exec {
+val getVersionName: ExecOutput? = providers.exec {
     commandLine("git", "describe", "--tags", "--always")
 }
 
@@ -34,7 +33,7 @@ android {
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android.txt"),
+                getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
@@ -76,7 +75,7 @@ dependencies {
 }
 
 tasks.register<Jar>("sourcesJar") {
-    archiveBaseName.set("tor-android-" + getVersionName.standardOutput.asText.get().trim())
+    archiveBaseName.set("tor-android-" + getVersionName!!.standardOutput.asText.get().trim())
     archiveClassifier.set("sources")
     from(android.sourceSets.getByName("main").java.srcDirs)
 }
@@ -87,7 +86,7 @@ tasks.dokkaGeneratePublicationJavadoc.configure {
 
 tasks.register<Jar>("javadocJar") {
     dependsOn(tasks.dokkaGeneratePublicationJavadoc)
-    archiveBaseName.set("tor-android-" + getVersionName.standardOutput.asText.get().trim())
+    archiveBaseName.set("tor-android-" + getVersionName!!.standardOutput.asText.get().trim())
     archiveClassifier.set("javadoc")
     from(tasks.dokkaGeneratePublicationJavadoc.flatMap { it.outputDirectory })
 }
