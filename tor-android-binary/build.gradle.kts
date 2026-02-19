@@ -1,3 +1,8 @@
+@file:Suppress("PropertyName")
+val LIBRARY_GROUP = "info.guardianproject"
+val LIBRARY_ARTIFACT_ID = "tor-android"
+val LIBRARY_URL = "https://github.com/guardianproject/tor-android"
+
 plugins {
     id("com.android.library")
     alias(libs.plugins.dokka)
@@ -96,14 +101,14 @@ afterEvaluate {
         publications {
             create<MavenPublication>("release") {
                 from(components["release"])
-                groupId = rootProject.extra["LIBRARY_GROUP"].toString()
-                artifactId = rootProject.extra["LIBRARY_ARTIFACT_ID"].toString()
+                groupId = LIBRARY_GROUP
+                artifactId = LIBRARY_ARTIFACT_ID
                 version = rootProject.extra["versionName"].toString()
 
                 pom {
                     name.set("TorAndroid")
                     description.set("Tor for Android")
-                    url.set("https://github.com/guardianproject/tor-android")
+                    url.set(LIBRARY_URL)
                     licenses {
                         license {
                             name.set("The 3-Clause BSD License")
@@ -120,7 +125,7 @@ afterEvaluate {
                     scm {
                         connection.set("scm:git:git://github.com/guardianproject/tor-android.git")
                         developerConnection.set("scm:git:ssh://git@github.com:guardianproject/tor-android.git")
-                        url.set("https://github.com/guardianproject/tor-android")
+                        url.set(LIBRARY_URL)
                     }
                 }
             }

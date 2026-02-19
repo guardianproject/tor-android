@@ -6,17 +6,28 @@ daemon.
 
 Currently, Tor Android is built with the following versions of `tor`, `libevent`, `openssl`, `zlib` and `zstd`:
 
-| Component | Version  |
-|:--------- | --------:|
-| tor       | [0.4.9.5](https://forum.torproject.org/c/news/tor-release-announcement/28) |
-| libevent  | [2.1.12](https://github.com/libevent/libevent/releases/tag/release-2.1.12-stable)   |
-| OpenSSL   | [3.5.5](https://github.com/openssl/openssl/releases/tag/openssl-3.5.5)    |
-| zlib   | [1.3.2](https://github.com/madler/zlib/releases/tag/v1.3.2)    |
-| zstd | [1.5.7](https://github.com/facebook/zstd/releases/tag/v1.5.7)    |
+| Component |                                                                           Version |
+|:----------|----------------------------------------------------------------------------------:|
+| tor       |        [0.4.9.5](https://forum.torproject.org/c/news/tor-release-announcement/28) |
+| libevent  | [2.1.12](https://github.com/libevent/libevent/releases/tag/release-2.1.12-stable) |
+| OpenSSL   |            [3.5.5](https://github.com/openssl/openssl/releases/tag/openssl-3.5.5) |
+| zlib      |                       [1.3.2](https://github.com/madler/zlib/releases/tag/v1.3.2) |
+| zstd      |                     [1.5.7](https://github.com/facebook/zstd/releases/tag/v1.5.7) |
 
 Tor Android binaries are available on the [Guardian Project Maven Repo](https://github.com/guardianproject/gpmaven)
 
-First add the repo to your top level `build.gradle` project:
+First add the repo to your top level Gradle file:
+
+```kts
+allprojects {
+    repositories {
+        // ...
+        maven { uri("https://raw.githubusercontent.com/guardianproject/gpmaven/master") }
+    }
+}
+```
+
+Or, for groovy's `build.gradle`
 ```groovy
 allprojects {
     repositories {
@@ -27,7 +38,7 @@ allprojects {
 ```
 
 Then add the `tor-android` and `jtorctl` dependencies to your project:
-```groovy
+```kts
 dependencies {
     implementation("info.guardianproject:tor-android:0.4.9.5")
     implementation("info.guardianproject:jtorctl:0.4.5.7")
@@ -73,41 +84,43 @@ run with either `libvirt` or VirtualBox.  The provisioning is based on the
 
 ## Preparing for a release 
 
-#### `build.gradle`
+#### Top-level `build.gradle.kts`
 
-Update these fields in `build.gradle`. For `tor` 0.4.8.22 the first digits of `versionCode` and the `versionName` string are the version of `tor` used. `versionCode` ends in a `0`.
+Update these fields at the top of `build.gradle.kts`. For `tor` 0.4.9.5 the first digits of `versionCode` and the `versionName` string are the version of `tor` used.
 
-```groovy
-    versionCode = 48220
-    versionName = "0.4.8.22"
+Note that `VERSION_CODE` ends in a 0.
+
+```kts
+    VERSION_CODE = 49050
+    VERSION_NAME = "0.4.9.5"
 ```
 
 If you are making new releases of `tor-android` that don't include a new update of tor, change the last digit 
-of `versionCode` and add a field onto `versionName`, ie:
+of `VERSION_CODE` and add a field onto `VERSION_NAME`, ie:
 
-```groovy
-    versionCode = 48221
-    versionName = "0.4.8.22.1"
+```kts
+    VERSION_CODE = 49051
+    VERSION_NAME = "0.4.9.5.1"
 ```
 
 #### `README.md`
 Update the versions of the dependencies in the table, as well as the field which contains copy+paste instructions
-on how to add `tor-android` to a gradle project.
+on how to add `tor-android` to a Gradle project.
 
 #### `gradle.properties`
-Update `VERSION_NAME` to the version of `tor` used in this build, ie `VERSION_NAME=0.4.8.22`
+Update `VERSION_NAME` to the version of `tor` used in this build, ie `VERSION_NAME=0.4.9.5`
 
 #### `sampletorapp/build.gradle`
-Update the version of `tor-android` used in the sample app's gradle configuration. 
+Update the version of `tor-android` used in the sample app's Gradle configuration. 
 
 ## Publishing `tor-android`
 
-Once you build the binaries, you can use gradle tasks to publish this in various ways, if you have the right credentials
+Once you build the binaries, you can use Gradle tasks to publish this in various ways, if you have the right credentials
 
 Publish to your local Maven repository:
 `./gradlew publishToMavenLocal`
 
-Publish to Github packages:
+Publish to GitHub packages:
 `./gradlew publishReleasePublicationToGitHubPackagesRepository`
 
 Publish to Gradle Central:
