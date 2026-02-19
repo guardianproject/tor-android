@@ -1,4 +1,6 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+// Top-level build file where you can add configuration options common to all subprojects
+
+@file:Suppress("PropertyName")
 
 val VERSION_CODE = 49050
 val VERSION_NAME = "0.4.9.5"
@@ -9,7 +11,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:9.0.1")
+        classpath(libs.agp)
     }
 }
 plugins {

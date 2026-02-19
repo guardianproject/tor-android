@@ -1,4 +1,5 @@
 @file:Suppress("PropertyName")
+
 val LIBRARY_GROUP = "info.guardianproject"
 val LIBRARY_ARTIFACT_ID = "tor-android"
 val LIBRARY_URL = "https://github.com/guardianproject/tor-android"

@@ -50,6 +50,7 @@ public class TorService extends Service {
 
     /**
      * Hide BuildConfig symbol from javadoc
+     *
      * @hidden
      */
     @SuppressWarnings("unused")
@@ -205,7 +206,7 @@ public class TorService extends Service {
     // Store the opaque reference as a long (pointer) for the native code
     @SuppressWarnings({"FieldMayBeFinal", "unused"})
     private long torConfiguration = -1;
-    @SuppressWarnings({"FieldMayBeFinal"," unused"})
+    @SuppressWarnings({"FieldMayBeFinal", " unused"})
     private int torControlFd = -1;
 
     private volatile TorControlConnection torControlConnection;
@@ -259,16 +260,13 @@ public class TorService extends Service {
     /**
      * Announce Tor is available for connections once the first circuit is complete
      */
-    private final RawEventListener startedEventListener = new RawEventListener() {
-        @Override
-        public void onEvent(String keyword, String data) {
-            if (TorService.STATUS_STARTING.equals(TorService.currentStatus)
-                    && TorControlCommands.EVENT_CIRCUIT_STATUS.equals(keyword)
-                    && data != null && !data.isEmpty()) {
-                String[] tokenArray = data.split(" ");
-                if (tokenArray.length > 1 && TorControlCommands.CIRC_EVENT_BUILT.equals(tokenArray[1])) {
-                    TorService.broadcastStatus(TorService.this, TorService.STATUS_ON);
-                }
+    private final RawEventListener startedEventListener = (keyword, data) -> {
+        if (TorService.STATUS_STARTING.equals(TorService.currentStatus)
+                && TorControlCommands.EVENT_CIRCUIT_STATUS.equals(keyword)
+                && data != null && !data.isEmpty()) {
+            String[] tokenArray = data.split(" ");
+            if (tokenArray.length > 1 && TorControlCommands.CIRC_EVENT_BUILT.equals(tokenArray[1])) {
+                TorService.broadcastStatus(TorService.this, TorService.STATUS_ON);
             }
         }
     };
