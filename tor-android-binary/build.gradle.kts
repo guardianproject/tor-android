@@ -22,7 +22,7 @@ val getVersionName: ExecOutput? = providers.exec {
 
 android {
     namespace = "org.torproject.jni"
-    compileSdk = 36
+    compileSdkPreview = "CinnamonBun"
 
     defaultConfig {
         minSdk = 24

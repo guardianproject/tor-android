@@ -253,6 +253,7 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--disable-asciidoc \
 				--disable-tool-name-check \
 				--disable-manpage \
+				--disable-unittests\
 				--disable-html-manual \
 				--disable-system-torrc \
 				--prefix=$(EXTERNAL_ROOT)
