@@ -230,6 +230,15 @@ public class TorService extends Service {
     private native int runMain();
 
 
+    public native static boolean fatal();
+    public static final String STATUS_ABORT = "ABORTING";
+    private static Context ctx;
+    public static void onTorRawAbort() {
+        Log.wtf("OrbotAbortReport", "made it to java abort");
+        broadcastStatus(ctx, STATUS_ABORT);
+    }
+
+
     public class LocalBinder extends Binder {
         public TorService getService() {
             return TorService.this;
@@ -248,6 +257,7 @@ public class TorService extends Service {
     public void onCreate() {
         super.onCreate();
         broadcastStatus(this, STATUS_STARTING);
+        ctx = this;
         startTorServiceThread();
     }
 
@@ -443,6 +453,7 @@ public class TorService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        ctx = null;
         if (torControlConnection != null) {
             torControlConnection.removeRawEventListener(startedEventListener);
         }
