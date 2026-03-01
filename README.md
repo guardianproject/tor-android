@@ -110,7 +110,7 @@ on how to add `tor-android` to a Gradle project.
 #### `gradle.properties`
 Update `VERSION_NAME` to the version of `tor` used in this build, ie `VERSION_NAME=0.4.9.5`
 
-#### `sampletorapp/build.gradle`
+#### `sampletorapp/build.gradle.kts`
 Update the version of `tor-android` used in the sample app's Gradle configuration. 
 
 ## Publishing `tor-android`
