@@ -236,6 +236,7 @@ public class TorService extends Service {
     public static void onTorRawAbort() {
         Log.wtf("OrbotAbortReport", "made it to java abort");
         if (ctx == null) return; // TorService's onCreate() hasn't been called, no valid context.
+        Log.wtf("OrbotAbortReport", "sending abort ");
         broadcastStatus(ctx, STATUS_ABORT);
     }
 
