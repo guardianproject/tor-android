@@ -262,12 +262,11 @@ public class TorService extends Service {
      */
     private final RawEventListener startedEventListener = (keyword, data) -> {
         if (TorService.STATUS_STARTING.equals(TorService.currentStatus)
-                && TorControlCommands.EVENT_CIRCUIT_STATUS.equals(keyword)
+                && TorControlCommands.EVENT_NOTICE_MSG.equals(keyword)
                 && data != null && !data.isEmpty()) {
-            String[] tokenArray = data.split(" ");
-            if (tokenArray.length > 1 && TorControlCommands.CIRC_EVENT_BUILT.equals(tokenArray[1])) {
+            if (data.contains("Bootstrapped 100%")) {
                 TorService.broadcastStatus(TorService.this, TorService.STATUS_ON);
-            }
+                }
         }
     };
 
