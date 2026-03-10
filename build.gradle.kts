@@ -2,6 +2,7 @@
 
 val versionCode = 49060
 val versionName = "0.4.9.6"
+//@file:Suppress("PropertyName")
 
 buildscript {
     repositories {
