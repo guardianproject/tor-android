@@ -113,6 +113,7 @@ public class TorService extends Service {
     public static final String STATUS_ON = "ON";
     public static final String STATUS_STARTING = "STARTING";
     public static final String STATUS_STOPPING = "STOPPING";
+    public static final String STATUS_BOOTSTRAPPED_100 = "Bootstrapped 100%";
 
     /**
      * @return a {@link File} pointing to the location of the optional
@@ -264,7 +265,7 @@ public class TorService extends Service {
         if (TorService.STATUS_STARTING.equals(TorService.currentStatus)
                 && TorControlCommands.EVENT_NOTICE_MSG.equals(keyword)
                 && data != null && !data.isEmpty()) {
-            if (data.contains("Bootstrapped 100%")) {
+            if (data.contains(STATUS_BOOTSTRAPPED_100)) {
                 TorService.broadcastStatus(TorService.this, TorService.STATUS_ON);
                 }
         }
