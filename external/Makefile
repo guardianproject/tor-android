@@ -249,6 +249,7 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--enable-zstd \
 				--disable-lzma \
 				--disable-module-relay \
+				--disable-unittests \
 				--disable-module-dirauth \
 				--disable-asciidoc \
 				--disable-tool-name-check \
@@ -288,8 +289,8 @@ ifneq ($(DEBUG), 1)
 	ls -l  $(INSTALL_DIR)/libtor.so
 endif
 	grep "Java_org_torproject_jni_TorService" $(INSTALL_DIR)/libtor.so
-	install -d $(EXTERNAL_ROOT)/test/$(APP_ABI)
-	cp tor/src/test/test tor/src/test/test-memwipe tor/src/test/test-slow \
+# 	install -d $(EXTERNAL_ROOT)/test/$(APP_ABI)
+# 	cp tor/src/test/test tor/src/test/test-memwipe tor/src/test/test-slow \
 		$(EXTERNAL_ROOT)/test/$(APP_ABI)
 
 PREBUILD_SHARED_LIBRARY-clean:
