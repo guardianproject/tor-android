@@ -36,7 +36,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
  * first bind to this using {@link #bindService(Intent, android.content.ServiceConnection, int)},
  * then use {@link #getTorControlConnection()} to get an instance of
  * {@link TorControlConnection} from {@code jtorctl}.  If
- * {@link TorControlCommands#EVENT_CIRCUIT_STATUS} is not included in
+ * {@link TorControlCommands#EVENT_STATUS_CLIENT} is not included in
  * {@link TorControlConnection#setEvents(java.util.List)}, then this service
  * will not be able to function properly since it relies on those events to
  * detect the state of Tor.
@@ -111,8 +111,6 @@ public class TorService extends Service {
     public static final String STATUS_ON = "ON";
     public static final String STATUS_STARTING = "STARTING";
     public static final String STATUS_STOPPING = "STOPPING";
-
-    private static final String STATUS_BOOTSTRAPPED_100 = "Bootstrapped 100%";
 
     /**
      * @return a {@link File} pointing to the location of the optional
@@ -259,15 +257,18 @@ public class TorService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    private static final String STATUS_CLIENT_CIRCUIT_ESTABLISHED = "CIRCUIT_ESTABLISHED";
+
     /**
      * Announce Tor is available for connections once the first circuit is complete
      */
     private final RawEventListener startedEventListener = (keyword, data) -> {
-        if (TorService.STATUS_STARTING.equals(TorService.currentStatus)
-                && TorControlCommands.EVENT_NOTICE_MSG.equals(keyword)
+        if (STATUS_STARTING.equals(currentStatus)
+                && TorControlCommands.EVENT_STATUS_CLIENT.equals(keyword)
                 && data != null && !data.isEmpty()) {
-            if (data.contains(STATUS_BOOTSTRAPPED_100)) {
-                TorService.broadcastStatus(TorService.this, TorService.STATUS_ON);
+            var tokenArray = data.split(" ");
+            if (tokenArray.length > 1 && STATUS_CLIENT_CIRCUIT_ESTABLISHED.equals(tokenArray[1])) {
+                broadcastStatus(TorService.this, STATUS_ON);
             }
         }
     };
@@ -311,7 +312,7 @@ public class TorService extends Service {
                 torControlConnection.launchThread(true);
                 torControlConnection.authenticate(new byte[0]);
                 torControlConnection.addRawEventListener(startedEventListener);
-                torControlConnection.setEvents(Collections.singletonList(TorControlCommands.EVENT_CIRCUIT_STATUS));
+                torControlConnection.setEvents(Collections.singletonList(TorControlCommands.EVENT_STATUS_CLIENT));
 
                 socksPort = getPortFromGetInfo("net/listeners/socks");
                 httpTunnelPort = getPortFromGetInfo("net/listeners/httptunnel");
@@ -506,7 +507,7 @@ public class TorService extends Service {
     /**
      * Broadcasts the current status to any apps following the status of TorService.
      */
-    static void sendBroadcastStatusIntent(Context context) {
+    private static void sendBroadcastStatusIntent(Context context) {
         context.sendBroadcast(getBroadcastIntent(context, currentStatus));
     }
 
@@ -514,7 +515,7 @@ public class TorService extends Service {
      * Sends the current status both internally and for any apps that need to
      * follow the status of TorService.
      */
-    static void broadcastStatus(Context context, String currentStatus) {
+    private static void broadcastStatus(Context context, String currentStatus) {
         TorService.currentStatus = currentStatus;
         var intent = getBroadcastIntent(context, currentStatus);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
@@ -525,7 +526,7 @@ public class TorService extends Service {
      * This might be better handled by {@link android.content.ServiceConnection}
      * but there is no way to write tests for {@code ServiceConnection}.
      */
-    static void broadcastError(Context context, Throwable e) {
+    private static void broadcastError(Context context, Throwable e) {
         var intent = new Intent(ACTION_ERROR);
         if (e != null) {
             intent.putExtra(Intent.EXTRA_TEXT, e.getLocalizedMessage());
