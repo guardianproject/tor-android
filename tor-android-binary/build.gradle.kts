@@ -79,7 +79,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.netcipher)
     androidTestImplementation(libs.commons.io)
-    androidTestImplementation(libs.commons.net)
 }
 
 tasks.register<Jar>("sourcesJar") {

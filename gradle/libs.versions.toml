@@ -5,8 +5,7 @@ androidx-localbroadcast = "1.1.0"
 androidx-rules = "1.7.0"
 androidx-runner = "1.7.0"
 appcompat = "1.7.1"
-commons-io = "2.21.0"
-commons-net = "3.13.0"
+commons-io = "2.22.0"
 dokka = "2.2.0"
 jtorctl = "0.4.5.7"
 netcipher = "2.1.0"
@@ -20,7 +19,6 @@ androidx-localbroadcast = { module = "androidx.localbroadcastmanager:localbroadc
 androidx-rules = { module = "androidx.test:rules", version.ref = "androidx-rules" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "androidx-runner" }
 commons-io = { module = "commons-io:commons-io", version.ref = "commons-io" }
-commons-net = { module = "commons-net:commons-net", version.ref = "commons-net" }
 jtorctl = { module = "info.guardianproject:jtorctl", version.ref = "jtorctl" }
 netcipher = { module = "info.guardianproject.netcipher:netcipher", version.ref = "netcipher" }
 

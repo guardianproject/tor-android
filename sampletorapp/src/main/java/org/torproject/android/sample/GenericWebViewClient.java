@@ -89,7 +89,6 @@ public class GenericWebViewClient extends WebViewClient {
             }
 
             return new WebResourceResponse(mimeType, encoding, connection.getResponseCode(), connection.getResponseMessage(), responseHeaders, in);
-            //return new WebResourceResponse(mimeType, "binary", in);
         } catch (IOException ignored) {
         }
         // failed doing proxied http request: return empty response
