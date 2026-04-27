@@ -84,7 +84,7 @@ dependencies {
 tasks.register<Jar>("sourcesJar") {
     archiveBaseName.set("tor-android-" + getVersionName().get())
     archiveClassifier.set("sources")
-    from(android.sourceSets.getByName("main").java.srcDirs)
+    from("src/main/java")
 }
 
 tasks.dokkaGeneratePublicationJavadoc.configure {
