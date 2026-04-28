@@ -2,6 +2,8 @@ pluginManagement {
     repositories {
         google()
         mavenCentral()
+        // used for foojay resolver, should be last
+        //developer.android.com/build/optimize-your-build#gradle_plugin_portal
         gradlePluginPortal()
     }
 }

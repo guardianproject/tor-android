@@ -8,8 +8,6 @@ plugins {
     id("maven-publish")
 }
 
-kotlin { jvmToolchain(21) }
-
 group = "info.guardianproject"
 
 fun getVersionName(): Provider<String> {
@@ -21,11 +19,7 @@ fun getVersionName(): Provider<String> {
 
 configure<LibraryExtension> {
     namespace = "org.torproject.jni"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 37
     defaultConfig {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

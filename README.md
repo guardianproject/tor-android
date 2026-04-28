@@ -1,18 +1,18 @@
 ## Tor Android
 
 This is native Android `TorService` built on the Tor shared library built for
-Android.  The included `libtor.so` binaries can also be used directly as a tor
+Android. The included `libtor.so` binaries can also be used directly as a tor
 daemon.
 
 Currently, Tor Android is built with the following versions of `tor`, `libevent`, `openssl`, `zlib` and `zstd`:
 
-| Component |                                                                              Version |
-|:----------|-------------------------------------------------------------------------------------:|
-| tor       |[0.4.9.6](https://forum.torproject.org/t/security-release-0-4-8-23-and-0-4-9-6/21386) |
-| libevent  |    [2.1.12](https://github.com/libevent/libevent/releases/tag/release-2.1.12-stable) |
-| OpenSSL   |               [3.5.6](https://github.com/openssl/openssl/releases/tag/openssl-3.5.6) |
-| zlib      |                          [1.3.2](https://github.com/madler/zlib/releases/tag/v1.3.2) |
-| zstd      |                        [1.5.7](https://github.com/facebook/zstd/releases/tag/v1.5.7) |
+| Component |                                                                               Version |
+|:----------|--------------------------------------------------------------------------------------:|
+| tor       | [0.4.9.6](https://forum.torproject.org/t/security-release-0-4-8-23-and-0-4-9-6/21386) |
+| libevent  |     [2.1.12](https://github.com/libevent/libevent/releases/tag/release-2.1.12-stable) |
+| OpenSSL   |                [3.5.6](https://github.com/openssl/openssl/releases/tag/openssl-3.5.6) |
+| zlib      |                           [1.3.2](https://github.com/madler/zlib/releases/tag/v1.3.2) |
+| zstd      |                         [1.5.7](https://github.com/facebook/zstd/releases/tag/v1.5.7) |
 
 Tor Android binaries are available on the [Guardian Project Maven Repo](https://github.com/guardianproject/gpmaven)
 
@@ -67,10 +67,7 @@ It runs on the following hardware architectures:
 - `x86_64`
 
 ## Tor Frequently Asked Questions:
-        
-- https://2019.www.torproject.org/docs/faq
 - https://support.torproject.org/faq/
-
 
 ## Building `tor-android`
 
@@ -83,8 +80,6 @@ run with either `libvirt` or VirtualBox.  The provisioning is based on the
 "release" job in `.gitlab-ci.yml`.
 
 ### Building on Debian
-These instructions are for building tor-android on a Debian based system.
-
 First install the prerequisite packages:
 
 ```bash
@@ -114,11 +109,7 @@ sudo apt install linux-headers-$(uname -r)
 
 *(NOTE: see instructions for [building Tor on Debian](https://gitlab.com/torproject/tor/-/blob/main/.gitlab-ci.yml?ref_type=heads) for a starting point on the latest Debian dependencies used to build `tor`...)*
 
-```bash
-
-```
-
-You'll need a valid JDK setup on your system. An extremely easy way to obtain a correclty configured one is to [install SDKMAN](https://sdkman.io/). With SDKMAN installed, you can obtain and use Java 25 like so:
+You'll need a valid JDK setup on your system. An extremely easy way to obtain a correctly configured one is to [install SDKMAN](https://sdkman.io/). With SDKMAN installed, you can obtain and use Java 25 like so:
 
 ```bash
 sdk init 
@@ -152,14 +143,12 @@ To build, run:
 ./tor-droid-make.sh build -a arm64-v8a
 
 # 64 bit Intel APK, for running on emulators with Intel hosts
-./tor-droid-make build -a x86_64 
+./tor-droid-make.sh build -a x86_64 
 ```
 
 This will produce an unsigned tor-android AAR.
 
-
-*(NOTE: that `./tor-droidmake build ...` does not currently work in the `fish` shell, use `zsh` or `bash`...)*
-
+*(NOTE: that `./tor-droid-make.sh ...` does not currently work in the `fish` shell, use `zsh` or `bash`...)*
 
 ## Preparing for a release 
 

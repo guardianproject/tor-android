@@ -4,17 +4,17 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
 configure<ApplicationExtension> {
     namespace = "org.torproject.android.sample"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 37
     defaultConfig {
         applicationId = namespace
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
     }
     buildFeatures {
         buildConfig = true
@@ -33,9 +33,8 @@ repositories {
 
 //noinspection UseTomlInstead
 dependencies {
-
     // apps built with tor-android need to include as dependencies both tor-android + jtorctl:
-    implementation("info.guardianproject:tor-android:0.4.9.5.1")
+    implementation("info.guardianproject:tor-android:0.4.9.6")
     implementation("info.guardianproject:jtorctl:0.4.5.7")
 
     // other android dependencies:

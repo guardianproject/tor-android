@@ -122,20 +122,21 @@ openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
 	cd openssl && PATH=$(PATH) && CFLAGS="$(CFLAGS) -Wno-macro-redefined" \
 		./Configure \
 				no-shared no-ssl3 no-tls1 no-tls1_1 \
-        no-ocsp no-nextprotoneg no-psk no-srp no-ts \
-        no-cmp no-cms no-ct \
-        no-dgram no-dtls no-http no-quic no-srtp \
-        no-argon2 no-aria no-bf no-blake2 no-camellia no-cast no-des no-dsa \
-        no-gost no-idea no-integrity-only-ciphers no-md2 no-md4 no-mdc2 \
-        no-ml-dsa no-ocb no-rc2 no-rc4 no-rc5 no-rmd160 no-scrypt no-seed \
-        no-siphash no-slh-dsa no-sm2 no-sm3 no-sm4 no-whirlpool \
-        no-ec2m no-ssl-trace no-tls-deprecated-ec \
-        no-siv no-tests no-padlockeng no-ui-console \
-        no-apps no-async no-comp no-ktls no-legacy no-zlib \
-			android-$(NDK_ABI) \
-			-D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) \
-			--prefix=/ \
-			--openssldir=/
+				no-ocsp no-nextprotoneg no-psk no-srp no-ts \
+				no-cmp no-cms no-ct no-dgram no-dtls no-http \
+				no-quic no-srtp no-argon2 no-aria no-bf \
+				no-blake2 no-camellia no-cast no-des no-dsa \
+				no-gost no-idea no-integrity-only-ciphers no-md2 \
+				no-md4 no-mdc2 no-ml-dsa no-ocb no-rc2 no-rc4 \
+				no-rc5 no-rmd160 no-scrypt no-seed no-siphash \
+				no-slh-dsa no-sm2 no-sm3 no-sm4 no-whirlpool \
+				no-ec2m no-ssl-trace no-tls-deprecated-ec \
+				no-siv no-tests no-padlockeng no-ui-console \
+				no-apps no-async no-comp no-ktls no-legacy no-zlib \
+				android-$(NDK_ABI) \
+				-D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) \
+				--prefix=/ \
+				--openssldir=/
 
 openssl-build-stamp: openssl/Makefile
 ifeq ($(V), 0)
