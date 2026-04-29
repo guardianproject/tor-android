@@ -48,8 +48,22 @@ dependencies {
 Apps using tor-android need to declare the `INTERNET` permission in their Android Manifest file:
 
 ```xml
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 ```
+
+Additionally, if your app targets Android 17 (API 37), you may want to optionally enable the `ACCESS_LOCAL_NETWORK` permission if you configuring your app to interact with devices on your Local Area Network.
+
+```xml
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
+```
+
+Most developers building with `tor-android` don't need to do this, but it'd allow you to say expose tor's SOCKS ports to devices on your network. IE, starting `tor` with this `torrc` will fail when targetting API 37:
+```
+SOCKSPort 0.0.0.0:9050
+SocksPolicy accept *:*
+```
+
+You'll need to do additional logic at runtime to grant the permission. More information on this new Android 17 restriction can be found [here](https://developer.android.com/privacy-and-security/local-network-permission).
 
 Tor protects your privacy on the internet by hiding the connection 
 between your Internet address and the services you use. We believe Tor
