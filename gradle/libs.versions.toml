@@ -9,7 +9,7 @@ commons-io = "2.22.0"
 dokka = "2.2.0"
 jtorctl = "0.4.5.7"
 netcipher = "2.1.0"
-nmcp = "1.4.4"
+nmcp = "1.5.0"
 
 [libraries]
 agp = { module = "com.android.tools.build:gradle", version.ref = "agp" }
