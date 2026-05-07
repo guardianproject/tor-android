@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all subprojects
 
-val versionCode = 49061
-val versionName = "0.4.9.6.1"
+val versionCode = 49080
+val versionName = "0.4.9.8"
 
 //@file:Suppress("PropertyName")
 
