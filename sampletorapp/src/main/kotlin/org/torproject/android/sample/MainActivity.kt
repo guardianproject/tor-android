@@ -51,23 +51,23 @@ class MainActivity : Activity() {
         })
         webView.webViewClient = webViewClient
 
+        val torServiceReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                val status = intent.getStringExtra(TorService.EXTRA_STATUS)
+                Toast.makeText(context, status, Toast.LENGTH_SHORT).show()
+                webView.loadUrl("https://check.torproject.org/")
+            }
+        }
+
         // sample app crashes without this 3rd RECEIVER_NOT_EXPORTED flag when >= 33
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(object : BroadcastReceiver() {
-                override fun onReceive(context: Context?, intent: Intent) {
-                    val status = intent.getStringExtra(TorService.EXTRA_STATUS)
-                    Toast.makeText(context, status, Toast.LENGTH_SHORT).show()
-                    webView.loadUrl("https://check.torproject.org/")
-                }
-            }, IntentFilter(TorService.ACTION_STATUS), RECEIVER_NOT_EXPORTED)
+            registerReceiver(
+                torServiceReceiver,
+                IntentFilter(TorService.ACTION_STATUS),
+                RECEIVER_NOT_EXPORTED
+            )
         } else {
-            registerReceiver(object : BroadcastReceiver() {
-                override fun onReceive(context: Context?, intent: Intent) {
-                    val status = intent.getStringExtra(TorService.EXTRA_STATUS)
-                    Toast.makeText(context, status, Toast.LENGTH_SHORT).show()
-                    webView.loadUrl("https://check.torproject.org/")
-                }
-            }, IntentFilter(TorService.ACTION_STATUS))
+            registerReceiver(torServiceReceiver, IntentFilter(TorService.ACTION_STATUS))
         }
 
         bindService(Intent(this, TorService::class.java), object : ServiceConnection {
