@@ -23,13 +23,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
-import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.webkit.WebView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import org.torproject.jni.TorService
 
 class MainActivity : Activity() {
@@ -59,16 +59,12 @@ class MainActivity : Activity() {
             }
         }
 
-        // sample app crashes without this 3rd RECEIVER_NOT_EXPORTED flag when >= 33
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(
-                torServiceReceiver,
-                IntentFilter(TorService.ACTION_STATUS),
-                RECEIVER_NOT_EXPORTED
-            )
-        } else {
-            registerReceiver(torServiceReceiver, IntentFilter(TorService.ACTION_STATUS))
-        }
+        ContextCompat.registerReceiver(
+            this,
+            torServiceReceiver,
+            IntentFilter(TorService.ACTION_STATUS),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
 
         bindService(Intent(this, TorService::class.java), object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName?, service: IBinder) {
