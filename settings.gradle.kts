@@ -14,6 +14,7 @@ plugins {
 
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS) // or PREFER_PROJECT
     repositories {
         google()
         mavenCentral()
