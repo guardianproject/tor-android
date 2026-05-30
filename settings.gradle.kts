@@ -7,8 +7,17 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
+@Suppress("UnstableApiUsage")
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
 
 include(":tor-android-binary", ":sampletorapp")
