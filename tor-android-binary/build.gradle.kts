@@ -16,7 +16,9 @@ fun getVersionNameFromGitTag(): Provider<String> = providers.exec {
 
 configure<LibraryExtension> {
     namespace = "org.torproject.jni"
-    compileSdk = 37
+    compileSdk {
+        version = release(37)
+    }
     defaultConfig {
         minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

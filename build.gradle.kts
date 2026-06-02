@@ -1,5 +1,5 @@
-val versionCode = 49090
-val versionName = "0.4.9.9"
+val versionCode : Int = 49090
+val versionName : String = "0.4.9.9"
 
 plugins {
     alias(libs.plugins.nmcp.aggregation)

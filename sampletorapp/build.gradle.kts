@@ -3,7 +3,9 @@ import com.android.build.api.dsl.ApplicationExtension
 plugins { alias(libs.plugins.android.application) }
 configure<ApplicationExtension> {
     namespace = "org.torproject.android.sample"
-    compileSdk = 37
+    compileSdk {
+        version = release(37)
+    }
     defaultConfig {
         applicationId = namespace
         minSdk = 24
