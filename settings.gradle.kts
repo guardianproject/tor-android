@@ -17,6 +17,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven(uri("https://raw.githubusercontent.com/guardianproject/gpmaven/master"))
     }
 }
 

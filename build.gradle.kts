@@ -1,15 +1,6 @@
-// Top-level build file where you can add configuration options common to all subprojects
 val versionCode = 49090
 val versionName = "0.4.9.9"
-buildscript {
-    repositories {
-        mavenCentral()
-        google()
-    }
-    dependencies {
-        classpath(libs.agp)
-    }
-}
+
 plugins {
     alias(libs.plugins.nmcp.aggregation)
     alias(libs.plugins.android.application) apply false

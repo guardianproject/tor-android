@@ -1,13 +1,7 @@
 import com.android.build.api.dsl.ApplicationExtension
 
-plugins {
-    alias(libs.plugins.android.application)
-}
-
-kotlin {
-    jvmToolchain(21)
-}
-
+plugins { alias(libs.plugins.android.application) }
+kotlin { jvmToolchain(21) }
 configure<ApplicationExtension> {
     namespace = "org.torproject.android.sample"
     compileSdk = 37
@@ -25,11 +19,6 @@ configure<ApplicationExtension> {
     }
 }
 
-repositories {
-    // this repository is needed for tor-android and jtorctl
-    // normally this goes in the top-level build.gradle.kts, but keeping it here for simplicity
-    maven(uri("https://raw.githubusercontent.com/guardianproject/gpmaven/master"))
-}
 
 //noinspection UseTomlInstead
 dependencies {

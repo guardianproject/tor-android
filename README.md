@@ -6,13 +6,13 @@ daemon.
 
 Currently, Tor Android is built with the following versions of `tor`, `libevent`, `openssl`, `zlib` and `zstd`:
 
-| Component |                                                                               Version |
-|:----------|--------------------------------------------------------------------------------------:|
-| tor       | [0.4.9.9](https://forum.torproject.org/t/security-release-0-4-9-9/21664) |
-| libevent  |     [2.1.12](https://github.com/libevent/libevent/releases/tag/release-2.1.12-stable) |
-| OpenSSL   |                [3.5.6](https://github.com/openssl/openssl/releases/tag/openssl-3.5.6) |
-| zlib      |                           [1.3.2](https://github.com/madler/zlib/releases/tag/v1.3.2) |
-| zstd      |                         [1.5.7](https://github.com/facebook/zstd/releases/tag/v1.5.7) |
+| Component |                                                                           Version |
+|:----------|----------------------------------------------------------------------------------:|
+| tor       |          [0.4.9.9](https://forum.torproject.org/t/security-release-0-4-9-9/21664) |
+| libevent  | [2.1.12](https://github.com/libevent/libevent/releases/tag/release-2.1.12-stable) |
+| OpenSSL   |            [3.5.6](https://github.com/openssl/openssl/releases/tag/openssl-3.5.6) |
+| zlib      |                       [1.3.2](https://github.com/madler/zlib/releases/tag/v1.3.2) |
+| zstd      |                     [1.5.7](https://github.com/facebook/zstd/releases/tag/v1.5.7) |
 
 Tor Android binaries are available on the [Guardian Project Maven Repo](https://github.com/guardianproject/gpmaven)
 
@@ -27,16 +27,6 @@ allprojects {
 }
 ```
 
-Or, for groovy's `build.gradle`
-```groovy
-allprojects {
-    repositories {
-        // ...
-        maven { url "https://raw.githubusercontent.com/guardianproject/gpmaven/master" }
-    }
-}
-```
-
 Then add the `tor-android` and `jtorctl` dependencies to your project:
 ```kts
 dependencies {
@@ -45,16 +35,12 @@ dependencies {
 }
 ```
 
-Apps using tor-android need to declare the `INTERNET` permission in their Android Manifest file:
-
+Apps using tor-android need to declare the `INTERNET` permission in their Android Manifest file.
+*Additionally, if your app targets Android 17 (API 37), you may want to also declare the `ACCESS_LOCAL_NETWORK` permission if you're configuring your app to interact with devices on your LAN.*
 ```xml
     <uses-permission android:name="android.permission.INTERNET" />
-```
-
-Additionally, if your app targets Android 17 (API 37), you may want to also declare the `ACCESS_LOCAL_NETWORK` permission if you're configuring your app to interact with devices on your Local Area Network.
-
-```xml
     <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
+    
 ```
 
 Most developers building with `tor-android` will not need this permission. However, if you're wanting to do things like expose `tor`'s SOCKS port to devices on your network. IE, starting `tor` with this `torrc`, you must use it (but again, only if `targetSdk` > 36):
@@ -72,20 +58,14 @@ configure it properly. Learn more at https://torproject.org/
 
 ## Minimum Requirements 
 
-In order to use tor-android you need to target Android **API 24** or higher. 
+- In order to use tor-android you need to target Android **API 24** or higher.
+- It runs on all standard Android architectures: `arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`
 
-It runs on the following hardware architectures:
-- `arm64-v8a` 
-- `armeabi-v7a`
-- `x86`
-- `x86_64`
-
-## Tor Frequently Asked Questions:
-- https://support.torproject.org/faq/
+## [Tor Frequently Asked Questions](https://support.torproject.org/faq/)
 
 ## Building `tor-android`
 
-Please see: https://raw.githubusercontent.com/guardianproject/tor-android/master/BUILD.md
+Please see: [BUILD.md](https://raw.githubusercontent.com/guardianproject/tor-android/master/BUILD.md)
 
 `tor-android` is generally built on Linux, but it can also be built on [macOS](https://github.com/guardianproject/tor-android/pull/186)
 
@@ -123,7 +103,7 @@ sudo apt install linux-headers-$(uname -r)
 
 *(NOTE: see instructions for [building Tor on Debian](https://gitlab.com/torproject/tor/-/blob/main/.gitlab-ci.yml?ref_type=heads) for a starting point on the latest Debian dependencies used to build `tor`...)*
 
-You'll need a valid JDK setup on your system. An extremely easy way to obtain a correctly configured one is to [install SDKMAN](https://sdkman.io/). With SDKMAN installed, you can obtain and use Java 25 like so:
+You'll need a valid JDK setup on your system. An easy way to obtain a correctly configured one is to [install SDKMAN](https://sdkman.io/). With SDKMAN installed, you can obtain and use Java 25 like so:
 
 ```bash
 sdk init 
@@ -133,13 +113,13 @@ sdk use java 25.0.2-tem
 
 Then obtain the Android SDK and NDK. The Android SDK is installed by default with Android Studio, and the NDK can be downloaded from within Android Studio's SDK manager.
 
-for now, tor-android is built with NDK toolchain 28.2.13676358
+for now, tor-android is built with NDK toolchain 29.0.14206865
 
 Then set these environment variables for the SDK and NDK:
 
 ```bash
 export ANDROID_HOME=~/Android/Sdk
-export ANDROID_NDK_HOME=~/Android/Sdk/ndk/28.2.13676358
+export ANDROID_NDK_HOME=~/Android/Sdk/ndk/29.0.14206865
 ```
 
 Be sure that you have every git submodule up-to-date:
@@ -197,18 +177,14 @@ Update the version of `tor-android` used in the sample app's Gradle configuratio
 
 ## Publishing `tor-android`
 
-Once you build the binaries, you can use Gradle tasks to publish this in various ways, if you have the right credentials
+Once you build the binaries, you can use Gradle tasks to publish this in various ways, if you have the right credentials:
+```bash
+# Publish to your local Maven repository:
+./gradlew publishToMavenLocal
 
-Publish to your local Maven repository:
-`./gradlew publishToMavenLocal`
+# Publish to GitHub packages:
+./gradlew publishReleasePublicationToGitHubPackagesRepository
 
-Publish to GitHub packages:
-`./gradlew publishReleasePublicationToGitHubPackagesRepository`
-
-Publish to Gradle Central:
-`./gradlew publishAggregationToCentralPortal`
-
-
-
-
-
+# Publish to Gradle Central:
+./gradlew publishAggregationToCentralPortal
+```
