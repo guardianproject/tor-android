@@ -1,7 +1,7 @@
 import com.android.build.api.dsl.LibraryExtension
 
 plugins {
-    alias { libs.plugins.android.library }
+    alias(libs.plugins.android.library)
     alias(libs.plugins.dokka)
     alias(libs.plugins.dokka.javadoc)
     signing
@@ -10,12 +10,9 @@ plugins {
 
 group = "info.guardianproject"
 
-fun getVersionName(): Provider<String> {
-    // Gets the version name from the latest Git tag
-    return providers.exec {
-        commandLine("git", "describe", "--tags", "--always")
-    }.standardOutput.asText.map { it.trim() }
-}
+fun getVersionNameFromGitTag(): Provider<String> = providers.exec {
+    commandLine("git", "describe", "--tags", "--always")
+}.standardOutput.asText.map { it.trim() }
 
 configure<LibraryExtension> {
     namespace = "org.torproject.jni"
@@ -48,14 +45,8 @@ configure<LibraryExtension> {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-
-    packaging {
-        resources {
-            excludes += "META-INF/androidx.localbroadcastmanager_localbroadcastmanager.version"
-        }
+        sourceCompatibility = JavaVersion.VERSION_24
+        targetCompatibility = JavaVersion.VERSION_24
     }
 
     buildFeatures {
@@ -76,7 +67,7 @@ dependencies {
 }
 
 tasks.register<Jar>("sourcesJar") {
-    archiveBaseName.set("tor-android-" + getVersionName().get())
+    archiveBaseName.set("tor-android-${getVersionNameFromGitTag().get()}")
     archiveClassifier.set("sources")
     from("src/main/java", "src/main/kotlin")
 }
@@ -87,7 +78,7 @@ tasks.dokkaGeneratePublicationJavadoc.configure {
 
 tasks.register<Jar>("javadocJar") {
     dependsOn(tasks.dokkaGeneratePublicationJavadoc)
-    archiveBaseName.set("tor-android-" + getVersionName().get())
+    archiveBaseName.set("tor-android-${getVersionNameFromGitTag().get()}")
     archiveClassifier.set("javadoc")
     from(tasks.dokkaGeneratePublicationJavadoc.flatMap { it.outputDirectory })
 }
