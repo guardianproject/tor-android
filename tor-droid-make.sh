@@ -10,6 +10,7 @@ fetch_submodules()
         git clean -fdx
         git submodule foreach git reset --hard
         git submodule foreach git clean -fdx
+	./gradlew clean
     fi
     echo "Fetching git submodules"
     git submodule sync
