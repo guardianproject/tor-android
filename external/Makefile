@@ -264,6 +264,7 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--disable-html-manual \
 				--disable-system-torrc \
 				--disable-unittests \
+				--disable-systemd \
 				--prefix=$(EXTERNAL_ROOT)
 
 	# remove this when someone does *anything* with the unit tests again...
