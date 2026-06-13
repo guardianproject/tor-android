@@ -69,6 +69,7 @@ dependencies {
 }
 
 tasks.register<Jar>("sourcesJar") {
+    description = "Create jar file with sources for TorService.java"
     archiveBaseName.set("tor-android-${getVersionNameFromGitTag().get()}")
     archiveClassifier.set("sources")
     from("src/main/java", "src/main/kotlin")
@@ -79,6 +80,7 @@ tasks.dokkaGeneratePublicationJavadoc.configure {
 }
 
 tasks.register<Jar>("javadocJar") {
+    description = "Create Javadoc file for TorService.java's documentation"
     dependsOn(tasks.dokkaGeneratePublicationJavadoc)
     archiveBaseName.set("tor-android-${getVersionNameFromGitTag().get()}")
     archiveClassifier.set("javadoc")

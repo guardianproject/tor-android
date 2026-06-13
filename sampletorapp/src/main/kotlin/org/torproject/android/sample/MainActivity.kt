@@ -33,7 +33,6 @@ import androidx.core.content.ContextCompat
 import org.torproject.jni.TorService
 
 class MainActivity : Activity() {
-    @SuppressLint("UnspecifiedRegisterReceiverFlag", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -44,6 +43,7 @@ class MainActivity : Activity() {
         val webViewClient = GenericWebViewClient()
         webViewClient.setRequestCounterListener(object :
             GenericWebViewClient.RequestCounterListener {
+            @SuppressLint("SetTextI18n")
             override fun countChanged(requestCount: Int) {
                 runOnUiThread { statusTextView.text = "Request Count: $requestCount" }
             }

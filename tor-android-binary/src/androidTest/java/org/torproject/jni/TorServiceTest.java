@@ -126,13 +126,13 @@ public class TorServiceTest {
         startingLatch.await();
         startedLatch.await();
 
-        int socksPort = torService.socksPort;
+        int socksPort = torService.getSocksPort();
         assertTrue(isServerSocketInUse(socksPort));
         if (socksPort != 9050) {
             assertFalse("Something else is providing port 9050!", isServerSocketInUse(9050));
         }
 
-        int httpTunnelPort = torService.httpTunnelPort;
+        int httpTunnelPort = torService.getHttpTunnelPort();
         assertTrue(isServerSocketInUse(httpTunnelPort));
         if (httpTunnelPort != 8118) {
             assertFalse("Something else is providing port 8118!", isServerSocketInUse(8118));
@@ -243,7 +243,7 @@ public class TorServiceTest {
         startedLatch.await();
 
         NetCipher.setProxy(
-                new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", torService.socksPort)));
+                new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", torService.getSocksPort())));
         assertTrue("NetCipher.getHttpURLConnection should use Tor",
                 NetCipher.isNetCipherGetHttpURLConnectionUsingTor());
         // ~350MB

@@ -41,7 +41,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
  * will not be able to function properly since it relies on those events to
  * detect the state of Tor.
  */
-@SuppressWarnings("deprecation")
 public class TorService extends Service {
 
     public static final String TAG = "TorService";
@@ -199,8 +198,8 @@ public class TorService extends Service {
     private static final String UNINITIALIZED = "UNINITIALIZED";
     private static String broadcastPackageName = UNINITIALIZED;
 
-    public static int socksPort = -1;
-    public static int httpTunnelPort = -1;
+    private static int socksPort = -1;
+    private static int httpTunnelPort = -1;
 
     // Store the opaque reference as a long (pointer) for the native code
     @SuppressWarnings({"FieldMayBeFinal", "unused"})
@@ -457,10 +456,12 @@ public class TorService extends Service {
         broadcastStatus(TorService.this, STATUS_OFF);
     }
 
+    @SuppressWarnings("unused")
     public int getSocksPort() {
         return socksPort;
     }
 
+    @SuppressWarnings("unused")
     public int getHttpTunnelPort() {
         return httpTunnelPort;
     }
