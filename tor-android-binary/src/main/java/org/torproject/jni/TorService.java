@@ -47,7 +47,7 @@ public class TorService extends Service {
     public static final String TAG = "TorService";
 
     /**
-     * Hide BuildConfig symbol from javadoc
+     * Hide BuildConfig symbol from Javadoc
      *
      * @hidden
      */
