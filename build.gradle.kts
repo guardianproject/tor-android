@@ -3,18 +3,6 @@
 val versionCode : Int = 49090
 val versionName : String = "0.4.9.9"
 
-//@file:Suppress("PropertyName")
-
-buildscript {
-    repositories {
-        mavenCentral()
-        google()
-    }
-    dependencies {
-        classpath(libs.agp)
-    }
-}
-
 plugins {
     alias(libs.plugins.nmcp.aggregation)
     alias(libs.plugins.android.application) apply false
