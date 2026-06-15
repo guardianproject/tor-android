@@ -53,7 +53,8 @@ endif
 ifneq ($(filter x86, $(APP_ABI)),)
  HOST := i686-linux-android
  ALTHOST := $(HOST)
- GREP_CHECK := 80386
+ ##GREP_CHECK := 80386
+ GREP_CHECK := i386
  NDK_ABI := x86
  NDK_BIT := 32
 endif
