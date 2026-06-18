@@ -75,7 +75,7 @@ build_app()
     echo "Building tor-android"
     build_external_dependencies
     if [ -z $1 ] || [ $1 = 'debug' ]; then
-        ./gradlew assembleDebug
+        ./gradlew assembleDebug sourcesJar
     else
         ./gradlew assembleRelease javadocJar sourcesJar
     fi
