@@ -122,7 +122,7 @@ export ANDROID_NDK_ROOT=$(ANDROID_NDK_HOME)
 openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
 	cd openssl && PATH=$(PATH) && CFLAGS="$(CFLAGS) -Wno-macro-redefined" \
 		./Configure \
-				no-shared no-ssl2 no-ssl3 no-tls1 no-tls1_1 \
+				no-shared no-ssl3 no-tls1 no-tls1_1 \
 				no-ocsp no-nextprotoneg no-psk no-srp no-ts \
 				no-cmp no-cms no-ct no-dgram no-dtls no-http \
 				no-quic no-srtp no-argon2 no-aria no-bf \
