@@ -40,7 +40,6 @@ Apps using tor-android need to declare the `INTERNET` permission in their Androi
 ```xml
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
-    
 ```
 
 Most developers building with `tor-android` will not need this permission. However, if you're wanting to do things like expose `tor`'s SOCKS port to devices on your network. IE, starting `tor` with this `torrc`, you must use it (but again, only if `targetSdk` > 36):
