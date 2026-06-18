@@ -206,7 +206,7 @@ release()
     fetch_submodules clean
     build_app release
     artifact="tor-android"
-    # version must match getVersionName() in tor-android-binary/build.gradle
+    # version must match getVersionNameFromGitTag() in tor-android-binary/build.gradle.kts
     version=$(git describe --tags --always)
     aar=${artifact}-${version}.aar
     cd tor-android-binary/build/outputs/aar/
