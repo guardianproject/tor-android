@@ -21,3 +21,6 @@ dependencyResolutionManagement {
 }
 
 include(":tor-android-binary", ":sampletorapp")
+
+// fail any new changes that will break in gradle 10's mandated configuration cache
+enableFeaturePreview("STABLE_CONFIGURATION_CACHE")

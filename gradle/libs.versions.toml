@@ -10,7 +10,7 @@ dokka = "2.2.0"
 jtorctl = "0.4.5.7"
 netcipher = "2.1.0"
 nmcp = "1.5.0"
-tor-android = "0.4.9.8"
+tor-android = "0.4.9.9.1"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
