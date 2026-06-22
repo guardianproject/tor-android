@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.nmcp.aggregation)
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.version.catalog.update)
 }
 
 extra.apply {
