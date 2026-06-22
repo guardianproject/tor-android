@@ -9,7 +9,7 @@ commons-io = "2.22.0"
 dokka = "2.2.0"
 jtorctl = "0.4.5.7"
 netcipher = "2.1.0"
-nmcp = "1.5.0"
+nmcp = "1.6.0"
 tor-android = "0.4.9.9.1"
 version-catalog-update = "1.1.0"
 
@@ -25,9 +25,9 @@ netcipher = { module = "info.guardianproject.netcipher:netcipher", version.ref =
 tor-android = { module = "info.guardianproject:tor-android", version.ref = "tor-android" }
 
 [plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
 dokka-javadoc = { id = "org.jetbrains.dokka-javadoc", version.ref = "dokka" }
 nmcp-aggregation = { id = "com.gradleup.nmcp.aggregation", version.ref = "nmcp" }
-android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
-version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "version-catalog-update"}
+version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "version-catalog-update" }
