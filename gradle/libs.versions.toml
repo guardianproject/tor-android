@@ -9,7 +9,7 @@ commons-io = "2.22.0"
 dokka = "2.2.0"
 jtorctl = "0.4.5.7"
 netcipher = "2.1.0"
-nmcp = "1.6.0"
+nmcp = "1.6.1"
 tor-android = "0.4.9.11"
 version-catalog-update = "1.1.0"
 
