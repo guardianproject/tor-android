@@ -17,7 +17,9 @@ fun getVersionNameFromGitTag(): Provider<String> = providers.exec {
 configure<LibraryExtension> {
     namespace = "org.torproject.jni"
     compileSdk {
-        version = release(37)
+        version = release(37) {
+            minorApiLevel = 1
+        }
     }
     defaultConfig {
         minSdk = 24

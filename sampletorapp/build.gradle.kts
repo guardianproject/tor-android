@@ -4,7 +4,9 @@ plugins { alias(libs.plugins.android.application) }
 configure<ApplicationExtension> {
     namespace = "org.torproject.android.sample"
     compileSdk {
-        version = release(37)
+        version = release(37) {
+            minorApiLevel = 1
+        }
     }
     defaultConfig {
         applicationId = namespace
