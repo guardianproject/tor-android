@@ -120,7 +120,7 @@ PATH := $(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/$(NDK_UNAME)-$(NDK_PROCESSO
 export ANDROID_NDK_ROOT=$(ANDROID_NDK_HOME)
 
 openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
-	cd openssl && PATH=$(PATH) && CFLAGS="$(CFLAGS) -Wno-macro-redefined" \
+	cd openssl && PATH=$(PATH) && CFLAGS="$(REPRODUCIBLE_CFLAGS) -Os -fvisibility=hidden -Wno-macro-redefined" \
 		./Configure \
 				no-shared no-ssl3 no-tls1 no-tls1_1 \
 				no-ocsp no-nextprotoneg no-psk no-srp no-ts \
@@ -164,7 +164,7 @@ libevent/Makefile: libevent/Makefile.am libevent/configure.ac
 	cd libevent && ./autogen.sh
 	cd libevent && ./configure \
 				LDFLAGS="-L../lib" \
-				CFLAGS="-I../include" \
+				CFLAGS="$(REPRODUCIBLE_CFLAGS) -Os -fvisibility=hidden" \
 				--host=$(ALTHOST) \
 				--disable-libevent-regress \
 				--disable-samples \
@@ -189,7 +189,9 @@ libevent-clean:
 # zlib
 
 zlib-build-stamp:
-	cd zlib && AR=$(NDK_TOOLCHAIN_BASE)/bin/llvm-ar CHOST=$(NDK_ABI) ./configure \
+	cd zlib && AR=$(NDK_TOOLCHAIN_BASE)/bin/llvm-ar \
+	CFlAGS="$(REPRODUCIBLE_CFLAGS) -Os -fvisibility=hidden" \
+	CHOST=$(NDK_ABI) ./configure \
 		--static \
 		--prefix=$(EXTERNAL_ROOT)
 	$(MAKE) -C zlib install
@@ -212,6 +214,8 @@ zlib-clean:
 # zstd
 
 zstd-build-stamp:
+	CPPFLAGS=-DZSTD_MULTITHREAD \
+	CFLAGS="$(REPRODUCIBLE_CFLAGS) -Os -fvisibility=hidden" \
 	$(MAKE) -C zstd/lib \
 		PREFIX=$(EXTERNAL_ROOT) \
 		libzstd.a-mt
@@ -247,6 +251,8 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 	@which pkg-config || (echo "ERROR: pkg-config is required! apt-get install pkg-config"; exit 1)
 	cd tor && ./autogen.sh
 	cd tor && \
+			CFLAGS="$(REPRODUCIBLE_CFLAGS) -Os" \
+			LDFLAGS="-Wl,--icf=safe" \
 			CPPFLAGS="$(CPPFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/$(NDK_UNAME)" ./configure \
 				--host=$(ALTHOST) \
 				--enable-android \
