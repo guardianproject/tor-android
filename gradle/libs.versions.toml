@@ -11,7 +11,7 @@ jtorctl = "0.4.5.7"
 netcipher = "2.1.0"
 nmcp = "1.6.1"
 tor-android = "0.4.9.11"
-version-catalog-update = "1.1.0"
+version-catalog-update = "1.1.1"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
