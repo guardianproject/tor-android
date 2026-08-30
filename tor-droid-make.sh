@@ -228,8 +228,13 @@ bundle()
 	    gpg --armor --detach-sign $f
 	done
     fi
-    # TODO faketime, strip-deterministic, or some other way to set ZIP timestamps
-    jar -cvf bundle-${artifact}-${version}.jar ${artifact}-*${version}*.*
+    # pin every entry in the bundle jar to a fixed timestamp so it is
+    # byte-for-byte reproducible, the same SOURCE_DATE_EPOCH used for the
+    # native tor build in external/Makefile
+    jar --create --verbose \
+        --file=bundle-${artifact}-${version}.jar \
+        --date=2009-02-13T23:31:30Z \
+        ${artifact}-*${version}*.*
 }
 
 show_options()
