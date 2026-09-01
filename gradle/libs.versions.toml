@@ -1,5 +1,5 @@
 [versions]
-agp = "9.3.2"
+agp = "9.4.0"
 androidx-junit = "1.3.0"
 androidx-localbroadcast = "1.1.0"
 androidx-rules = "1.7.0"
@@ -9,7 +9,7 @@ commons-io = "2.22.0"
 dokka = "2.2.0"
 jtorctl = "0.4.5.7"
 netcipher = "2.1.0"
-nmcp = "1.6.1"
+nmcp = "1.6.2"
 tor-android = "0.4.9.11"
 version-catalog-update = "1.1.1"
 
