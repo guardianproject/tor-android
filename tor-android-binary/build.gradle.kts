@@ -70,6 +70,13 @@ dependencies {
     androidTestImplementation(libs.commons.io)
 }
 
+// keep archive tasks reproducible, so rebuilding from the same source
+// gives byte-identical output regardless of when/where it's built
+tasks.withType<AbstractArchiveTask>().configureEach {
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
+}
+
 tasks.register<Jar>("sourcesJar") {
     description = "Create jar file with sources for TorService.java"
     archiveBaseName.set("tor-android-${getVersionNameFromGitTag().get()}")
