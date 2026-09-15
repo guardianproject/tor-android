@@ -23,8 +23,6 @@ configure<LibraryExtension> {
     }
     defaultConfig {
         minSdk = 24
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArguments["disableAnalytics"] = "true"
 
         // Replace with actual values or move to gradle.properties or version catalog
         buildConfigField("int", "VERSION_CODE", rootProject.extra["versionCode"].toString())
@@ -62,12 +60,6 @@ dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.so"))))
     api(libs.androidx.localbroadcast)
     api(libs.jtorctl)
-
-    androidTestImplementation(libs.androidx.runner)
-    androidTestImplementation(libs.androidx.rules)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.netcipher)
-    androidTestImplementation(libs.commons.io)
 }
 
 tasks.register<Jar>("sourcesJar") {

@@ -42,7 +42,7 @@ Apps using tor-android need to declare the `INTERNET` permission in their Androi
     <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
 ```
 
-Most developers building with `tor-android` will not need this permission. However, if you're wanting to do things like expose `tor`'s SOCKS port to devices on your network. IE, starting `tor` with this `torrc`, you must use it (but again, only if `targetSdk` > 36):
+Most developers building with `tor-android` will not need this permission. However, if you're wanting to do things like expose `tor`'s SOCKS port to other devices on your local network. IE, starting `tor` with this `torrc`, you must use it (but again, only if `targetSdk` > 36):
 ```
 SOCKSPort 0.0.0.0:9050
 SocksPolicy accept *:*
@@ -140,8 +140,6 @@ To build, run:
 ```
 
 This will produce an unsigned tor-android AAR.
-
-*(NOTE: that `./tor-droid-make.sh ...` does not currently work in the `fish` shell, use `zsh` or `bash`...)*
 
 ## Preparing for a release 
 
