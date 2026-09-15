@@ -207,6 +207,7 @@ public class TorService extends Service implements TorControlCommands {
 
 
     public class LocalBinder extends Binder {
+        @SuppressWarnings("unused")
         public TorService getService() {
             return TorService.this;
         }
@@ -477,6 +478,7 @@ public class TorService extends Service implements TorControlCommands {
      *
      * @see TorControlConnection#setEvents(java.util.List)
      */
+    @SuppressWarnings("unused")
     public TorControlConnection getTorControlConnection() {
         return torControlConnection;
     }
