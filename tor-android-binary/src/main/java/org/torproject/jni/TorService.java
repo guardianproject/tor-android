@@ -41,7 +41,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
  * will not be able to function properly since it relies on those events to
  * detect the state of Tor.
  */
-public class TorService extends Service {
+public class TorService extends Service implements TorControlCommands {
 
     public static final String TAG = "TorService";
 
@@ -232,14 +232,14 @@ public class TorService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private static final String STATUS_CLIENT_CIRCUIT_ESTABLISHED = "CIRCUIT_ESTABLISHED";
+    public static final String STATUS_CLIENT_CIRCUIT_ESTABLISHED = "CIRCUIT_ESTABLISHED";
 
     /**
      * Announce Tor is available for connections once the first circuit is complete
      */
     private final RawEventListener startedEventListener = (keyword, data) -> {
         if (STATUS_STARTING.equals(currentStatus)
-                && TorControlCommands.EVENT_STATUS_CLIENT.equals(keyword)
+                && EVENT_STATUS_CLIENT.equals(keyword)
                 && data != null && !data.isEmpty()) {
             var tokenArray = data.split(" ");
             if (tokenArray.length > 1 && STATUS_CLIENT_CIRCUIT_ESTABLISHED.equals(tokenArray[1])) {
@@ -287,7 +287,7 @@ public class TorService extends Service {
                 torControlConnection.launchThread(true);
                 torControlConnection.authenticate(new byte[0]);
                 torControlConnection.addRawEventListener(startedEventListener);
-                torControlConnection.setEvents(Collections.singletonList(TorControlCommands.EVENT_STATUS_CLIENT));
+                torControlConnection.setEvents(Collections.singletonList(EVENT_STATUS_CLIENT));
 
                 socksPort = getPortFromGetInfo("net/listeners/socks");
                 httpTunnelPort = getPortFromGetInfo("net/listeners/httptunnel");
@@ -464,7 +464,7 @@ public class TorService extends Service {
     private void shutdownTor() {
         try {
             if (torControlConnection != null) {
-                torControlConnection.shutdownTor(TorControlCommands.SIGNAL_SHUTDOWN);
+                torControlConnection.shutdownTor(SIGNAL_SHUTDOWN);
             }
         } catch (IOException e) {
             Log.e(TAG, e.toString());
