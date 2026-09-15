@@ -84,16 +84,6 @@ public class TorService extends Service {
     public static final String EXTRA_STATUS = "org.torproject.android.intent.extra.STATUS";
 
     /**
-     * A {@link String} {@code packageName} for {@code TorService} to direct its
-     * status reply to, after receiving an {@link #ACTION_START},
-     * {@link #ACTION_STOP}, or {@link #ACTION_STATUS} {@link Intent}. This allows
-     * {@code TorService} to send redundant replies to that single app, rather than
-     * broadcasting to all apps after every request.
-     */
-    @SuppressWarnings("unused")
-    public final static String EXTRA_PACKAGE_NAME = "org.torproject.android.intent.extra.PACKAGE_NAME";
-
-    /**
      * The {@link String} {@code packageName} of the app to which this {@code TorService} belongs.
      * This allows broadcast receivers to distinguish between broadcasts from different apps that
      * use {@code TorService}.
@@ -134,20 +124,6 @@ public class TorService extends Service {
             broadcastPackageName = context.getPackageName();
         }
         return broadcastPackageName;
-    }
-
-    /**
-     * Set the Package Name to send the status broadcasts to, or {@code null}
-     * to broadcast to all apps.
-     *
-     * @param packageName The name of the application package to send the
-     *                    status broadcasts to, or null to broadcast to all.
-     * @see Intent#setPackage(String)
-     */
-    @SuppressWarnings("unused")
-
-    public static void setBroadcastPackageName(String packageName) {
-        TorService.broadcastPackageName = packageName;
     }
 
     private static File getControlSocket(Context context) {
@@ -286,7 +262,7 @@ public class TorService extends Service {
             android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             try {
                 final var countDownLatch = new CountDownLatch(1);
-                final var observeDir = getAppTorServiceDataDir(TorService.this).getAbsolutePath();
+                final var observeDir = getAppTorServiceDataDir(TorService.this);
                 var controlPortFileObserver = new FileObserver(observeDir) {
                     @Override
                     public void onEvent(int event, @Nullable String name) {

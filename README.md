@@ -112,13 +112,13 @@ sdk use java 25.0.2-tem
 
 Then obtain the Android SDK and NDK. The Android SDK is installed by default with Android Studio, and the NDK can be downloaded from within Android Studio's SDK manager.
 
-for now, tor-android is built with NDK toolchain 29.0.14206865
+for now, tor-android is built with NDK toolchain 30.0.16248370
 
 Then set these environment variables for the SDK and NDK:
 
 ```bash
 export ANDROID_HOME=~/Android/Sdk
-export ANDROID_NDK_HOME=~/Android/Sdk/ndk/29.0.14206865
+export ANDROID_NDK_HOME=~/Android/Sdk/ndk/30.0.16248370
 ```
 
 Be sure that you have every git submodule up-to-date:
