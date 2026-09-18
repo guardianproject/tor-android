@@ -168,7 +168,6 @@ libevent/Makefile: libevent/Makefile.am libevent/configure.ac
 				--host=$(ALTHOST) \
 				--disable-libevent-regress \
 				--disable-samples \
-				--disable-openssl \
 				--disable-shared \
 			        --prefix=/
 
