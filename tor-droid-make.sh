@@ -29,6 +29,8 @@ check_android_dependencies()
         exit 1
     fi
     export ANDROID_SDK_ROOT="$ANDROID_HOME"
+    export ANDROID_NDK_HOME="$ANDROID_HOME/30.0.16248370"
+
 
     # openssl wants a var called ANDROID_NDK_HOME
     if [ ! -e "$ANDROID_NDK_HOME" ]; then
