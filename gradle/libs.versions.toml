@@ -5,7 +5,7 @@ appcompat = "1.8.0"
 dokka = "2.2.0"
 jtorctl = "0.4.5.7"
 nmcp = "1.6.2"
-tor-android = "0.4.9.12"
+tor-android = "0.4.9.13"
 version-catalog-update = "1.1.1"
 
 [libraries]
