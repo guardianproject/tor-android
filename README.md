@@ -1,4 +1,4 @@
-## Tor Android
+# Tor Android
 
 This is native Android `TorService` built on the Tor shared library built for
 Android. The included `libtor.so` binaries can also be used directly as a tor
@@ -15,6 +15,10 @@ Currently, Tor Android is built with the following versions of `tor`, `libevent`
 | zstd      |                     [1.5.7](https://github.com/facebook/zstd/releases/tag/v1.5.7)   |
 
 Tor Android binaries are available on the [Guardian Project Maven Repo](https://github.com/guardianproject/gpmaven)
+
+As of late 2026, a Changelog for new releases is available in [`CHANGELOG.md`](https://github.com/guardianproject/tor-android/blob/master/CHANGELOG.md)
+
+## Using `tor-android` in your project
 
 First add the repo to your top level Gradle file:
 
