@@ -1,7 +1,5 @@
 EXTERNAL_ROOT := $(shell pwd)
 
-MAKE ?= make -j`nproc`
-
 .PHONY = elf-cleaner-clean
 
 all: PREBUILD_EXECUTABLE
@@ -10,20 +8,19 @@ all: PREBUILD_EXECUTABLE
 # elf-cleaner
 
 elf-cleaner/Makefile:
-	cd elf-cleaner && autoreconf --install
-	cd elf-cleaner && ./configure --prefix=/
+	cd elf-cleaner && \
+	cmake -B build -G Ninja -DCMAKE_INSTALL_PREFIX=$(EXTERNAL_ROOT)
 
 elf-cleaner-build-stamp: elf-cleaner/Makefile
-	$(MAKE) -C elf-cleaner install DESTDIR=$(EXTERNAL_ROOT)
+	ninja install -C elf-cleaner/build
 	touch $@
 
 elf-cleaner-clean:
 	-rm -f bin/termux-elf-cleaner
 	-rm -f elf-cleaner-build-stamp
-	-$(MAKE) -C elf-cleaner uninstall DESTDIR=$(EXTERNAL_ROOT)
-	-$(MAKE) -C elf-cleaner clean
 	-cd elf-cleaner && \
-                git clean -fdx > /dev/null
+		git clean -fdx && \
+		git reset --hard
 
 elf-cleaner: elf-cleaner-build-stamp
 
