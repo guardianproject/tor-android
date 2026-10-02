@@ -263,7 +263,7 @@ public class TorService extends Service implements TorControlCommands {
             android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             try {
                 final var countDownLatch = new CountDownLatch(1);
-                final var observeDir = getAppTorServiceDataDir(TorService.this);
+                final var observeDir = getAppTorServiceDataDir(TorService.this).getAbsolutePath();
                 var controlPortFileObserver = new FileObserver(observeDir) {
                     @Override
                     public void onEvent(int event, @Nullable String name) {
