@@ -168,7 +168,6 @@ libevent/Makefile: libevent/Makefile.am libevent/configure.ac
 				--host=$(ALTHOST) \
 				--disable-libevent-regress \
 				--disable-samples \
-				--disable-openssl \
 				--disable-shared \
 			        --prefix=/
 
@@ -247,7 +246,7 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 	@which pkg-config || (echo "ERROR: pkg-config is required! apt-get install pkg-config"; exit 1)
 	cd tor && ./autogen.sh
 	cd tor && \
-			CPPFLAGS="$(CPPFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/$(NDK_UNAME)" ./configure \
+			CPPFLAGS="$(CPPFLAGS) -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/$(NDK_UNAME)" LDFLAGS="-L$(EXTERNAL_ROOT)/lib" CFLAGS="-I$(EXTERNAL_ROOT)/include" ./configure \
 				--host=$(ALTHOST) \
 				--enable-android \
 				--enable-gpl \
