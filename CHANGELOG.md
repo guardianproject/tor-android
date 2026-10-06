@@ -1,3 +1,7 @@
+## 0.4.9.13.2 - October 5, 2026
+
+- small build update for official public release
+
 ## 0.4.9.13.1 - October 2, 2026
 
 - use [`openssl` 3.5.9](https://github.com/openssl/openssl/releases#release-openssl-3.5.9)
