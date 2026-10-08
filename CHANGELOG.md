@@ -1,6 +1,8 @@
 ## 0.4.9.14 - October 8, 2026
 
 - Update to [`tor` 0.4.9.14](https://forum.torproject.org/t/security-release-0-4-9-14/22241)
+- Update to gradle 9.8.1
+- Fully use gradle toolchain resolver, removing old `COMPILE_OPTIONS` blocks from `build.gradle.kts`
 
 ## 0.4.9.13.2 - October 5, 2026
 

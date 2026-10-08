@@ -8,6 +8,12 @@ plugins {
     id("maven-publish")
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(24))
+    }
+}
+
 group = "info.guardianproject"
 
 fun getVersionNameFromGitTag(): Provider<String> = providers.exec {
@@ -44,11 +50,6 @@ configure<LibraryExtension> {
             withSourcesJar()
             withJavadocJar()
         }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_24
-        targetCompatibility = JavaVersion.VERSION_24
     }
 
     buildFeatures {

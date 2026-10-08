@@ -1,6 +1,13 @@
 import com.android.build.api.dsl.ApplicationExtension
 
 plugins { alias(libs.plugins.android.application) }
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(24))
+    }
+}
+
 configure<ApplicationExtension> {
     namespace = "org.torproject.android.sample"
     compileSdk {
@@ -12,10 +19,6 @@ configure<ApplicationExtension> {
         applicationId = namespace
         minSdk = 24
         targetSdk = 37
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_24
-        targetCompatibility = JavaVersion.VERSION_24
     }
 }
 
