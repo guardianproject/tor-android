@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TOR_VERSION="tor-0.4.9.13"
+TOR_VERSION="tor-0.4.9.14"
 BRANCH_SUFFIX="dev"
 
 TOR_PROJECT_REMOTE="torproject"

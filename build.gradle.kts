@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all subprojects
 
-val versionCode : Int = 49132
-val versionName : String = "0.4.9.13.2"
+val versionCode : Int = 49140
+val versionName : String = "0.4.9.14"
 
 plugins {
     alias(libs.plugins.nmcp.aggregation)

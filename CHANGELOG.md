@@ -1,3 +1,7 @@
+## 0.4.9.14 - October 8, 2026
+
+- Update to [`tor` 0.4.9.14](https://forum.torproject.org/t/security-release-0-4-9-14/22241)
+
 ## 0.4.9.13.2 - October 5, 2026
 
 - small build update for official public release
