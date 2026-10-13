@@ -12,7 +12,7 @@ configure<ApplicationExtension> {
     namespace = "org.torproject.android.sample"
     compileSdk {
         version = release(37) {
-            minorApiLevel = 1
+            minorApiLevel = 2
         }
     }
     defaultConfig {
