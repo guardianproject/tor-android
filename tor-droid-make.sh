@@ -244,7 +244,7 @@ show_options()
     echo "          bundle  Make Maven artifact bundle JAR"
     echo ""
     echo "Options:"
-    echo "          -a      ABI(s) to build (default: \"$default_abis\")"
+    echo "          -a      ABI(s) to build (default: \"$default_abis\" (excludes \"x86\"))"
     echo "          -b      Build type, it can be release or debug (default: debug)"
     echo "          -c      Clean the repository (Used together with the fetch command)"
     echo "          -f      Force clean all (Used together with the release command)"
@@ -253,7 +253,11 @@ show_options()
 }
 
 option=$1
-default_abis="arm64-v8a armeabi-v7a x86 x86_64"
+default_abis="arm64-v8a armeabi-v7a x86_64"
+
+# uncomment to include intel x86 (32 bit
+# default_abis="arm64-v8a armeabi-v7a x86_64"
+# or run ./tor-droid-make.sh build -a x86 to manually build it
 abis=$default_abis
 build_type="debug"
 

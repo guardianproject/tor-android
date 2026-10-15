@@ -62,7 +62,7 @@ configure it properly. Learn more at https://torproject.org/
 ## Minimum Requirements 
 
 - In order to use tor-android you need to target Android **API 24** or higher.
-- It runs on all standard Android architectures: `arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`
+- It runs on all standard Android architectures: `arm64-v8a`, `armeabi-v7a`, `x86_64`(`x86` support is possible but is off by default)
 
 ## [Tor Frequently Asked Questions](https://support.torproject.org/faq/)
 

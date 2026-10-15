@@ -1,3 +1,6 @@
+## UPCOMING
+- Exclude x86 ABI from default builds, we only use it when emulating API 24 devices
+
 ## 0.4.9.14 - October 8, 2026
 
 - Update to [`tor` 0.4.9.14](https://forum.torproject.org/t/security-release-0-4-9-14/22241)
