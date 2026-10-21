@@ -1,5 +1,6 @@
 ## UPCOMING
 - Exclude x86 ABI from default builds, we only use it when emulating API 24 devices
+- Update to gralde 9.8.2
 
 ## 0.4.9.14 - October 8, 2026
 
