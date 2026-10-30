@@ -1,7 +1,18 @@
 #!/bin/bash
 
-TOR_VERSION="tor-0.4.9.14"
 BRANCH_SUFFIX="dev"
+TOR_VERSION=""
+if [[ -z "$1" ]]; then
+  echo "Please provide a tor version tag to use..."
+  echo "for example: ./cherry-pick-gp-tor-commits.sh tor-0.4.9.15"
+  exit
+else
+  TOR_VERSION="$1"
+  read -r -p "Type \"yes\" to patch tor-android code onto tor tag $TOR_VERSION)? " answer
+  if [[ "${answer,,}" != "yes" ]]; then
+    exit
+  fi
+fi
 
 TOR_PROJECT_REMOTE="torproject"
 GUARDIAN_PROJECT_REMOTE="origin"
