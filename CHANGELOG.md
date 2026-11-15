@@ -1,6 +1,8 @@
 ## UPCOMING
 - Exclude x86 ABI from default builds, we only use it when emulating API 24 devices
-- Update to gralde 9.8.2
+- Update to gralde 9.9.1
+- Update to tor-0.4.9.17
+- Update to zlib v1.4
 
 ## 0.4.9.14 - October 8, 2026
 
