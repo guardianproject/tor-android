@@ -1,12 +1,12 @@
 [versions]
-agp = "9.4.1"
+agp = "9.5.1"
 androidx-localbroadcast = "1.1.0"
 appcompat = "1.8.0"
-dokka = "2.2.0"
+dokka = "2.3.0"
 jtorctl = "0.4.5.7"
 nmcp = "1.6.2"
 tor-android = "0.4.9.14"
-version-catalog-update = "1.1.1"
+version-catalog-update = "1.1.2"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
