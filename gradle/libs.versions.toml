@@ -3,7 +3,6 @@ agp = "9.5.1"
 androidx-localbroadcast = "1.1.0"
 appcompat = "1.8.0"
 dokka = "2.3.0"
-jtorctl = "0.4.5.7"
 nmcp = "1.6.2"
 tor-android = "0.4.9.17"
 version-catalog-update = "1.1.2"
@@ -11,7 +10,6 @@ version-catalog-update = "1.1.2"
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-localbroadcast = { module = "androidx.localbroadcastmanager:localbroadcastmanager", version.ref = "androidx-localbroadcast" }
-jtorctl = { module = "info.guardianproject:jtorctl", version.ref = "jtorctl" }
 tor-android = { module = "info.guardianproject:tor-android", version.ref = "tor-android" }
 
 [plugins]

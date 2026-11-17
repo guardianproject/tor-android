@@ -24,7 +24,6 @@ configure<ApplicationExtension> {
 
 dependencies {
     implementation(libs.tor.android)
-    implementation(libs.jtorctl)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.localbroadcast)
 }
