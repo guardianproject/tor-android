@@ -99,16 +99,16 @@ final class Bytes {
         '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
 
-    public static final String hex(byte[] ba) {
-        StringBuffer buf = new StringBuffer();
-        for (int i = 0; i < ba.length; ++i) {
-            int b = (ba[i]) & 0xff;
+    public static String hex(byte[] ba) {
+        StringBuilder buf = new StringBuilder();
+        for (byte value : ba) {
+            int b = value & 0xff;
             buf.append(NYBBLES[b >> 4]);
-            buf.append(NYBBLES[b&0x0f]);
+            buf.append(NYBBLES[b & 0x0f]);
         }
         return buf.toString();
     }
 
-    private Bytes() {};
+    private Bytes() {}
 }
 

@@ -32,7 +32,7 @@ public class TorControlError extends IOException {
                 return null;
             return TorControlCommands.ERROR_MSGS[errorType];
         } catch (ArrayIndexOutOfBoundsException ex) {
-            return "Unrecongized error #"+errorType;
+            return "Unrecognized error #"+errorType;
         }
     }
 }
