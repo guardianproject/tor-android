@@ -264,7 +264,7 @@ public class TorService extends Service implements TorControlCommands {
             try {
                 final var countDownLatch = new CountDownLatch(1);
                 final var observeDir = getAppTorServiceDataDir(TorService.this).getAbsolutePath();
-                var controlPortFileObserver = new FileObserver(observeDir) {
+                var controlPortFileObserver = new FileObserver(new File(observeDir)) {
                     @Override
                     public void onEvent(int event, @Nullable String name) {
                         if ((event & FileObserver.CREATE) > 0 && CONTROL_SOCKET_NAME.equals(name)) {
