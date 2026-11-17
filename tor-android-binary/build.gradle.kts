@@ -14,6 +14,9 @@ java {
     }
 }
 
+val versionCode : Int = 49170
+val versionName : String = "0.4.9.17"
+
 group = "info.guardianproject"
 
 fun getVersionNameFromGitTag(): Provider<String> = providers.exec {
@@ -30,9 +33,8 @@ configure<LibraryExtension> {
     defaultConfig {
         minSdk = 24
 
-        // Replace with actual values or move to gradle.properties or version catalog
-        buildConfigField("int", "VERSION_CODE", rootProject.extra["versionCode"].toString())
-        buildConfigField("String", "VERSION_NAME", "\"${rootProject.extra["versionName"]}\"")
+        buildConfigField("int", "VERSION_CODE", versionCode.toString())
+        buildConfigField("String", "VERSION_NAME", "\"${versionName}\"")
     }
 
     buildTypes {
@@ -91,7 +93,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = libraryGroup
                 artifactId = libraryArtifactId
-                version = rootProject.extra["versionName"].toString()
+                version = versionName
 
                 pom {
                     name.set("TorAndroid")

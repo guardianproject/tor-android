@@ -1,18 +1,10 @@
 // Top-level build file where you can add configuration options common to all subprojects
 
-val versionCode : Int = 49170
-val versionName : String = "0.4.9.17"
-
 plugins {
     alias(libs.plugins.nmcp.aggregation)
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.version.catalog.update)
-}
-
-extra.apply {
-    set("versionCode", versionCode)
-    set("versionName", versionName)
 }
 
 nmcpAggregation {
