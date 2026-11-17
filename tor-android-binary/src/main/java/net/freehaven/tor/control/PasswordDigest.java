@@ -9,7 +9,6 @@ import java.security.SecureRandom;
 /**
  * A hashed digest of a secret password (used to set control connection
  * security.)
- *
  * For the actual hashing algorithm, see RFC2440's secret-to-key conversion.
  */
 public class PasswordDigest {
@@ -90,7 +89,7 @@ public class PasswordDigest {
 
     /** Return a hexadecimal encoding of a byte array. */
     // XXX There must be a better way to do this in Java.
-    private static final String encodeBytes(byte[] ba) {
+    private static String encodeBytes(byte[] ba) {
         return Bytes.hex(ba);
     }
 
