@@ -258,7 +258,6 @@ tor/Makefile: tor/configure.ac tor/Makefile.am
 				--enable-zstd \
 				--disable-lzma \
 				--disable-module-relay \
-				--disable-module-dirauth \
 				--disable-asciidoc \
 				--disable-tool-name-check \
 				--disable-manpage \
