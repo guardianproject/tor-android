@@ -31,11 +31,10 @@ allprojects {
 }
 ```
 
-Then add the `tor-android` and `jtorctl` dependencies to your project:
+Then add the `tor-android` dependency to your project:
 ```kts
 dependencies {
-    implementation("info.guardianproject:tor-android:0.4.9.13.2")
-    implementation("info.guardianproject:jtorctl:0.4.5.7")
+    implementation("info.guardianproject:tor-android:0.4.9.17")
 }
 ```
 
