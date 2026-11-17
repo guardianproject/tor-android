@@ -66,8 +66,8 @@ class GenericWebViewClient : WebViewClient() {
             }
 
             connection.requestMethod = request.method
-            for (requestHeader in request.requestHeaders.entries) {
-                connection.setRequestProperty(requestHeader.key, requestHeader.value)
+            for ((key, value) in request.requestHeaders) {
+                connection.setRequestProperty(key, value)
             }
 
             // transform response to required format for WebResourceResponse parameters
@@ -80,7 +80,7 @@ class GenericWebViewClient : WebViewClient() {
             }
 
             var mimeType = "text/plain"
-            if (connection.contentType != null && !connection.contentType.isEmpty()) {
+            if (connection.contentType != null && connection.contentType.isNotEmpty()) {
                 mimeType =
                     connection.contentType.split("; ".toRegex()).dropLastWhile { it.isEmpty() }
                         .toTypedArray()[0]

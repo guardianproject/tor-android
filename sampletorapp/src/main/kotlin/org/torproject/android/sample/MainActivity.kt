@@ -33,6 +33,12 @@ import androidx.core.content.ContextCompat
 import org.torproject.jni.TorService
 
 class MainActivity : Activity() {
+
+    companion object {
+        const val TAG = "SampleTorApp"
+        const val TOR_PROJECT_CONNECTION_CHECK_URL = "https://check.torproject.org/"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -55,7 +61,7 @@ class MainActivity : Activity() {
             override fun onReceive(context: Context, intent: Intent) {
                 val status = intent.getStringExtra(TorService.EXTRA_STATUS)
                 Toast.makeText(context, status, Toast.LENGTH_SHORT).show()
-                webView.loadUrl("https://check.torproject.org/")
+                webView.loadUrl(TOR_PROJECT_CONNECTION_CHECK_URL)
             }
         }
 
@@ -74,7 +80,7 @@ class MainActivity : Activity() {
                     try {
                         Thread.sleep(500)
                     } catch (e: InterruptedException) {
-                        Log.e("SampleTorApp", e.toString())
+                        Log.e(TAG, e.toString())
                     }
                 }
 
@@ -83,8 +89,9 @@ class MainActivity : Activity() {
             }
 
             override fun onServiceDisconnected(name: ComponentName?) {
-                Log.d("SampleTorApp", "service disconnected")
+                Log.d(TAG, "service disconnected")
             }
+
         }, BIND_AUTO_CREATE)
     }
 }
