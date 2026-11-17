@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
  *
  * @see <a href="https://gitweb.torproject.org/torspec.git/tree/control-spec.txt#n257">torspec.git/control-spec.txt 3. Commands</a>
  */
+@SuppressWarnings({"SequencedCollectionMethodCanBeUsed", "ReplaceNullCheck"})
 public class TorControlConnection implements TorControlCommands {
 
     private final LinkedList<Waiter> waiters;
@@ -239,37 +240,38 @@ public class TorControlConnection implements TorControlCommands {
             if (handler == null) {
                 continue;
             }
-            if (tp.equals(EVENT_CIRCUIT_STATUS)) {
-                List<String> lst = Bytes.splitStr(null, rest);
-                handler.circuitStatus(lst.get(1),
-                        lst.get(0),
-                        lst.get(1).equals(CIRC_EVENT_LAUNCHED)
-                                || lst.size() < 3 ? ""
-                                : lst.get(2));
-            } else if (tp.equals(EVENT_STREAM_STATUS)) {
-                List<String> lst = Bytes.splitStr(null, rest);
-                handler.streamStatus(lst.get(1),
-                        lst.get(0),
-                        lst.get(3));
-                // XXXX circID.
-            } else if (tp.equals(EVENT_OR_CONN_STATUS)) {
-                List<String> lst = Bytes.splitStr(null, rest);
-                handler.orConnStatus(lst.get(1), lst.get(0));
-            } else if (tp.equals(EVENT_BANDWIDTH_USED)) {
-                List<String> lst = Bytes.splitStr(null, rest);
-                handler.bandwidthUsed(Integer.parseInt(lst.get(0)),
-                        Integer.parseInt(lst.get(1)));
-            } else if (tp.equals(EVENT_NEW_DESC)) {
-                List<String> lst = Bytes.splitStr(null, rest);
-                handler.newDescriptors(lst);
-            } else if (tp.equals(EVENT_DEBUG_MSG) ||
-                    tp.equals(EVENT_INFO_MSG) ||
-                    tp.equals(EVENT_NOTICE_MSG) ||
-                    tp.equals(EVENT_WARN_MSG) ||
-                    tp.equals(EVENT_ERR_MSG)) {
-                handler.message(tp, rest);
-            } else {
-                handler.unrecognized(tp, rest);
+            switch (tp) {
+                case EVENT_CIRCUIT_STATUS -> {
+                    List<String> lst = Bytes.splitStr(null, rest);
+                    handler.circuitStatus(lst.get(1),
+                            lst.get(0),
+                            lst.get(1).equals(CIRC_EVENT_LAUNCHED)
+                                    || lst.size() < 3 ? ""
+                                    : lst.get(2));
+                }
+                case EVENT_STREAM_STATUS -> {
+                    List<String> lst = Bytes.splitStr(null, rest);
+                    handler.streamStatus(lst.get(1),
+                            lst.get(0),
+                            lst.get(3));
+                    // XXXX circID.
+                }
+                case EVENT_OR_CONN_STATUS -> {
+                    List<String> lst = Bytes.splitStr(null, rest);
+                    handler.orConnStatus(lst.get(1), lst.get(0));
+                }
+                case EVENT_BANDWIDTH_USED -> {
+                    List<String> lst = Bytes.splitStr(null, rest);
+                    handler.bandwidthUsed(Integer.parseInt(lst.get(0)),
+                            Integer.parseInt(lst.get(1)));
+                }
+                case EVENT_NEW_DESC -> {
+                    List<String> lst = Bytes.splitStr(null, rest);
+                    handler.newDescriptors(lst);
+                }
+                case EVENT_DEBUG_MSG, EVENT_INFO_MSG, EVENT_NOTICE_MSG, EVENT_WARN_MSG,
+                     EVENT_ERR_MSG -> handler.message(tp, rest);
+                default -> handler.unrecognized(tp, rest);
             }
         }
     }
@@ -330,7 +332,7 @@ public class TorControlConnection implements TorControlCommands {
     /**
      * Start a thread to react to Tor's responses in the background.
      * This is necessary to handle asynchronous events and synchronous
-     * responses that arrive independantly over the same socket.
+     * responses that arrive independently over the same socket.
      */
     public synchronized Thread launchThread(boolean daemon) {
     	ControlParseThread th = new ControlParseThread();
@@ -428,7 +430,7 @@ public class TorControlConnection implements TorControlCommands {
      * <p>
      * When a configuration option takes multiple values, or when multiple
      * configuration keys form a context-sensitive group (see getConf below), then
-     * setting any of the options in a setConf command is taken to reset all of
+     * setting any of the options in a setConf command is taken to reset all
      * the others.  For example, if two ORBindAddress values are configured, and a
      * command arrives containing a single ORBindAddress value, the new
      * command's value replaces the two old values.
@@ -439,7 +441,7 @@ public class TorControlConnection implements TorControlCommands {
      * @see <a href="https://torproject.gitlab.io/torspec/control-spec/#setconf">control-spec: SETCONF</a>
      */
     public void setConf(Collection<String> kvList) throws IOException {
-        if (kvList.size() == 0)
+        if (kvList.isEmpty())
             return;
         StringBuilder b = new StringBuilder(SETCONF);
         for (String kv : kvList) {
@@ -460,7 +462,7 @@ public class TorControlConnection implements TorControlCommands {
      * @see <a href="https://torproject.gitlab.io/torspec/control-spec/#resetconf">control-spec: RESETCONF</a>
      */
     public void resetConf(Collection<String> keys) throws IOException {
-        if (keys.size() == 0)
+        if (keys.isEmpty())
             return;
         StringBuilder b = new StringBuilder(RESETCONF);
         for (String key : keys) {
@@ -489,7 +491,7 @@ public class TorControlConnection implements TorControlCommands {
      * key-value pairs are returned in order.
      * <p>
      * Some options are context-sensitive, and depend on other options with
-     * different keywords.  These cannot be fetched directly.  Currently there
+     * different keywords.  These cannot be fetched directly.  Currently, there
      * is only one such option: clients should use the "HiddenServiceOptions"
      * virtual keyword to get all HiddenServiceDir, HiddenServicePort,
      * HiddenServiceNodes, and HiddenServiceExcludeNodes option settings.
@@ -933,7 +935,7 @@ public class TorControlConnection implements TorControlCommands {
      * @see <a href="https://torproject.gitlab.io/torspec/control-spec/#postdescriptor">control-spec: POSTDESCRIPTOR</a>
      */
     public String postDescriptor(String purpose, boolean cache, String descriptor) throws IOException {
-        if (purpose == null || purpose.length() < 1) {
+        if (purpose == null || purpose.isEmpty()) {
             purpose = "";
         } else {
             purpose = "purpose=" + purpose;
@@ -971,7 +973,7 @@ public class TorControlConnection implements TorControlCommands {
      * <li>4 -- REASON_EXITPOLICY     (OR refuses to connect to host or port)</li>
      * <li>5 -- REASON_DESTROY        (Circuit is being destroyed)</li>
      * <li>6 -- REASON_DONE           (Anonymized TCP connection was closed)</li>
-     * <li>7 -- REASON_TIMEOUT        (Connection timed out, or OR timed out while connecting)</li>
+     * <li>7 -- REASON_TIMEOUT        (Connection timed out, OR timed out while connecting)</li>
      * <li>8 -- (unallocated)</li>
      * <li>9 -- REASON_HIBERNATING    (OR is temporarily hibernating)</li>
      * <li>10 -- REASON_INTERNAL       (Internal error at the OR)</li>
@@ -1013,7 +1015,7 @@ public class TorControlConnection implements TorControlCommands {
      * @see <a href="https://torproject.gitlab.io/torspec/control-spec/#usefeature">control-spec: USEFEATURE</a>
      */
     public void useFeature(Collection<String> keys) throws IOException {
-        if (keys.size() == 0) {
+        if (keys.isEmpty()) {
             return;
         }
         StringBuilder b = new StringBuilder(USEFEATURE);
@@ -1068,7 +1070,7 @@ public class TorControlConnection implements TorControlCommands {
      * @see <a href="https://torproject.gitlab.io/torspec/control-spec/#protocolinfo">control-spec: PROTOCOLINFO</a>
      */
     public void protocolInfo(Collection<String> keys) throws IOException {
-        if (keys.size() == 0) {
+        if (keys.isEmpty()) {
             return;
         }
         StringBuilder b = new StringBuilder(PROTOCOLINFO);
@@ -1127,7 +1129,7 @@ public class TorControlConnection implements TorControlCommands {
         b.append(' ').append(address);
         if (servers != null) {
             for (String server : servers) {
-                if (server != null && server.length() > 0) {
+                if (server != null && !server.isEmpty()) {
                     b.append(" SERVER=").append(server);
                 }
             }
@@ -1164,12 +1166,12 @@ public class TorControlConnection implements TorControlCommands {
         StringBuilder b = new StringBuilder(HSPOST);
         if (servers != null) {
             for (String server : servers) {
-                if (server != null && server.length() > 0) {
+                if (server != null && !server.isEmpty()) {
                     b.append(" SERVER=").append(server);
                 }
             }
         }
-        if (hsAddress != null && hsAddress.length() > 0) {
+        if (hsAddress != null && !hsAddress.isEmpty()) {
             b.append(" HSADDRESS=").append(hsAddress);
         }
         b.append("\r\n");
@@ -1273,11 +1275,11 @@ public class TorControlConnection implements TorControlCommands {
                                        throws IOException {
         if (privKey.indexOf(':') < 0)
             throw new IllegalArgumentException("Invalid privKey");
-        if (portLines == null || portLines.size() < 1)
+        if (portLines == null || portLines.isEmpty())
             throw new IllegalArgumentException("Must provide at least one port line");
         StringBuilder b = new StringBuilder();
         b.append(ADD_ONION).append(" ").append(privKey);
-        if (flags != null && flags.size() > 0) {
+        if (flags != null && !flags.isEmpty()) {
             b.append(" Flags=");
             String separator = "";
             for (String flag : flags) {
@@ -1289,7 +1291,7 @@ public class TorControlConnection implements TorControlCommands {
             int virtPort = portLine.getKey();
             String target = portLine.getValue();
             b.append(" Port=").append(virtPort);
-            if (target != null && target.length() > 0)
+            if (target != null && !target.isEmpty())
                 b.append(",").append(target);
         }
         b.append("\r\n");

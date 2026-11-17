@@ -3,13 +3,15 @@
 package net.freehaven.tor.control;
 
 import java.io.IOException;
+import java.io.Serial;
 
 /**
  * An exception raised when Tor tells us about an error.
  */
 public class TorControlError extends IOException {
 
-    static final long serialVersionUID = 3;
+    @Serial
+    private static final long serialVersionUID = 3;
 
     private final int errorType;
 
