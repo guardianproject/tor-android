@@ -60,7 +60,6 @@ configure<LibraryExtension> {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.so"))))
     api(libs.androidx.localbroadcast)
-    api(libs.jtorctl)
 }
 
 tasks.register<Jar>("sourcesJar") {
