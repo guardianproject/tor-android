@@ -187,9 +187,20 @@ public class TorService extends Service implements TorControlCommands {
 
     /**
      * This lock must be acquired before calling createTorConfiguration() and
-     * held until mainConfigurationFree() has been called.
+     * held until mainConfigurationFree() has been called.  tor keeps its state
+     * in process-wide globals, so only one {@code tor_run_main()} may be active
+     * per process.  It is acquired and released on {@link #torThread} itself:
+     * acquiring it on the main thread does not work because
+     * {@link ReentrantLock} lets the owning thread through again, so a new
+     * {@code TorService} instance could start tor while the previous one was
+     * still running, crashing in {@code hs_circuitmap_init()}.
      */
     private static final ReentrantLock runLock = new ReentrantLock();
+
+    /**
+     * Set once {@link #onDestroy()} has been called for this instance.
+     */
+    private volatile boolean destroyed = false;
 
     @SuppressWarnings("UnusedReturnValue")
     private native boolean createTorConfiguration();
@@ -290,6 +301,14 @@ public class TorService extends Service implements TorControlCommands {
                 torControlConnection.addRawEventListener(startedEventListener);
                 torControlConnection.setEvents(Collections.singletonList(EVENT_STATUS_CLIENT));
 
+                if (destroyed) {
+                    // onDestroy() ran before the ControlSocket was ready, so it
+                    // could not ask tor to exit. Do it now so that runLock is
+                    // released and the next TorService instance can start.
+                    shutdownTor();
+                    return;
+                }
+
                 socksPort = getPortFromGetInfo("net/listeners/socks");
                 httpTunnelPort = getPortFromGetInfo("net/listeners/httptunnel");
 
@@ -308,6 +327,16 @@ public class TorService extends Service implements TorControlCommands {
         @Override
         public void run() {
             final var context = getApplicationContext();
+            if (runLock.isLocked()) {
+                Log.i(TAG, "Waiting for previous tor instance to exit");
+            }
+            runLock.lock();
+            Log.i(TAG, "Acquired lock");
+            if (destroyed) {
+                Log.i(TAG, "Service destroyed before tor started, releasing lock");
+                runLock.unlock();
+                return;
+            }
             try {
                 createTorConfiguration();
                 setDefaultProxyPorts();
@@ -360,6 +389,8 @@ public class TorService extends Service implements TorControlCommands {
             } finally {
                 broadcastStatus(context, STATUS_STOPPING);
                 mainConfigurationFree();
+                Log.i(TAG, "Releasing lock");
+                runLock.unlock();
                 TorService.this.stopSelf();
             }
         }
@@ -411,23 +442,15 @@ public class TorService extends Service implements TorControlCommands {
      * @see <a href="https://github.com/torproject/tor/blob/40be20d542a83359ea480bbaa28380b4137c88b2/src/app/config/config.c#L4730">options that must be on the command line</a>
      */
     private void startTorServiceThread() {
-        if (runLock.isLocked()) {
-            Log.i(TAG, "Waiting for lock");
-        }
-        runLock.lock();
-        Log.i(TAG, "Acquired lock");
         torThread.start();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        destroyed = true;
         if (torControlConnection != null) {
             torControlConnection.removeRawEventListener(startedEventListener);
-        }
-        if (runLock.isLocked()) {
-            Log.i(TAG, "Releasing lock");
-            runLock.unlock();
         }
         shutdownTor();
         broadcastStatus(TorService.this, STATUS_OFF);
