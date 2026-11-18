@@ -14,8 +14,8 @@ java {
     }
 }
 
-val versionCode : Int = 49170
-val versionName : String = "0.4.9.17"
+val versionCode : Int = 49171
+val versionName : String = "0.4.9.17.1"
 
 group = "info.guardianproject"
 
