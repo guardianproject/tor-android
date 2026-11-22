@@ -134,6 +134,7 @@ openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
 				no-ec2m no-ssl-trace no-tls-deprecated-ec \
 				no-siv no-tests no-padlockeng no-ui-console \
 				no-apps no-async no-comp no-ktls no-legacy no-zlib \
+				no-docs \
 				android-$(NDK_ABI) \
 				-D__ANDROID_API__=$(NDK_PLATFORM_LEVEL) \
 				--prefix=/ \
