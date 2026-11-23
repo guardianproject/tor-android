@@ -10,7 +10,7 @@ fetch_submodules()
         git clean -fdx
         git submodule foreach git reset --hard
         git submodule foreach git clean -fdx
-	./gradlew clean
+	./gradlew --warning-mode all clean
     fi
     echo "Fetching git submodules"
     git submodule sync
@@ -77,9 +77,9 @@ build_app()
     echo "Building tor-android"
     build_external_dependencies
     if [ -z $1 ] || [ $1 = 'debug' ]; then
-        ./gradlew assembleDebug sourcesJar
+        ./gradlew --warning-mode all assembleDebug sourcesJar
     else
-        ./gradlew assembleRelease javadocJar sourcesJar
+        ./gradlew --warning-mode all assembleRelease javadocJar sourcesJar
     fi
 }
 
