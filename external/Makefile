@@ -8,7 +8,7 @@ EXTERNAL_ROOT := $(shell pwd)
 
 DEBUG ?= 0
 
-MAKE ?= make -j`nproc`
+export MAKEFLAGS += -j$(shell nproc)
 
 # Android now has 64-bit and 32-bit versions of the NDK for GNU/Linux.  We
 # assume that the build platform uses the appropriate version, otherwise the
@@ -142,9 +142,9 @@ openssl/Makefile: openssl/Configure $(wildcard openssl/Configurations/*.*)
 
 openssl-build-stamp: openssl/Makefile
 ifeq ($(V), 0)
-	PATH=$(PATH) make -j`nproc` --silent -C openssl install_dev DESTDIR=$(EXTERNAL_ROOT) ECHO=':'
+	PATH=$(PATH) $(MAKE) --silent -C openssl install_dev DESTDIR=$(EXTERNAL_ROOT) ECHO=':'
 else
-	PATH=$(PATH) make -j`nproc` -C openssl install_dev DESTDIR=$(EXTERNAL_ROOT)
+	PATH=$(PATH) $(MAKE) -C openssl install_dev DESTDIR=$(EXTERNAL_ROOT)
 endif
 	touch $@
 
@@ -152,8 +152,8 @@ openssl-clean:
 	-rm openssl-build-stamp
 	-rm lib/libcrypto.a
 	-rm lib/libssl.a
-	-make -C openssl uninstall_dev > /dev/null
-	-make -C openssl clean
+	-$(MAKE) -C openssl uninstall_dev > /dev/null
+	-$(MAKE) -C openssl clean
 	-cd openssl && \
 		git clean -fdx > /dev/null
 
@@ -244,7 +244,8 @@ zstd-clean:
 #------------------------------------------------------------------------------#
 # tor
 
-tor/Makefile: tor/configure.ac tor/Makefile.am
+tor/Makefile: tor/configure.ac tor/Makefile.am openssl-build-stamp libevent-build-stamp zlib-build-stamp zstd-build-stamp
+
 	@which pkg-config || (echo "ERROR: pkg-config is required! apt-get install pkg-config"; exit 1)
 	cd tor && ./autogen.sh
 	cd tor && \
