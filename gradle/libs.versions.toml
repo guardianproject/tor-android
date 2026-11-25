@@ -4,7 +4,7 @@ androidx-localbroadcast = "1.1.0"
 appcompat = "1.8.0"
 dokka = "2.3.0"
 nmcp = "1.6.2"
-tor-android = "0.4.9.17"
+tor-android = "0.4.9.17.1"
 version-catalog-update = "1.1.2"
 
 [libraries]

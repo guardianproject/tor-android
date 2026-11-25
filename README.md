@@ -38,7 +38,7 @@ allprojects {
 Then add the `tor-android` dependency to your project:
 ```kts
 dependencies {
-    implementation("info.guardianproject:tor-android:0.4.9.17")
+    implementation("info.guardianproject:tor-android:0.4.9.17.1")
 }
 
 ```
