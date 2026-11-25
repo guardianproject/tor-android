@@ -72,10 +72,19 @@ build_external_dependencies()
     done
 }
 
+build_geoip()
+{
+    echo "instaling geoip android res/raw files"
+    mkdir -p tor-android-binary/src/main/res/raw
+    cp -fv external/tor/src/config/geoip tor-android-binary/src/main/res/raw
+    cp -fv external/tor/src/config/geoip6 tor-android-binary/src/main/res/raw
+}
+
 build_app()
 {
     echo "Building tor-android"
     build_external_dependencies
+    build_geoip
     if [ -z $1 ] || [ $1 = 'debug' ]; then
         ./gradlew --warning-mode all assembleDebug sourcesJar
     else
