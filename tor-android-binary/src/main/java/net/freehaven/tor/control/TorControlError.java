@@ -3,15 +3,13 @@
 package net.freehaven.tor.control;
 
 import java.io.IOException;
-import java.io.Serial;
 
 /**
  * An exception raised when Tor tells us about an error.
  */
 public class TorControlError extends IOException {
 
-    @Serial
-    private static final long serialVersionUID = 3;
+    static final long serialVersionUID = 3;
 
     private final int errorType;
 
@@ -34,7 +32,7 @@ public class TorControlError extends IOException {
                 return null;
             return TorControlCommands.ERROR_MSGS[errorType];
         } catch (ArrayIndexOutOfBoundsException ex) {
-            return "Unrecognized error #"+errorType;
+            return "Unrecongized error #"+errorType;
         }
     }
 }

@@ -24,7 +24,7 @@ public interface EventHandler {
      * <b>circID</b> is the alphanumeric identifier of the affected circuit,
      * and <b>path</b> is a comma-separated list of alphanumeric ServerIDs.
      */
-    void circuitStatus(String status, String circID, String path);
+    public void circuitStatus(String status, String circID, String path);
 
     /**
      * Invoked when a stream's status has changed.
@@ -44,7 +44,7 @@ public interface EventHandler {
      * <b>streamID</b> is the alphanumeric identifier of the affected stream,
      * and its <b>target</b> is specified as address:port.
      */
-    void streamStatus(String status, String streamID, String target);
+    public void streamStatus(String status, String streamID, String target);
 
     /**
      * Invoked when the status of a connection to an OR has changed.
@@ -58,20 +58,20 @@ public interface EventHandler {
      * </ul>
      * <b>orName</b> is the alphanumeric identifier of the OR affected.
      */
-    void orConnStatus(String status, String orName);
+    public void orConnStatus(String status, String orName);
 
     /**
      * Invoked once per second. <b>read</b> and <b>written</b> are
      * the number of bytes read and written, respectively, in
      * the last second.
      */
-    void bandwidthUsed(long read, long written);
+    public void bandwidthUsed(long read, long written);
 
     /**
      * Invoked whenever Tor learns about new ORs.  The <b>orList</b> object
      * contains the alphanumeric ServerIDs associated with the new ORs.
      */
-    void newDescriptors(java.util.List<String> orList);
+    public void newDescriptors(java.util.List<String> orList);
 
     /**
      * Invoked when Tor logs a message.
@@ -85,7 +85,7 @@ public interface EventHandler {
      * </ul>
      * and <b>msg</b> is the message string.
      */
-    void message(String severity, String msg);
+    public void message(String severity, String msg);
 
     /**
      * Invoked when an unspecified message is received.
@@ -93,7 +93,7 @@ public interface EventHandler {
      * @param type the message type
      * @param msg  the message string
      */
-    void unrecognized(String type, String msg);
+    public void unrecognized(String type, String msg);
 
 }
 
