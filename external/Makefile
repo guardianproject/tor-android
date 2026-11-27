@@ -8,7 +8,7 @@ EXTERNAL_ROOT := $(shell pwd)
 
 DEBUG ?= 0
 
-export MAKEFLAGS += -j$(shell nproc)
+MAKE := make -j$(shell nproc)
 
 # Android now has 64-bit and 32-bit versions of the NDK for GNU/Linux.  We
 # assume that the build platform uses the appropriate version, otherwise the
@@ -245,7 +245,6 @@ zstd-clean:
 # tor
 
 tor/Makefile: tor/configure.ac tor/Makefile.am openssl-build-stamp libevent-build-stamp zlib-build-stamp zstd-build-stamp
-
 	@which pkg-config || (echo "ERROR: pkg-config is required! apt-get install pkg-config"; exit 1)
 	cd tor && ./autogen.sh
 	cd tor && \
