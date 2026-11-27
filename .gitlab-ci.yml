@@ -14,10 +14,6 @@ cache:
     name: "${CI_PROJECT_PATH}_${CI_JOB_STAGE}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA}"
     paths:
       - tor-android-binary/build/outputs/aar
-      - tor-android-binary/src/main/libs
-      - external/include
-      - external/lib
-      - external/test
     expire_in: 1 week
     when: always
 
@@ -40,6 +36,9 @@ build-tor-android:
     - mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
     - yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
     - $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;30.0.16248370" "platforms;android-37.2" "build-tools;37.0.0"
+    # needed to apply patches with git am
+    - git config --user.email "tor-android@gitlab.runner"
+    - git config --user.name ".gitlab-ci.yml"
   script:
     - chmod +x ./tor-droid-make.sh gradlew
     - ./tor-droid-make.sh fetch -c
