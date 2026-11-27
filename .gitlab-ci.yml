@@ -39,6 +39,7 @@ build-tor-android:
     # needed to apply patches with git am
     - git config user.email "tor-android@gitlab.runner"
     - git config user.name ".gitlab-ci.yml"
+    - git submodule update --init --recursive
   script:
     - chmod +x ./tor-droid-make.sh gradlew
     - ./tor-droid-make.sh fetch -c

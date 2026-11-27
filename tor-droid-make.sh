@@ -4,6 +4,8 @@ set -e
 
 fetch_submodules()
 {
+    # make extenral/tor something you have to add with git add -f
+    git config submodule.external/tor.ignore all
     if [ -n "$1" ]; then
         echo "Cleaning repository"
         git reset --hard
