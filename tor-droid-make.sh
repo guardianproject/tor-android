@@ -18,9 +18,8 @@ fetch_submodules()
     git submodule update --init --recursive
     echo "Applying Guardian Project's c-tor patchset from external/guardian-tor-patches..."
     cd external/tor
-    git am --empty=keep ../guardian-tor-patches/*.patch
+    git am --committer-date-is-author-date --empty=keep ../guardian-tor-patches/*.patch
     cd ../..
-    echo ""
     echo "Guardian Project patches applied!"
 }
 
