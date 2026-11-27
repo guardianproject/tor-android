@@ -45,5 +45,5 @@ public interface RawEventListener {
      *
      * @see <a href="https://torproject.gitlab.io/torspec/control-spec/#asynchronous-events">Control Port Asynchronous events</a>
      */
-    void onEvent(String keyword, String data);
+    public void onEvent(String keyword, String data);
 }

@@ -3,15 +3,13 @@
 package net.freehaven.tor.control;
 
 import java.io.IOException;
-import java.io.Serial;
 
 /**
  * An exception raised when Tor behaves in an unexpected way.
  */
 public class TorControlSyntaxError extends IOException {
 
-    @Serial
-    private static final long serialVersionUID = 3;
+    static final long serialVersionUID = 3;
 
     public TorControlSyntaxError(String s) { super(s); }
 }
