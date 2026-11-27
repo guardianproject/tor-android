@@ -1,0 +1,49 @@
+image: eclipse-temurin:25-jdk
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+
+.job-template: &job-template
+  artifacts:
+    name: "${CI_PROJECT_PATH}_${CI_JOB_STAGE}_${CI_COMMIT_REF_NAME}_${CI_COMMIT_SHA}"
+    paths:
+      - tor-android-binary/build/outputs/aar
+      - tor-android-binary/src/main/libs
+      - external/include
+      - external/lib
+      - external/test
+    expire_in: 1 week
+    when: always
+
+stages:
+  - build
+
+build-tor-android:
+  stage: build
+  variables:
+    DEBIAN_FRONTEND: noninteractive
+    ANDROID_HOME: /opt/android-sdk
+    ANDROID_NDK_HOME: /opt/android-sdk/ndk/30.0.16248370
+  before_script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends autoconf autogen automake autopoint autotools-dev gettext-base gettext git libtool make patch pkg-config g++ uidmap libseccomp-dev libscrypt-dev build-essential ca-certificates po4a libzstd-dev unzip wget
+    # Install Android command-line tools (check the current version number at developer.android.com)
+    - wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O /tmp/cmdline-tools.zip
+    - mkdir -p $ANDROID_HOME/cmdline-tools
+    - unzip -q /tmp/cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools
+    - mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+    - yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+    - $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;30.0.16248370" "platforms;android-37.2" "build-tools;37.0.0"
+  script:
+    - chmod +x ./tor-droid-make.sh gradlew
+    - ./tor-droid-make.sh fetch -c
+    - ./tor-droid-make.sh build
+  artifacts:
+    paths:
+      - tor-android-binary/build/outputs/aar/
