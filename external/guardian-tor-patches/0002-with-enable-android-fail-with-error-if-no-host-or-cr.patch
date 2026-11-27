@@ -1,0 +1,42 @@
+From c1a59d3aac95a4d83990710082e61d7214830bda Mon Sep 17 00:00:00 2001
+From: Hans-Christoph Steiner <hans@eds.org>
+Date: Fri, 25 Oct 2019 21:02:57 +0200
+Subject: [PATCH 02/20] with --enable-android, fail with error if no host or
+ cross-compiling
+
+---
+ configure.ac | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/configure.ac b/configure.ac
+index 3f8b71541b..e04b53845f 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -127,6 +127,24 @@ if test "x$enable_android" = "xyes"; then
+   enable_system_torrc=no
+   enable_tool_name_check=no
+   have_systemd=no
++
++  need_cross_compiling_host=no
++  if test "x$cross_compiling" != "xyes"; then
++       need_cross_compiling_host=yes
++  fi
++  case "$host" in
++       *-linux-android*) ;;
++       *)
++       need_cross_compiling_host=yes
++       ;;
++  esac
++  if test "x$need_cross_compiling_host" = "xyes"; then
++       AC_MSG_ERROR([
++
++ Android builds are cross-compiled, therefore require setting --host= which
++ can be derived from the NDK ABIs: https://developer.android.com/ndk/guides/abis
++       ])
++  fi
+ fi
+ 
+ if test "x$enable_coverage" != "xyes" -a "x$enable_asserts_in_tests" = "xno" ; then
+-- 
+2.47.3
+

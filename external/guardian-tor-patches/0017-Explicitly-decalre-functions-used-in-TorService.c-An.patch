@@ -1,0 +1,33 @@
+From fb86fd7392577cc3d8c3285d9b2f0abe6df0538c Mon Sep 17 00:00:00 2001
+From: a <dsnake@protonmail.com>
+Date: Thu, 2 May 2024 16:04:45 -0400
+Subject: [PATCH 17/20] Explicitly decalre functions used in TorService.c,
+ Android NDK toolchain 26 uses a newer version of clang that treats these
+ implicitly invoked function calls as errors instead of warngings
+
+---
+ src/feature/api/org_torproject_jni_TorService.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/feature/api/org_torproject_jni_TorService.c b/src/feature/api/org_torproject_jni_TorService.c
+index 1b93a43672..ff58744258 100644
+--- a/src/feature/api/org_torproject_jni_TorService.c
++++ b/src/feature/api/org_torproject_jni_TorService.c
+@@ -3,10 +3,13 @@
+  * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ /* See LICENSE for licensing information */
+ 
+-#include "tor_api.h"
+ #include "org_torproject_jni_TorService.h"
+ #include "orconfig.h"
+ #include "lib/malloc/malloc.h"
++#include "app/main/shutdown.h"
++#include "feature/api/tor_api.h"
++#include "feature/api/tor_api_internal.h"
++
+ 
+ #include <jni.h>
+ #include <stdbool.h>
+-- 
+2.47.3
+

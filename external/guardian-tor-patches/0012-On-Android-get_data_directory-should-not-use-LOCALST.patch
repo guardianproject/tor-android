@@ -1,0 +1,10 @@
+From feeb1fe254e345c098a436768e2dbffaa65824bb Mon Sep 17 00:00:00 2001
+From: Hans-Christoph Steiner <hans@eds.org>
+Date: Fri, 15 Oct 2021 10:18:31 +0200
+Subject: [PATCH 12/20] On Android, get_data_directory() should not use
+ LOCALSTATEDIR
+
+closes https://gitlab.torproject.org/tpo/core/tor/-/issues/40487
+-- 
+2.47.3
+

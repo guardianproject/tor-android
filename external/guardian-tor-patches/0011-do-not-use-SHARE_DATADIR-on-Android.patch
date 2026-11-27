@@ -1,0 +1,18 @@
+From fddbcf87b588f29427c9a3821ec49d7f0cd65108 Mon Sep 17 00:00:00 2001
+From: Hans-Christoph Steiner <hans@eds.org>
+Date: Fri, 15 Oct 2021 09:49:57 +0200
+Subject: [PATCH 11/20] do not use SHARE_DATADIR on Android
+
+There is no absolute install path that an app can expect data files on
+Android.  Everything is expected to be a path inside of the app, and those
+paths depend on the Application ID of the app.  /data/local/tmp is
+guaranteed to exist, but will only be usable by the 'shell' and 'root'
+users, so this fallback is for debugging only.
+
+This fixes a reproducible issue where the tor-android build harness ended
+up including build paths for SHARE_DATADIR.
+
+https://gitlab.torproject.org/tpo/core/tor/-/merge_requests/460
+-- 
+2.47.3
+

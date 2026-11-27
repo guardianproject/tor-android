@@ -1,0 +1,23 @@
+From 1327ee35bca0f5512ea99b57211663853fab50ba Mon Sep 17 00:00:00 2001
+From: Hans-Christoph Steiner <hans@eds.org>
+Date: Tue, 29 Oct 2019 22:03:50 +0100
+Subject: [PATCH 15/20] add Guardian Project FUNDING.yml
+
+---
+ FUNDING.yml | 4 ++++
+ 1 file changed, 4 insertions(+)
+ create mode 100644 FUNDING.yml
+
+diff --git a/FUNDING.yml b/FUNDING.yml
+new file mode 100644
+index 0000000000..8ef6850c26
+--- /dev/null
++++ b/FUNDING.yml
+@@ -0,0 +1,4 @@
++liberapay: GuardianProject
++patreon: guardianproject
++github:
++    - eighthave
+-- 
+2.47.3
+

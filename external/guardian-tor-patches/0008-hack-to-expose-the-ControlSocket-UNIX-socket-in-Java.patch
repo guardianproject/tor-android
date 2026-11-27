@@ -1,0 +1,95 @@
+From 8b19acf747d29c4a73bf781f7ee4c000be0056d1 Mon Sep 17 00:00:00 2001
+From: Hans-Christoph Steiner <hans@eds.org>
+Date: Fri, 11 Oct 2019 14:17:17 +0200
+Subject: [PATCH 08/20] hack to expose the ControlSocket UNIX socket in Java
+ space
+
+Android does not support UNIX domain sockets, so we have to hack this in.
+---
+ .../api/org_torproject_jni_TorService.c       | 55 +++++++++++++++++++
+ .../api/org_torproject_jni_TorService.h       |  8 +++
+ 2 files changed, 63 insertions(+)
+
+diff --git a/src/feature/api/org_torproject_jni_TorService.c b/src/feature/api/org_torproject_jni_TorService.c
+index 9e21e8295e..640409b521 100644
+--- a/src/feature/api/org_torproject_jni_TorService.c
++++ b/src/feature/api/org_torproject_jni_TorService.c
+@@ -257,3 +257,58 @@ Java_org_torproject_jni_TorService_runMain
+ {
+   return RunMain(env, thisObj);
+ }
++/**
++ * Android does not support UNIX Domain Sockets, but we can fake it by sending
++ * the file descriptor via a java.io.FileDescriptor instance, which can be
++ * used to open streams.  The field "fd" has been in Java forever.  In Android,
++ * they renamed the field in 2008 to "descriptor", back when they did many
++ * silly things like that.  It hasn't changed since then, e.g. Android 1.0.
++ */
++JNIEXPORT jobject JNICALL
++Java_org_torproject_jni_TorService_prepareFileDescriptor
++(JNIEnv *env, jclass _ignore, jstring arg)
++{
++  UNUSED(_ignore);
++  const char *filename = (*env)->GetStringUTFChars(env, arg, NULL);
++  int fd = socket(AF_UNIX, SOCK_STREAM, 0);
++  struct sockaddr_un addr;
++  memset(&addr, 0, sizeof(addr));
++  addr.sun_family = AF_UNIX;
++  strncpy(addr.sun_path, filename, sizeof(addr.sun_path) - 1);
++  (*env)->ReleaseStringUTFChars(env, arg, filename);
++
++  jclass io_exception = (*env)->FindClass(env, "java/io/IOException");
++  if (io_exception == NULL) {
++    return NULL;
++  }
++  if (fd < 0 || connect(fd, (struct sockaddr *) &addr, sizeof(addr)) == -1) {
++    char buf[1024];
++    snprintf(buf, 1023, "%s open: %s", filename, strerror(errno));
++    (*env)->ThrowNew(env, io_exception, buf);
++    return NULL;
++  }
++
++  jclass file_descriptor = (*env)->FindClass(env, "java/io/FileDescriptor");
++  if (file_descriptor == NULL) {
++    return NULL;
++  }
++  jmethodID file_descriptor_init = \
++    (*env)->GetMethodID(env, file_descriptor, "<init>", "()V");
++  if (file_descriptor_init == NULL) {
++    return NULL;
++  }
++  jobject ret = (*env)->NewObject(env, file_descriptor, file_descriptor_init);
++
++#ifdef __ANDROID__
++  jfieldID field_fd = \
++    (*env)->GetFieldID(env, file_descriptor, "descriptor", "I");
++#else  /* !defined(__ANDROID__) */
++  jfieldID field_fd = (*env)->GetFieldID(env, file_descriptor, "fd", "I");
++#endif  /* defined(__ANDROID__) */
++  if (field_fd == NULL) {
++    return NULL;
++  }
++  (*env)->SetIntField(env, ret, field_fd, fd);
++
++  return ret;
++}
+diff --git a/src/feature/api/org_torproject_jni_TorService.h b/src/feature/api/org_torproject_jni_TorService.h
+index 3a2aa2895b..50edcaa10e 100644
+--- a/src/feature/api/org_torproject_jni_TorService.h
++++ b/src/feature/api/org_torproject_jni_TorService.h
+@@ -62,4 +62,12 @@ JNIEXPORT jint JNICALL
+ Java_org_torproject_jni_TorService_runMain
+ (JNIEnv *, jobject);
+ 
++/*
++ * Class:     org_torproject_jni_TorService
++ * Method:    prepareFileDescriptor
++ */
++JNIEXPORT jobject JNICALL
++Java_org_torproject_jni_TorService_prepareFileDescriptor
++(JNIEnv *env, jclass, jstring);
++
+ #endif /* !defined(ORG_TORPROJECT_JNI_TORSERVICE_H) */
+-- 
+2.47.3
+

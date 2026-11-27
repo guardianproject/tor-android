@@ -1,0 +1,39 @@
+From 461ef7be46576327d01f9478eaea8f4a6df8aa94 Mon Sep 17 00:00:00 2001
+From: Hans-Christoph Steiner <hans@eds.org>
+Date: Wed, 11 Dec 2019 12:46:06 +0100
+Subject: [PATCH 05/20] DO NOT MERGE disable check for strdup until JNI impl
+ fixed
+
+---
+ scripts/maint/checkSpace.pl                 | 2 +-
+ scripts/maint/checkspace_tests/expected.txt | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/scripts/maint/checkSpace.pl b/scripts/maint/checkSpace.pl
+index 8ecbf414cf..ba613cf225 100755
+--- a/scripts/maint/checkSpace.pl
++++ b/scripts/maint/checkSpace.pl
+@@ -237,7 +237,7 @@ for my $fn (@ARGV) {
+                     msg "$&:$fn:$.\n";
+                 }
+                 if (/\bmalloc\(/ or /\bfree\(/ or /\brealloc\(/ or
+-                    /\bstrdup\(/ or /\bstrndup\(/ or /\bcalloc\(/) {
++                    /\bstrndup\(/ or /\bcalloc\(/) {
+                     msg "$&:$fn:$.    (use tor_malloc, tor_free, etc)\n";
+                 }
+             }
+diff --git a/scripts/maint/checkspace_tests/expected.txt b/scripts/maint/checkspace_tests/expected.txt
+index 38595ed373..362d14729f 100644
+--- a/scripts/maint/checkspace_tests/expected.txt
++++ b/scripts/maint/checkspace_tests/expected.txt
+@@ -22,7 +22,6 @@
+    malloc(:./dubious.c:77    (use tor_malloc, tor_free, etc)
+      free(:./dubious.c:78    (use tor_malloc, tor_free, etc)
+   realloc(:./dubious.c:79    (use tor_malloc, tor_free, etc)
+-   strdup(:./dubious.c:80    (use tor_malloc, tor_free, etc)
+   strndup(:./dubious.c:81    (use tor_malloc, tor_free, etc)
+    calloc(:./dubious.c:82    (use tor_malloc, tor_free, etc)
+    noguard:./dubious.h (No #ifndef/#define header guard pair found)
+-- 
+2.47.3
+

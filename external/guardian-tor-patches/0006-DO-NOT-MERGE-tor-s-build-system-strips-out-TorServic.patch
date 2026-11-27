@@ -1,0 +1,33 @@
+From 8817bfb5e6403021278caa0257bdd202e0b793c6 Mon Sep 17 00:00:00 2001
+From: Hans-Christoph Steiner <hans@eds.org>
+Date: Thu, 31 Oct 2019 00:31:01 +0100
+Subject: [PATCH 06/20] DO NOT MERGE tor's build system strips out TorService,
+ unless its in an existing file
+
+---
+ src/feature/api/.may_include | 1 +
+ src/feature/api/tor_api.c    | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/src/feature/api/.may_include b/src/feature/api/.may_include
+index 424c745c12..4bcc583049 100644
+--- a/src/feature/api/.may_include
++++ b/src/feature/api/.may_include
+@@ -1 +1,2 @@
+ *.h
++*.c
+diff --git a/src/feature/api/tor_api.c b/src/feature/api/tor_api.c
+index 88e91ebfd5..1f56e22a92 100644
+--- a/src/feature/api/tor_api.c
++++ b/src/feature/api/tor_api.c
+@@ -167,3 +167,7 @@ tor_main(int argc, char *argv[])
+   tor_main_configuration_free(cfg);
+   return rv;
+ }
++
++#ifdef HAVE_JNI_H
++#include "org_torproject_jni_TorService.c"
++#endif
+-- 
+2.47.3
+

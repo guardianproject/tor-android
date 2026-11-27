@@ -1,0 +1,28 @@
+From d9c0d454456128d146d9da00164be1cf6c1eef89 Mon Sep 17 00:00:00 2001
+From: syphyr <syphyr@gmail.com>
+Date: Fri, 8 Aug 2025 20:33:58 +0200
+Subject: [PATCH 20/20] Fix JNI include path
+
+---
+ src/feature/api/org_torproject_jni_TorService.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/feature/api/org_torproject_jni_TorService.c b/src/feature/api/org_torproject_jni_TorService.c
+index 63021c8447..362eb5b3dd 100644
+--- a/src/feature/api/org_torproject_jni_TorService.c
++++ b/src/feature/api/org_torproject_jni_TorService.c
+@@ -3,10 +3,10 @@
+  * Copyright (c) 2007-2019, The Tor Project, Inc. */
+ /* See LICENSE for licensing information */
+ 
+-#include "org_torproject_jni_TorService.h"
+ #include "orconfig.h"
+ #include "lib/malloc/malloc.h"
+ #include "app/main/shutdown.h"
++#include "feature/api/org_torproject_jni_TorService.h"
+ #include "feature/api/tor_api.h"
+ #include "feature/api/tor_api_internal.h"
+ 
+-- 
+2.47.3
+

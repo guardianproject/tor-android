@@ -1,0 +1,28 @@
+From 057291402886079e4bc5b3531b28798230e3d196 Mon Sep 17 00:00:00 2001
+From: syphyr <syphyr@gmail.com>
+Date: Fri, 4 Jul 2025 00:28:25 +0200
+Subject: [PATCH 18/20] Fix type mismatch in JNI function
+
+SetupControlSocket() returns a boolean value and it's only caller is the
+JNI function mainConfigurationSetupControlSocket() that also returns a
+boolean value. So, change SetupControlSocket() to boolean.
+---
+ src/feature/api/org_torproject_jni_TorService.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/feature/api/org_torproject_jni_TorService.c b/src/feature/api/org_torproject_jni_TorService.c
+index ff58744258..910248f70e 100644
+--- a/src/feature/api/org_torproject_jni_TorService.c
++++ b/src/feature/api/org_torproject_jni_TorService.c
+@@ -174,7 +174,7 @@ SetCommandLine(JNIEnv *env, jobject thisObj, jobjectArray arrArgv)
+   return true;
+ }
+ 
+-static int
++static bool
+ SetupControlSocket(JNIEnv *env, jobject thisObj)
+ {
+   jclass torApiClass = (*env)->GetObjectClass(env, thisObj);
+-- 
+2.47.3
+

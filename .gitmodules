@@ -1,6 +1,6 @@
 [submodule "external/tor"]
 	path = external/tor
-	url = https://github.com/bitmold/tor.git
+	url = https://gitlab.com/torproject/tor.git
 	ignore = dirty
 [submodule "external/libevent"]
 	path = external/libevent

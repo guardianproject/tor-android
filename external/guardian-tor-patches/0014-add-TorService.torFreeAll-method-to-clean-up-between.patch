@@ -1,0 +1,62 @@
+From b36cb518ca9c37319ee607d53053dc2cb55ddb37 Mon Sep 17 00:00:00 2001
+From: Hans-Christoph Steiner <hans@eds.org>
+Date: Tue, 10 Dec 2019 22:24:49 +0100
+Subject: [PATCH 14/20] add TorService.torFreeAll() method to clean up between
+ restarts
+
+This is here as an experiment in case it is useful in Java space.  It is
+looking like there are better ways to handle the shutdown, so my guess is
+that this will not be useful.
+
+* https://github.com/guardianproject/tor-android/pull/59
+* https://github.com/guardianproject/tor-android/pull/61#discussion_r766016252
+* https://github.com/guardianproject/tor-android/issues/57
+---
+ src/feature/api/org_torproject_jni_TorService.c | 10 ++++++++++
+ src/feature/api/org_torproject_jni_TorService.h |  9 +++++++++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/src/feature/api/org_torproject_jni_TorService.c b/src/feature/api/org_torproject_jni_TorService.c
+index a9b74f06a0..1b93a43672 100644
+--- a/src/feature/api/org_torproject_jni_TorService.c
++++ b/src/feature/api/org_torproject_jni_TorService.c
+@@ -258,6 +258,16 @@ Java_org_torproject_jni_TorService_runMain
+ {
+   return RunMain(env, thisObj);
+ }
++
++JNIEXPORT void JNICALL
++Java_org_torproject_jni_TorService_torFreeAll
++(JNIEnv *env, jobject _ignore)
++{
++  UNUSED(env);
++  UNUSED(_ignore);
++  tor_free_all(0);
++}
++
+ /**
+  * Android does not support UNIX Domain Sockets, but we can fake it by sending
+  * the file descriptor via a java.io.FileDescriptor instance, which can be
+diff --git a/src/feature/api/org_torproject_jni_TorService.h b/src/feature/api/org_torproject_jni_TorService.h
+index 50edcaa10e..4ea0e5f9e2 100644
+--- a/src/feature/api/org_torproject_jni_TorService.h
++++ b/src/feature/api/org_torproject_jni_TorService.h
+@@ -62,6 +62,15 @@ JNIEXPORT jint JNICALL
+ Java_org_torproject_jni_TorService_runMain
+ (JNIEnv *, jobject);
+ 
++/*
++ * Class:     org_torproject_jni_TorService
++ * Method:    torFreeAll
++ * Signature: ()V
++ */
++JNIEXPORT void JNICALL
++Java_org_torproject_jni_TorService_torFreeAll
++(JNIEnv *, jobject);
++
+ /*
+  * Class:     org_torproject_jni_TorService
+  * Method:    prepareFileDescriptor
+-- 
+2.47.3
+

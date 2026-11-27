@@ -1,0 +1,30 @@
+From 46a0f3548ec64c0afa0e1998a6cf27dc1e3b20b9 Mon Sep 17 00:00:00 2001
+From: Hans-Christoph Steiner <hans@eds.org>
+Date: Tue, 10 Dec 2019 22:24:49 +0100
+Subject: [PATCH 09/20] gitlab-ci: add cppcheck job
+
+---
+ .gitlab-ci.yml | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 36bfc891be..dfae829253 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -288,3 +288,13 @@ rust-latest:
+     - cargo clippy --all-features --all-targets -- -D warnings
+   after_script:
+     - cargo clean
++
++# cppcheck static analyzer
++cppcheck:
++  image: debian:bullseye
++  script:
++    - *apt-template
++    - apt-get install cppcheck
++    - find src -name '*.[ch]' | sort
++        | cppcheck --file-list=- --max-configs=50
++            --enable=information,performance,portability,unusedFunction
+-- 
+2.47.3
+

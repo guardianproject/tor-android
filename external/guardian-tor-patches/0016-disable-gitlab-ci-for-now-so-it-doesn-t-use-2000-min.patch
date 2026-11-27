@@ -1,0 +1,18 @@
+From d65744ee61ff5bc20f0e36db01851a3e6dd5f893 Mon Sep 17 00:00:00 2001
+From: n8fr8 <nathan@freitas.net>
+Date: Tue, 11 Oct 2022 09:50:28 -0400
+Subject: [PATCH 16/20] disable gitlab ci for now so it doesn't use 2000
+ minutes of CI time
+
+---
+ .gitlab-ci.yml => .gitlab-ci.yml.disabled | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename .gitlab-ci.yml => .gitlab-ci.yml.disabled (100%)
+
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml.disabled
+similarity index 100%
+rename from .gitlab-ci.yml
+rename to .gitlab-ci.yml.disabled
+-- 
+2.47.3
+

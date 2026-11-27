@@ -1,0 +1,131 @@
+From fcb1f294e659257ac2eaa435b51cd170fcf1a776 Mon Sep 17 00:00:00 2001
+From: Hans-Christoph Steiner <hans@eds.org>
+Date: Wed, 28 Apr 2021 14:26:40 +0200
+Subject: [PATCH 10/20] gitlab-ci: add complete Android build and test run in
+ emulator
+
+---
+ .gitlab-ci.yml | 110 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 110 insertions(+)
+
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index dfae829253..2e975ebeac 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -298,3 +298,113 @@ cppcheck:
+     - find src -name '*.[ch]' | sort
+         | cppcheck --file-list=- --max-configs=50
+             --enable=information,performance,portability,unusedFunction
++
++
++#####
++# Android builds have a very different setup than desktop OSes since
++# it is a cross-compile and tests must run in the emulator.
++.android-template: &android-template
++  image: registry.gitlab.com/fdroid/ci-images-client:latest
++  variables:
++    DEBIAN_FRONTEND: noninteractive
++  before_script:
++    - *apt-template
++    - apt-get install autoconf automake ca-certificates curl gzip make libtinfo5 libtool pkg-config tar unzip wget
++  script:
++    - export AVD_SDK=`echo $CI_JOB_NAME | awk '{print $2}'`
++    - export AVD_TAG=`echo $CI_JOB_NAME | awk '{print $3}'`
++    - export AVD_ARCH=`echo $CI_JOB_NAME | awk '{print $4}'`
++    - export AVD_PACKAGE="system-images;android-${AVD_SDK};${AVD_TAG};${AVD_ARCH}"
++    - echo $AVD_PACKAGE
++
++    - ndk=android-ndk-`echo $CI_JOB_NAME | awk '{print $5}'`
++    - export ANDROID_NDK_HOME=/opt/$ndk
++    - export PATH=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
++    - ndk_zip="${ndk}-linux-x86_64.zip"
++    - wget --quiet --tries=0 https://dl.google.com/android/repository/$ndk_zip
++    - unzip -qq -d /opt $ndk_zip
++
++    - export ABI=$AVD_ARCH
++    - test $ABI = "armeabi-v7a"
++        && { host_triplet=armv7a-linux-androideabi; alt_triplet=arm-linux-androideabi; arch=arm; path_triplet=$alt_triplet; }
++    - test $ABI = "arm64-v8a"
++        && { host_triplet=aarch64-linux-androideabi; alt_triplet=$host_triplet; arch=arm64; path_triplet=$host_triplet; }
++    - test $ABI = "x86"
++        && { host_triplet=i686-linux-android; alt_triplet=$host_triplet; arch=$ABI; path_triplet=$ABI; }
++    - test $ABI = "x86_64"
++        && { host_triplet=$ABI-linux-android; alt_triplet=$host_triplet; arch=$ABI; path_triplet=$ABI; }
++    - platform=21
++    - export CC=${host_triplet}${platform}-clang
++
++    - mkdir -p external
++    - export EXTERNAL_ROOT=`pwd`/external
++
++    # if using an old NDK, then more configuration is needed
++    - if ! which $CC; then
++        export CC="${alt_triplet}-gcc --sysroot=$ANDROID_NDK_HOME/platforms/android-$platform/arch-$arch -isystem $ANDROID_NDK_HOME/sysroot/usr/include/$alt_triplet -isystem $ANDROID_NDK_HOME/sysroot/usr/include";
++        export CFLAGS=-D__ANDROID_API__=$platform
++        export PATH=$ANDROID_NDK_HOME/toolchains/${alt_triplet}-4.9/prebuilt/linux-x86_64/bin:$PATH;
++      fi
++
++    - openssl_version=`echo $CI_JOB_NAME | awk '{print $6}'`
++    - mkdir openssl
++    - curl --silent --location https://www.openssl.org/source/openssl-${openssl_version}.tar.gz
++        | tar -xz --directory=openssl --strip-components=1
++    - cd openssl
++    - ./Configure no-shared android-$arch -D__ANDROID_API__=$platform
++        --prefix=$EXTERNAL_ROOT --openssldir=$EXTERNAL_ROOT
++    - make install_dev
++    - cd ..
++
++    - mkdir libevent
++    - curl --silent --location https://github.com/libevent/libevent/archive/release-2.1.12-stable.tar.gz
++        | tar -xz --directory=libevent --strip-components=1
++    - cd libevent
++    - ./autogen.sh
++    - ./configure
++        LDFLAGS="-L$EXTERNAL_ROOT/lib"
++        CFLAGS="-I$EXTERNAL_ROOT/include"
++        --host="${alt_triplet}"
++        --disable-libevent-regress
++        --disable-samples
++        --disable-shared
++        --prefix=$EXTERNAL_ROOT
++    - make install
++    - cd ..
++
++    - ./autogen.sh
++    - ./configure
++        --host="$host_triplet"
++        --enable-android
++        --enable-static-libevent --with-libevent-dir=$EXTERNAL_ROOT
++        --enable-static-openssl --with-openssl-dir=$EXTERNAL_ROOT
++        --prefix=$EXTERNAL_ROOT
++
++    - grep -E '^# *define +ENABLE_OPENSSL +1$' orconfig.h
++    - grep -E '^# *define +HAVE_TLS_METHOD +1$' orconfig.h
++
++    - make install
++
++    - adb start-server
++    - start-emulator
++    - wait-for-emulator
++    - adb devices
++    - adb shell input keyevent 82 &
++
++    # adb shell on older emulators didn't pass the return value, so we need tricks
++    # https://stackoverflow.com/a/58452689
++    - EXITVALUE=0
++    - cd src/test
++    - for f in test test-memwipe test-slow; do
++        printf "\n\n------------------------------------------\n$f\n";
++        adb -e push $f /data/local/tmp/;
++        adb -e shell "cd /data/local/tmp; ./$f"'; echo -n $? > '"$f.result";
++        test `adb -e shell "cat /data/local/tmp/$f.result"` = "0" || EXITVALUE=1;
++      done
++    - exit $EXITVALUE
++
++no-accel 22 default x86_64 r21e 1.1.1l:
++  <<: *android-template
++
++no-accel 24 default armeabi-v7a r21e 1.1.1l:
++  <<: *android-template
+-- 
+2.47.3
+

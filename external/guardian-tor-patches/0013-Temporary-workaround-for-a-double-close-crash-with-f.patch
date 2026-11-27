@@ -1,0 +1,69 @@
+From 3ffe8508a87676d445cafa8ecc404dee6f3ad85b Mon Sep 17 00:00:00 2001
+From: Torsten Grote <t@grobox.de>
+Date: Wed, 8 Dec 2021 13:24:47 +0100
+Subject: [PATCH 13/20] Temporary workaround for a double close crash with
+ fdsan.
+
+closes https://github.com/guardianproject/tor-android/issues/57
+
+Should be removed once fixed in Tor upstream:
+https://gitlab.torproject.org/tpo/core/tor/-/issues/40525
+---
+ src/feature/api/org_torproject_jni_TorService.c |  1 +
+ src/feature/api/tor_api.c                       | 11 +++++++++++
+ src/feature/api/tor_api_internal.h              |  7 +++++++
+ 3 files changed, 19 insertions(+)
+
+diff --git a/src/feature/api/org_torproject_jni_TorService.c b/src/feature/api/org_torproject_jni_TorService.c
+index 640409b521..a9b74f06a0 100644
+--- a/src/feature/api/org_torproject_jni_TorService.c
++++ b/src/feature/api/org_torproject_jni_TorService.c
+@@ -240,6 +240,7 @@ Java_org_torproject_jni_TorService_mainConfigurationFree
+     fprintf(stderr, "ConfigurationFree: The Tor configuration is NULL!\n");
+     return;
+   }
++  unset_owning_controller_socket(cfg);
+   tor_main_configuration_free(cfg);
+ }
+ 
+diff --git a/src/feature/api/tor_api.c b/src/feature/api/tor_api.c
+index 1f56e22a92..6396b62b51 100644
+--- a/src/feature/api/tor_api.c
++++ b/src/feature/api/tor_api.c
+@@ -100,6 +100,17 @@ tor_main_configuration_set_command_line(tor_main_configuration_t *cfg,
+   return 0;
+ }
+ 
++/*
++ * Temporary workaround for a double close crash with fdsan.
++ * See: https://github.com/guardianproject/tor-android/issues/57
++ * Should be removed once fixed in Tor upstream.
++ */
++void
++unset_owning_controller_socket(tor_main_configuration_t* t)
++{
++    t->owning_controller_socket = -1;
++}
++
+ tor_control_socket_t
+ tor_main_configuration_setup_control_socket(tor_main_configuration_t *cfg)
+ {
+diff --git a/src/feature/api/tor_api_internal.h b/src/feature/api/tor_api_internal.h
+index 5075922676..719685cb13 100644
+--- a/src/feature/api/tor_api_internal.h
++++ b/src/feature/api/tor_api_internal.h
+@@ -31,4 +31,11 @@ struct tor_main_configuration_t {
+   tor_socket_t owning_controller_socket;
+ };
+ 
++/*
++ * Temporary workaround for a double close crash with fdsan.
++ * See: https://github.com/guardianproject/tor-android/issues/57
++ * Should be removed once fixed in Tor upstream.
++ */
++void unset_owning_controller_socket(tor_main_configuration_t* t);
++
+ #endif /* !defined(TOR_API_INTERNAL_H) */
+-- 
+2.47.3
+

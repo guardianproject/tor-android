@@ -1,0 +1,30 @@
+From 1add98d2604646e4c30e3d761a4b84e5ce01e0c6 Mon Sep 17 00:00:00 2001
+From: syphyr <syphyr@gmail.com>
+Date: Sun, 6 Jul 2025 23:56:13 +0200
+Subject: [PATCH 19/20] Return false when Tor config is NULL
+
+run() checkes the boolean value of mainConfigurationSetCommandLine,
+which is the only caller of SetCommandLine. The return value of
+SetCommandLine should be false when the Tor configuration is NULL,
+otherwise C will interpret the current -1 return value as true and not
+abort on a missing Tor configuration.
+---
+ src/feature/api/org_torproject_jni_TorService.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/feature/api/org_torproject_jni_TorService.c b/src/feature/api/org_torproject_jni_TorService.c
+index 910248f70e..63021c8447 100644
+--- a/src/feature/api/org_torproject_jni_TorService.c
++++ b/src/feature/api/org_torproject_jni_TorService.c
+@@ -145,7 +145,7 @@ SetCommandLine(JNIEnv *env, jobject thisObj, jobjectArray arrArgv)
+   tor_main_configuration_t *cfg = GetConfiguration(env, thisObj);
+   if (cfg == NULL) {
+     fprintf(stderr, "SetCommandLine: The Tor configuration is NULL!\n");
+-    return -1;
++    return false;
+   }
+ 
+   jsize arrArgvLen = (*env)->GetArrayLength(env, arrArgv);
+-- 
+2.47.3
+

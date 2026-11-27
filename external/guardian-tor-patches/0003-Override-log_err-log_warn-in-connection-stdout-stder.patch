@@ -1,0 +1,40 @@
+From a7937038311fe81564d42e9c426b6d456c19f020 Mon Sep 17 00:00:00 2001
+From: Hans-Christoph Steiner <hans@eds.org>
+Date: Wed, 30 Oct 2019 23:36:44 +0100
+Subject: [PATCH 03/20] Override log_err/log_warn in connection, stdout/stderr
+ don't work
+
+This will provide errors to logcat in case of early startup issues.
+
+For more info:
+https://trac.torproject.org/projects/tor/ticket/32036
+---
+ src/core/mainloop/connection.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/src/core/mainloop/connection.c b/src/core/mainloop/connection.c
+index 502cbb5941..2770351151 100644
+--- a/src/core/mainloop/connection.c
++++ b/src/core/mainloop/connection.c
+@@ -138,6 +138,18 @@
+ #include <sys/un.h>
+ #endif
+ 
++/**
++ * Override log_err and log_warn here since stdout/stderr don't work
++ * https://gitlab.torproject.org/tpo/core/tor/-/issues/32036
++ */
++#ifdef __ANDROID__
++#include <android/log.h>
++#define log_err(ignored, ...) \
++  __android_log_print(ANDROID_LOG_ERROR, "Tor-connection", ##__VA_ARGS__)
++#define log_warn(ignored, ...) \
++  __android_log_print(ANDROID_LOG_WARN, "Tor-connection", ##__VA_ARGS__)
++#endif // __ANDROID__
++
+ #include "feature/dircommon/dir_connection_st.h"
+ #include "feature/control/control_connection_st.h"
+ #include "core/or/entry_connection_st.h"
+-- 
+2.47.3
+
